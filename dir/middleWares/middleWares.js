@@ -16,10 +16,10 @@ const errorMiddleWAre = (req, res, next) => {
             const duplicate = errors.find((el, i) => (i < index && el.param === item.param));
             return !duplicate;
         });
-        const test = errorsWithoutDuplicate.map((item) => {
+        const errorMessage = errorsWithoutDuplicate.map((item) => {
             return { message: `${item.param} incorrect`, field: item.param };
         });
-        return res.status(400).send({ errorsMessages: test });
+        return res.status(400).send({ errorsMessages: errorMessage });
     }
     next();
 };

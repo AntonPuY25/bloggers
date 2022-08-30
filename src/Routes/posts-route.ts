@@ -40,8 +40,10 @@ postsRoute.get('/:id', (req: Request, res: Response) => {
 postsRoute.put('/:id', titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
     const postId = Number(req.params.id);
 
-    const currentPost = postsRepositories.updatePost({...req.body,postId})
-
+    const currentPost = postsRepositories.updatePost({...req.body, postId})
+    if (currentPost === -1) {
+        res.status(400).send(getCurrentFieldError('bloggerId', 'Not found this blogger'))
+    }
     if (currentPost) {
         res.send(204)
     } else {

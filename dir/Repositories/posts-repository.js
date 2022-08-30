@@ -42,6 +42,9 @@ exports.postsRepositories = {
                 return posts.splice(currentPostId, 1, newPost);
             }
         }
+        else {
+            return -1;
+        }
     },
     deletedPost: (postId) => {
         console.log(postId, 'postId');

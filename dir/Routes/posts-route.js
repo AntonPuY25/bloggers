@@ -31,6 +31,9 @@ exports.postsRoute.get('/:id', (req, res) => {
 exports.postsRoute.put('/:id', middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => {
     const postId = Number(req.params.id);
     const currentPost = posts_repository_1.postsRepositories.updatePost(Object.assign(Object.assign({}, req.body), { postId }));
+    if (currentPost === -1) {
+        res.status(400).send((0, helpers_1.getCurrentFieldError)('bloggerId', 'Not found this blogger'));
+    }
     if (currentPost) {
         res.send(204);
     }

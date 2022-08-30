@@ -1,32 +1,7 @@
 import {CreatePostProps, UpdatePostProps} from "../interfaces/interfaces";
 import {bloggers} from "./bloggers-repository";
 
-const posts = [
-    {
-        id: 1,
-        title: 'New POST',
-        shortDescription: 'My First Post',
-        content: 'Content about First Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-    {
-        id: 2,
-        title: 'New POST 2',
-        shortDescription: 'My Second Post',
-        content: 'Content about Second Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-    {
-        id: 3,
-        title: 'New POST 3',
-        shortDescription: 'My Third Post',
-        content: 'Content about Third Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-]
+const posts: any[] = []
 
 export const postsRepositories = {
     getPosts: () => posts,
@@ -40,7 +15,7 @@ export const postsRepositories = {
                 title,
                 shortDescription,
                 content,
-                bloggerId,
+                bloggerId: Number(bloggerId),
                 bloggerName: currentBlogger.name
             }
 
@@ -68,7 +43,7 @@ export const postsRepositories = {
                     title,
                     shortDescription,
                     content,
-                    bloggerId,
+                    bloggerId: Number(bloggerId),
                     bloggerName: currentBlogger.name
                 }
                 return posts.splice(currentPostId, 1, newPost)
@@ -79,12 +54,12 @@ export const postsRepositories = {
     },
 
     deletedPost: (postId: number) => {
-        console.log(postId,'postId')
+        console.log(postId, 'postId')
         const currentPostId = posts.findIndex(({id}) => id === postId)
-        console.log(currentPostId,'currentPostId')
+        console.log(currentPostId, 'currentPostId')
 
         if (currentPostId !== -1) {
-            return posts.splice(currentPostId,1);
+            return posts.splice(currentPostId, 1);
         }
     },
 }

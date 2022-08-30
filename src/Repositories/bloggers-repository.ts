@@ -33,10 +33,8 @@ export const bloggersRepository = {
 
         const currentBloggerId = bloggers.findIndex(({id}) => id === bloggerId);
 
-        if (currentBloggerId) {
-
+        if (currentBloggerId !== -1) {
             const currentBlogger = bloggers[currentBloggerId];
-
             const newBlogger = {
                 id: currentBlogger.id,
                 name,
@@ -50,7 +48,7 @@ export const bloggersRepository = {
 
         const currentBloggerId = bloggers.findIndex(({id}) => id === bloggerId);
 
-        if (currentBloggerId) {
+        if (currentBloggerId !== -1) {
             return bloggers.splice(currentBloggerId, 1)
         }
     },

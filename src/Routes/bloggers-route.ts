@@ -21,8 +21,8 @@ bloggersRoute.get('/:id', (req: Request, res: Response) => {
 
     const currentBlogger = bloggersRepository.getCurrentBlogger(bloggerId)
 
-    if (currentBlogger) {
-        res.status(201).send(currentBlogger)
+    if (currentBlogger && bloggerId) {
+        res.status(200).send(currentBlogger)
     } else {
         res.send(404)
     }
@@ -34,7 +34,7 @@ bloggersRoute.put('/:id', nameValidator, urlValidator, errorMiddleWAre, (req: Re
 
     const currentBlogger = bloggersRepository.updateBlogger({bloggerId, name, youtubeUrl})
 
-    if (currentBlogger) {
+    if (currentBlogger && bloggerId)  {
         res.send(204)
     } else {
         res.send(404)
@@ -46,7 +46,7 @@ bloggersRoute.delete('/:id', (req: Request, res: Response) => {
 
     const currentBlogger = bloggersRepository.deleteBlogger(bloggerId)
 
-    if (currentBlogger) {
+    if (currentBlogger && bloggerId) {
         res.send(204)
     } else {
         res.send(404)

@@ -2,32 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepositories = void 0;
 const bloggers_repository_1 = require("./bloggers-repository");
-const posts = [
-    {
-        id: 1,
-        title: 'New POST',
-        shortDescription: 'My First Post',
-        content: 'Content about First Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-    {
-        id: 2,
-        title: 'New POST 2',
-        shortDescription: 'My Second Post',
-        content: 'Content about Second Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-    {
-        id: 3,
-        title: 'New POST 3',
-        shortDescription: 'My Third Post',
-        content: 'Content about Third Post',
-        bloggerId: 1,
-        bloggerName: 'Anton'
-    },
-];
+const posts = [];
 exports.postsRepositories = {
     getPosts: () => posts,
     createPost: ({ content, bloggerId, shortDescription, title }) => {
@@ -38,7 +13,7 @@ exports.postsRepositories = {
                 title,
                 shortDescription,
                 content,
-                bloggerId,
+                bloggerId: Number(bloggerId),
                 bloggerName: currentBlogger.name
             };
             posts.push(newPost);
@@ -61,7 +36,7 @@ exports.postsRepositories = {
                     title,
                     shortDescription,
                     content,
-                    bloggerId,
+                    bloggerId: Number(bloggerId),
                     bloggerName: currentBlogger.name
                 };
                 return posts.splice(currentPostId, 1, newPost);

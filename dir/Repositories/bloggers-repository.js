@@ -27,7 +27,7 @@ exports.bloggersRepository = {
     },
     updateBlogger: ({ bloggerId, name, youtubeUrl }) => {
         const currentBloggerId = exports.bloggers.findIndex(({ id }) => id === bloggerId);
-        if (currentBloggerId) {
+        if (currentBloggerId !== -1) {
             const currentBlogger = exports.bloggers[currentBloggerId];
             const newBlogger = {
                 id: currentBlogger.id,
@@ -39,7 +39,7 @@ exports.bloggersRepository = {
     },
     deleteBlogger: (bloggerId) => {
         const currentBloggerId = exports.bloggers.findIndex(({ id }) => id === bloggerId);
-        if (currentBloggerId) {
+        if (currentBloggerId !== -1) {
             return exports.bloggers.splice(currentBloggerId, 1);
         }
     },

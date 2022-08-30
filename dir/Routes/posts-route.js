@@ -9,7 +9,7 @@ exports.postsRoute = (0, express_1.Router)({});
 exports.postsRoute.get('/', (req, res) => {
     res.send(posts_repository_1.postsRepositories.getPosts());
 });
-exports.postsRoute.post('/', middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => {
+exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => {
     const currentPost = posts_repository_1.postsRepositories.createPost(req.body);
     if (currentPost) {
         res.status(201).send(currentPost);
@@ -28,7 +28,7 @@ exports.postsRoute.get('/:id', (req, res) => {
         res.send(404);
     }
 });
-exports.postsRoute.put('/:id', middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => {
+exports.postsRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => {
     const postId = Number(req.params.id);
     const currentPost = posts_repository_1.postsRepositories.updatePost(Object.assign(Object.assign({}, req.body), { postId }));
     if (currentPost === -1) {
@@ -41,7 +41,7 @@ exports.postsRoute.put('/:id', middleWares_1.titleValidator, middleWares_1.descr
         res.send(404);
     }
 });
-exports.postsRoute.delete('/:id', (req, res) => {
+exports.postsRoute.delete('/:id', middleWares_1.authorizationMiddleWare, (req, res) => {
     const postId = Number(req.params.id);
     const currentPost = posts_repository_1.postsRepositories.deletedPost(postId);
     if (currentPost) {

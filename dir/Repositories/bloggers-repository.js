@@ -1,46 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bloggersRepository = exports.bloggers = void 0;
-exports.bloggers = [
-    { id: 1, name: 'Anton', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s' },
-    { id: 2, name: 'Yana', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s' },
-    { id: 3, name: 'Byklya', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s' },
-    { id: 4, name: 'Kirill', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s' },
-    { id: 5, name: 'Bob', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s' },
-];
+exports.bloggersRepository = void 0;
+const store_1 = require("../DB/store");
 exports.bloggersRepository = {
-    getBloggers: () => exports.bloggers,
+    getBloggers: () => store_1.bloggers,
     createBlogger: ({ youtubeUrl, name }) => {
         const newBlogger = {
-            id: +(new Date()),
+            id: new Date().toString(),
             name,
             youtubeUrl,
         };
-        exports.bloggers.push(newBlogger);
+        store_1.bloggers.push(newBlogger);
         return newBlogger;
     },
     getCurrentBlogger: (bloggerId) => {
-        const currentBlogger = exports.bloggers.find(({ id }) => id === bloggerId);
+        const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
         if (currentBlogger) {
             return currentBlogger;
         }
     },
     updateBlogger: ({ bloggerId, name, youtubeUrl }) => {
-        const currentBloggerId = exports.bloggers.findIndex(({ id }) => id === bloggerId);
+        const currentBloggerId = store_1.bloggers.findIndex(({ id }) => id === bloggerId);
         if (currentBloggerId !== -1) {
-            const currentBlogger = exports.bloggers[currentBloggerId];
+            const currentBlogger = store_1.bloggers[currentBloggerId];
             const newBlogger = {
                 id: currentBlogger.id,
                 name,
                 youtubeUrl,
             };
-            return exports.bloggers.splice(currentBloggerId, 1, newBlogger);
+            return store_1.bloggers.splice(currentBloggerId, 1, newBlogger);
         }
     },
     deleteBlogger: (bloggerId) => {
-        const currentBloggerId = exports.bloggers.findIndex(({ id }) => id === bloggerId);
+        const currentBloggerId = store_1.bloggers.findIndex(({ id }) => id === bloggerId);
         if (currentBloggerId !== -1) {
-            return exports.bloggers.splice(currentBloggerId, 1);
+            return store_1.bloggers.splice(currentBloggerId, 1);
         }
     },
 };

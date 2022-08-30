@@ -1,19 +1,14 @@
 import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
+import {bloggers} from "../DB/store";
 
-export const bloggers = [
-    {id: 1, name: 'Anton', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s'},
-    {id: 2, name: 'Yana', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s'},
-    {id: 3, name: 'Byklya', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s'},
-    {id: 4, name: 'Kirill', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s'},
-    {id: 5, name: 'Bob', youtubeUrl: 'https://www.youtube.com/watch?v=9CL34BQxmEs&t=9717s'},
-]
+
 
 export const bloggersRepository = {
     getBloggers: () => bloggers,
     createBlogger: ({youtubeUrl, name}: CreateBloggerProps) => {
 
         const newBlogger = {
-            id: +(new Date()),
+            id: new Date().toString(),
             name,
             youtubeUrl,
         }
@@ -21,7 +16,7 @@ export const bloggersRepository = {
 
         return newBlogger
     },
-    getCurrentBlogger: (bloggerId: number) => {
+    getCurrentBlogger: (bloggerId: string) => {
 
         const currentBlogger = bloggers.find(({id}) => id === bloggerId);
 
@@ -44,7 +39,7 @@ export const bloggersRepository = {
         }
 
     },
-    deleteBlogger: (bloggerId: number) => {
+    deleteBlogger: (bloggerId: string) => {
 
         const currentBloggerId = bloggers.findIndex(({id}) => id === bloggerId);
 

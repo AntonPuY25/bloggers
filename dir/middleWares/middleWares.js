@@ -25,10 +25,13 @@ const errorMiddleWAre = (req, res, next) => {
 };
 exports.errorMiddleWAre = errorMiddleWAre;
 const authorizationMiddleWare = (req, res, next) => {
-    if (req.headers.authorization !== 'Basic QWRtaW46cXdlcnQ= ') {
-        return res.send(401);
+    console.log(req.headers.authorization, 'req.headers.authorization');
+    if (!req.headers.authorization || req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
+        return res.sendStatus(401);
     }
-    next();
+    else {
+        return next();
+    }
 };
 exports.authorizationMiddleWare = authorizationMiddleWare;
 //# sourceMappingURL=middleWares.js.map

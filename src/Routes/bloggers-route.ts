@@ -17,7 +17,7 @@ bloggersRoute.post('/', authorizationMiddleWare,nameValidator, urlValidator, err
 })
 
 bloggersRoute.get('/:id', (req: Request, res: Response) => {
-    const bloggerId = Number(req.params.id);
+    const bloggerId = req.params.id;
 
     const currentBlogger = bloggersRepository.getCurrentBlogger(bloggerId)
 
@@ -29,7 +29,7 @@ bloggersRoute.get('/:id', (req: Request, res: Response) => {
 })
 
 bloggersRoute.put('/:id', authorizationMiddleWare,nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
-    const bloggerId = Number(req.params.id);
+    const bloggerId = req.params.id;
     const {name, youtubeUrl} = req.body;
 
     const currentBlogger = bloggersRepository.updateBlogger({bloggerId, name, youtubeUrl})
@@ -42,7 +42,7 @@ bloggersRoute.put('/:id', authorizationMiddleWare,nameValidator, urlValidator, e
 })
 
 bloggersRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
-    const bloggerId = Number(req.params.id);
+    const bloggerId = req.params.id;
 
     const currentBlogger = bloggersRepository.deleteBlogger(bloggerId)
 

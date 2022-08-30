@@ -4,7 +4,7 @@ export interface CreateBloggerProps  {
 }
 
 export interface UpdateBloggerProps  {
-    bloggerId: number;
+    bloggerId: string;
     name: string;
     youtubeUrl: string;
 }

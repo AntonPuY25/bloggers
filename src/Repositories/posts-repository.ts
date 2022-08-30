@@ -1,7 +1,6 @@
 import {CreatePostProps, UpdatePostProps} from "../interfaces/interfaces";
-import {bloggers} from "./bloggers-repository";
+import {bloggers, posts} from "../DB/store";
 
-const posts: any[] = []
 
 export const postsRepositories = {
     getPosts: () => posts,
@@ -20,10 +19,8 @@ export const postsRepositories = {
             }
 
             posts.push(newPost)
-
             return newPost;
         }
-
     },
     getCurrentPost: (postId: number) => {
         const currentPost = posts.find(({id}) => id === postId)

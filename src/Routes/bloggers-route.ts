@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
-import {errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
+import {authorizationMiddleWare, errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
 
 export const bloggersRoute = Router({})
 
@@ -8,7 +8,7 @@ bloggersRoute.get('/', (req: Request, res: Response) => {
     res.send(bloggersRepository.getBloggers())
 })
 
-bloggersRoute.post('/', nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
+bloggersRoute.post('/', authorizationMiddleWare,nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body;
 
     const currentBlogger = bloggersRepository.createBlogger({name, youtubeUrl})
@@ -28,7 +28,7 @@ bloggersRoute.get('/:id', (req: Request, res: Response) => {
     }
 })
 
-bloggersRoute.put('/:id', nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
+bloggersRoute.put('/:id', authorizationMiddleWare,nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
     const bloggerId = Number(req.params.id);
     const {name, youtubeUrl} = req.body;
 
@@ -41,7 +41,7 @@ bloggersRoute.put('/:id', nameValidator, urlValidator, errorMiddleWAre, (req: Re
     }
 })
 
-bloggersRoute.delete('/:id', (req: Request, res: Response) => {
+bloggersRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
     const bloggerId = Number(req.params.id);
 
     const currentBlogger = bloggersRepository.deleteBlogger(bloggerId)

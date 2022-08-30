@@ -8,7 +8,7 @@ exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => {
     res.send(bloggers_repository_1.bloggersRepository.getBloggers());
 });
-exports.bloggersRoute.post('/', middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => {
+exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => {
     const { name, youtubeUrl } = req.body;
     const currentBlogger = bloggers_repository_1.bloggersRepository.createBlogger({ name, youtubeUrl });
     res.status(201).send(currentBlogger);
@@ -23,7 +23,7 @@ exports.bloggersRoute.get('/:id', (req, res) => {
         res.send(404);
     }
 });
-exports.bloggersRoute.put('/:id', middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => {
+exports.bloggersRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => {
     const bloggerId = Number(req.params.id);
     const { name, youtubeUrl } = req.body;
     const currentBlogger = bloggers_repository_1.bloggersRepository.updateBlogger({ bloggerId, name, youtubeUrl });
@@ -34,7 +34,7 @@ exports.bloggersRoute.put('/:id', middleWares_1.nameValidator, middleWares_1.url
         res.send(404);
     }
 });
-exports.bloggersRoute.delete('/:id', (req, res) => {
+exports.bloggersRoute.delete('/:id', middleWares_1.authorizationMiddleWare, (req, res) => {
     const bloggerId = Number(req.params.id);
     const currentBlogger = bloggers_repository_1.bloggersRepository.deleteBlogger(bloggerId);
     if (currentBlogger && bloggerId) {

@@ -26,3 +26,11 @@ export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction)
     }
     next()
 };
+
+export const authorizationMiddleWare = (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization !== 'Basic QWRtaW46cXdlcnQ= ') {
+        return res.send(401);
+    }
+    next()
+
+}

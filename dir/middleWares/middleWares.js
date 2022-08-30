@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.nameValidator = exports.urlValidator = void 0;
+exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.nameValidator = exports.urlValidator = void 0;
 const { body, validationResult } = require('express-validator');
 exports.urlValidator = body('youtubeUrl').trim().isURL().isLength({ min: 3, max: 100 });
 exports.nameValidator = body('name').trim().isLength({ min: 3, max: 15 });
@@ -24,4 +24,11 @@ const errorMiddleWAre = (req, res, next) => {
     next();
 };
 exports.errorMiddleWAre = errorMiddleWAre;
+const authorizationMiddleWare = (req, res, next) => {
+    if (req.headers.authorization !== 'Basic QWRtaW46cXdlcnQ= ') {
+        return res.send(401);
+    }
+    next();
+};
+exports.authorizationMiddleWare = authorizationMiddleWare;
 //# sourceMappingURL=middleWares.js.map

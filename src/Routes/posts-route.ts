@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {postsRepositories} from "../Repositories/posts-repository";
 import {
+    authorizationMiddleWare,
     bloggerIdValidator,
     contentValidator,
     descriptionValidator,
@@ -15,7 +16,7 @@ postsRoute.get('/', (req: Request, res: Response) => {
     res.send(postsRepositories.getPosts())
 })
 
-postsRoute.post('/', titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
+postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
     const currentPost = postsRepositories.createPost(req.body)
 
     if (currentPost) {
@@ -37,7 +38,7 @@ postsRoute.get('/:id', (req: Request, res: Response) => {
     }
 })
 
-postsRoute.put('/:id', titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
+postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
     const postId = Number(req.params.id);
 
     const currentPost = postsRepositories.updatePost({...req.body, postId})
@@ -52,7 +53,7 @@ postsRoute.put('/:id', titleValidator, descriptionValidator, contentValidator, b
 
 })
 
-postsRoute.delete('/:id', (req: Request, res: Response) => {
+postsRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
     const postId = Number(req.params.id);
 
     const currentPost = postsRepositories.deletedPost(postId)

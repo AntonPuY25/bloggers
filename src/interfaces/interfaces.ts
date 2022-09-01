@@ -13,9 +13,9 @@ export interface CreatePostProps {
     title: string,
     shortDescription: string,
     content: string,
-    bloggerId: number
+    bloggerId: string
 }
 
 export interface UpdatePostProps extends CreatePostProps {
-   postId:number
+   postId:string
 }

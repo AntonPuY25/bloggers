@@ -5,7 +5,7 @@ const store_1 = require("../DB/store");
 exports.postsRepositories = {
     getPosts: () => store_1.posts,
     createPost: ({ content, bloggerId, shortDescription, title }) => {
-        const currentBlogger = store_1.bloggers.find(({ id }) => id === Number(bloggerId));
+        const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
         if (currentBlogger) {
             const newPost = {
                 id: Number(new Date()),
@@ -26,7 +26,7 @@ exports.postsRepositories = {
         }
     },
     updatePost: ({ content, bloggerId, shortDescription, title, postId }) => {
-        const currentBlogger = store_1.bloggers.find(({ id }) => id === Number(bloggerId));
+        const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
         if (currentBlogger) {
             const currentPostId = store_1.posts.findIndex(({ id }) => id === postId);
             if (currentPostId !== -1) {

@@ -6,15 +6,15 @@ export const postsRepositories = {
     getPosts: () => posts,
 
     createPost: ({content, bloggerId, shortDescription, title}: CreatePostProps) => {
-        const currentBlogger = bloggers.find(({id}) => id === Number(bloggerId));
+        const currentBlogger = bloggers.find(({id}) => id === bloggerId);
 
         if (currentBlogger) {
             const newPost = {
-                id: Number(new Date()),
+                id: new Date().toString(),
                 title,
                 shortDescription,
                 content,
-                bloggerId: Number(bloggerId),
+                bloggerId: bloggerId.toString(),
                 bloggerName: currentBlogger.name
             }
 
@@ -22,7 +22,7 @@ export const postsRepositories = {
             return newPost;
         }
     },
-    getCurrentPost: (postId: number) => {
+    getCurrentPost: (postId: string) => {
         const currentPost = posts.find(({id}) => id === postId)
 
         if (currentPost) {
@@ -31,16 +31,16 @@ export const postsRepositories = {
     },
 
     updatePost: ({content, bloggerId, shortDescription, title, postId}: UpdatePostProps) => {
-        const currentBlogger = bloggers.find(({id}) => id === Number(bloggerId));
+        const currentBlogger = bloggers.find(({id}) => id === bloggerId);
         if (currentBlogger) {
             const currentPostId = posts.findIndex(({id}) => id === postId)
             if (currentPostId !== -1) {
                 const newPost = {
-                    id: postId,
+                    id: postId.toString(),
                     title,
                     shortDescription,
                     content,
-                    bloggerId: Number(bloggerId),
+                    bloggerId: bloggerId.toString(),
                     bloggerName: currentBlogger.name
                 }
                 return posts.splice(currentPostId, 1, newPost)
@@ -52,11 +52,8 @@ export const postsRepositories = {
 
     },
 
-    deletedPost: (postId: number) => {
-        console.log(postId, 'postId')
+    deletedPost: (postId: string) => {
         const currentPostId = posts.findIndex(({id}) => id === postId)
-        console.log(currentPostId, 'currentPostId')
-
         if (currentPostId !== -1) {
             return posts.splice(currentPostId, 1);
         }

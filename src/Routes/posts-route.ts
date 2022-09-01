@@ -28,7 +28,7 @@ postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidato
 })
 
 postsRoute.get('/:id', (req: Request, res: Response) => {
-    const postId = Number(req.params.id);
+    const postId = req.params.id;
 
     const currentPost = postsRepositories.getCurrentPost(postId)
     if (currentPost) {
@@ -39,7 +39,7 @@ postsRoute.get('/:id', (req: Request, res: Response) => {
 })
 
 postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
-    const postId = Number(req.params.id);
+    const postId = req.params.id;
 
     const currentPost = postsRepositories.updatePost({...req.body, postId})
     if (currentPost === -1) {
@@ -54,7 +54,7 @@ postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValida
 })
 
 postsRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
-    const postId = Number(req.params.id);
+    const postId = req.params.id;
 
     const currentPost = postsRepositories.deletedPost(postId)
     if (currentPost) {

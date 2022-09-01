@@ -8,11 +8,11 @@ exports.postsRepositories = {
         const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
         if (currentBlogger) {
             const newPost = {
-                id: Number(new Date()),
+                id: Number(new Date()).toString(),
                 title,
                 shortDescription,
                 content,
-                bloggerId: Number(bloggerId),
+                bloggerId: bloggerId.toString(),
                 bloggerName: currentBlogger.name
             };
             store_1.posts.push(newPost);
@@ -31,24 +31,19 @@ exports.postsRepositories = {
             const currentPostId = store_1.posts.findIndex(({ id }) => id === postId);
             if (currentPostId !== -1) {
                 const newPost = {
-                    id: postId,
+                    id: postId.toString(),
                     title,
                     shortDescription,
                     content,
-                    bloggerId: Number(bloggerId),
+                    bloggerId: bloggerId.toString(),
                     bloggerName: currentBlogger.name
                 };
                 return store_1.posts.splice(currentPostId, 1, newPost);
             }
         }
-        else {
-            return -1;
-        }
     },
     deletedPost: (postId) => {
-        console.log(postId, 'postId');
         const currentPostId = store_1.posts.findIndex(({ id }) => id === postId);
-        console.log(currentPostId, 'currentPostId');
         if (currentPostId !== -1) {
             return store_1.posts.splice(currentPostId, 1);
         }

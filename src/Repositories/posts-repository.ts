@@ -10,7 +10,7 @@ export const postsRepositories = {
 
         if (currentBlogger) {
             const newPost = {
-                id: new Date().toString(),
+                id: Number(new Date()).toString(),
                 title,
                 shortDescription,
                 content,
@@ -45,9 +45,6 @@ export const postsRepositories = {
                 }
                 return posts.splice(currentPostId, 1, newPost)
             }
-
-        }else{
-            return -1
         }
 
     },

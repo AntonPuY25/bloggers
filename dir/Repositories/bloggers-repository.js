@@ -6,7 +6,7 @@ exports.bloggersRepository = {
     getBloggers: () => store_1.bloggers,
     createBlogger: ({ youtubeUrl, name }) => {
         const newBlogger = {
-            id: new Date().toString(),
+            id: Number(new Date()).toString(),
             name,
             youtubeUrl,
         };

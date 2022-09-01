@@ -8,7 +8,7 @@ export const bloggersRepository = {
     createBlogger: ({youtubeUrl, name}: CreateBloggerProps) => {
 
         const newBlogger = {
-            id: new Date().toString(),
+            id: Number(new Date()).toString(),
             name,
             youtubeUrl,
         }

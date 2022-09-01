@@ -42,9 +42,6 @@ postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValida
     const postId = req.params.id;
 
     const currentPost = postsRepositories.updatePost({...req.body, postId})
-    if (currentPost === -1) {
-        res.status(400).send(getCurrentFieldError('bloggerId', 'Not found this blogger'))
-    }
     if (currentPost) {
         res.send(204)
     } else {

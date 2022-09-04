@@ -1,50 +1,56 @@
-import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
-import {bloggers} from "../DB/store";
-
+import {BloggerType, UpdateBloggerProps} from "../interfaces/interfaces";
+import {BloggersModel} from "../DB/bloggers-scheme";
 
 
 export const bloggersRepository = {
-    getBloggers: () => bloggers,
-    createBlogger: ({youtubeUrl, name}: CreateBloggerProps) => {
-
-        const newBlogger = {
-            id: Number(new Date()).toString(),
-            name,
-            youtubeUrl,
-        }
-        bloggers.push(newBlogger)
-
-        return newBlogger
+    getBloggers: async () => {
+        return BloggersModel.find()
+            .then((result: any) => result)
+            .catch((error: any) => null);
     },
-    getCurrentBlogger: (bloggerId: string) => {
 
-        const currentBlogger = bloggers.find(({id}) => id === bloggerId);
+    createBlogger: async (newBlogger: BloggerType) => {
+        const currentBlogger = new BloggersModel(newBlogger)
+
+        return currentBlogger.save()
+            .then((result: any) => result)
+            .catch(() => null)
+    },
+
+    getCurrentBlogger: async (bloggerId: string) => {
+
+        return BloggersModel.findOne({id: bloggerId})
+            .then((result: any) => result)
+            .catch((error: any) => null)
+    },
+    updateBlogger: async ({bloggerId, name, youtubeUrl}: UpdateBloggerProps) => {
+
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(bloggerId)
 
         if (currentBlogger) {
-            return currentBlogger
-        }
-    },
-    updateBlogger: ({bloggerId, name, youtubeUrl}: UpdateBloggerProps) => {
-
-        const currentBloggerId = bloggers.findIndex(({id}) => id === bloggerId);
-
-        if (currentBloggerId !== -1) {
-            const currentBlogger = bloggers[currentBloggerId];
-            const newBlogger = {
-                id: currentBlogger.id,
-                name,
-                youtubeUrl,
-            }
-            return bloggers.splice(currentBloggerId, 1, newBlogger)
+            return BloggersModel.updateOne({id: bloggerId}, {
+                $set: {
+                    name,
+                    youtubeUrl
+                }
+            })
+                .then((result: any) => result)
+                .catch((error: any) => null)
+        } else {
+            return null
         }
 
     },
-    deleteBlogger: (bloggerId: string) => {
+    deleteBlogger: async (bloggerId: string) => {
 
-        const currentBloggerId = bloggers.findIndex(({id}) => id === bloggerId);
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(bloggerId)
 
-        if (currentBloggerId !== -1) {
-            return bloggers.splice(currentBloggerId, 1)
+        if (currentBlogger) {
+            return BloggersModel.deleteOne({id: bloggerId})
+                .then((result: any) => result)
+                .catch((error: any) => null)
+        } else {
+            return null
         }
     },
 }

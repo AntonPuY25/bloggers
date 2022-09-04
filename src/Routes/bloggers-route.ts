@@ -1,25 +1,25 @@
 import {Request, Response, Router} from "express";
-import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {authorizationMiddleWare, errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
+import {bloggersService} from "../services/bloggers-service";
 
 export const bloggersRoute = Router({})
 
-bloggersRoute.get('/', (req: Request, res: Response) => {
-    res.send(bloggersRepository.getBloggers())
+bloggersRoute.get('/', async (req: Request, res: Response) => {
+    res.send(await bloggersService.getBloggers())
 })
 
-bloggersRoute.post('/', authorizationMiddleWare,nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
+bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
     const {name, youtubeUrl} = req.body;
 
-    const currentBlogger = bloggersRepository.createBlogger({name, youtubeUrl})
+    const currentBlogger = await bloggersService.createBlogger({name, youtubeUrl})
     res.status(201).send(currentBlogger)
 
 })
 
-bloggersRoute.get('/:id', (req: Request, res: Response) => {
+bloggersRoute.get('/:id', async (req: Request, res: Response) => {
     const bloggerId = req.params.id;
 
-    const currentBlogger = bloggersRepository.getCurrentBlogger(bloggerId)
+    const currentBlogger = await bloggersService.getCurrentBlogger(bloggerId)
 
     if (currentBlogger && bloggerId) {
         res.status(200).send(currentBlogger)
@@ -28,23 +28,22 @@ bloggersRoute.get('/:id', (req: Request, res: Response) => {
     }
 })
 
-bloggersRoute.put('/:id', authorizationMiddleWare,nameValidator, urlValidator, errorMiddleWAre, (req: Request, res: Response) => {
+bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
     const bloggerId = req.params.id;
     const {name, youtubeUrl} = req.body;
 
-    const currentBlogger = bloggersRepository.updateBlogger({bloggerId, name, youtubeUrl})
+    const currentBlogger = await bloggersService.updateBlogger({bloggerId, name, youtubeUrl})
 
-    if (currentBlogger && bloggerId)  {
+    if (currentBlogger && bloggerId) {
         res.send(204)
     } else {
         res.send(404)
     }
 })
 
-bloggersRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
+bloggersRoute.delete('/:id', authorizationMiddleWare, async (req: Request, res: Response) => {
     const bloggerId = req.params.id;
-
-    const currentBlogger = bloggersRepository.deleteBlogger(bloggerId)
+    const currentBlogger = await bloggersService.deleteBlogger(bloggerId)
 
     if (currentBlogger && bloggerId) {
         res.sendStatus(204)

@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import {postsRepositories} from "../Repositories/posts-repository";
 import {
     authorizationMiddleWare,
     bloggerIdValidator,
@@ -9,15 +8,16 @@ import {
     titleValidator
 } from "../middleWares/middleWares";
 import {getCurrentFieldError} from "../helpers/helpers";
+import {postsService} from "../services/posts-service";
 
 export const postsRoute = Router({});
 
-postsRoute.get('/', (req: Request, res: Response) => {
-    res.send(postsRepositories.getPosts())
+postsRoute.get('/',  async (req: Request, res: Response) => {
+    res.send(await postsService.getPosts())
 })
 
-postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
-    const currentPost = postsRepositories.createPost(req.body)
+postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre,async (req: Request, res: Response) => {
+    const currentPost =  await postsService.createPost(req.body)
 
     if (currentPost) {
         res.status(201).send(currentPost)
@@ -27,10 +27,10 @@ postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidato
 
 })
 
-postsRoute.get('/:id', (req: Request, res: Response) => {
+postsRoute.get('/:id', async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost = postsRepositories.getCurrentPost(postId)
+    const currentPost =await postsService.getCurrentPost(postId)
     if (currentPost) {
         res.send(currentPost)
     } else {
@@ -38,10 +38,10 @@ postsRoute.get('/:id', (req: Request, res: Response) => {
     }
 })
 
-postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, (req: Request, res: Response) => {
+postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre,async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost = postsRepositories.updatePost({...req.body, postId})
+    const currentPost = await postsService.updatePost({...req.body, postId})
     if (currentPost) {
         res.send(204)
     } else {
@@ -50,10 +50,10 @@ postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValida
 
 })
 
-postsRoute.delete('/:id', authorizationMiddleWare,(req: Request, res: Response) => {
+postsRoute.delete('/:id', authorizationMiddleWare,async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost = postsRepositories.deletedPost(postId)
+    const currentPost =await postsService.deletedPost(postId)
     if (currentPost) {
         res.send(204)
     } else {

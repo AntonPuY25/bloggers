@@ -1,52 +1,65 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepositories = void 0;
-const store_1 = require("../DB/store");
+const bloggers_repository_1 = require("./bloggers-repository");
+const post_scheme_1 = require("../DB/post-scheme");
 exports.postsRepositories = {
-    getPosts: () => store_1.posts,
-    createPost: ({ content, bloggerId, shortDescription, title }) => {
-        const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
+    getPosts: () => __awaiter(void 0, void 0, void 0, function* () {
+        return post_scheme_1.PostsModel.find()
+            .then((result) => result)
+            .catch(() => null);
+    }),
+    createPost: (post) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.bloggerId);
         if (currentBlogger) {
-            const newPost = {
-                id: Number(new Date()).toString(),
-                title,
-                shortDescription,
-                content,
-                bloggerId: bloggerId.toString(),
-                bloggerName: currentBlogger.name
-            };
-            store_1.posts.push(newPost);
-            return newPost;
+            post.bloggerName = currentBlogger.name;
+            const currentPost = new post_scheme_1.PostsModel(post);
+            return currentPost.save()
+                .then((result) => result)
+                .catch(() => null);
         }
-    },
-    getCurrentPost: (postId) => {
-        const currentPost = store_1.posts.find(({ id }) => id === postId);
-        if (currentPost) {
-            return currentPost;
-        }
-    },
-    updatePost: ({ content, bloggerId, shortDescription, title, postId }) => {
-        const currentBlogger = store_1.bloggers.find(({ id }) => id === bloggerId);
+    }),
+    getCurrentPost: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        return post_scheme_1.PostsModel.findOne({ id: postId })
+            .then((result) => result)
+            .catch((error) => null);
+    }),
+    updatePost: (post, postId) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.bloggerId);
         if (currentBlogger) {
-            const currentPostId = store_1.posts.findIndex(({ id }) => id === postId);
-            if (currentPostId !== -1) {
-                const newPost = {
-                    id: postId.toString(),
-                    title,
-                    shortDescription,
-                    content,
-                    bloggerId: bloggerId.toString(),
-                    bloggerName: currentBlogger.name
-                };
-                return store_1.posts.splice(currentPostId, 1, newPost);
+            const currentPost = yield exports.postsRepositories.getCurrentPost(postId);
+            if (currentPost) {
+                post.bloggerName = currentBlogger.name;
+                return post_scheme_1.PostsModel.updateOne({ id: postId }, {
+                    $set: post
+                })
+                    .then((result) => result)
+                    .catch((error) => null);
+            }
+            else {
+                return null;
             }
         }
-    },
-    deletedPost: (postId) => {
-        const currentPostId = store_1.posts.findIndex(({ id }) => id === postId);
-        if (currentPostId !== -1) {
-            return store_1.posts.splice(currentPostId, 1);
+        else {
+            return null;
         }
-    },
+    }),
+    deletedPost: (postId) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentPost = yield exports.postsRepositories.getCurrentPost(postId);
+        if (currentPost) {
+            return post_scheme_1.PostsModel.deleteOne({ id: postId })
+                .then((result) => result)
+                .catch((error) => null);
+        }
+    }),
 };
 //# sourceMappingURL=posts-repository.js.map

@@ -1,58 +1,63 @@
-import {CreatePostProps, UpdatePostProps} from "../interfaces/interfaces";
-import {bloggers, posts} from "../DB/store";
+import {PostType} from "../interfaces/interfaces";
+import {bloggersRepository} from "./bloggers-repository";
+import {PostsModel} from "../DB/post-scheme";
 
 
 export const postsRepositories = {
-    getPosts: () => posts,
+    getPosts: async () => {
+        return PostsModel.find()
+            .then((result: any) => result)
+            .catch(() => null)
+    },
 
-    createPost: ({content, bloggerId, shortDescription, title}: CreatePostProps) => {
-        const currentBlogger = bloggers.find(({id}) => id === bloggerId);
+    createPost: async (post: PostType) => {
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.bloggerId);
+
 
         if (currentBlogger) {
-            const newPost = {
-                id: Number(new Date()).toString(),
-                title,
-                shortDescription,
-                content,
-                bloggerId: bloggerId.toString(),
-                bloggerName: currentBlogger.name
-            }
+            post.bloggerName = currentBlogger.name
 
-            posts.push(newPost)
-            return newPost;
+            const currentPost = new PostsModel(post)
+            return currentPost.save()
+                .then((result: any) => result)
+                .catch(() => null)
         }
     },
-    getCurrentPost: (postId: string) => {
-        const currentPost = posts.find(({id}) => id === postId)
+    getCurrentPost: async (postId: string) => {
+        return PostsModel.findOne({id: postId})
+            .then((result: any) => result)
+            .catch((error: any) => null)
+    },
 
+    updatePost: async (post: PostType, postId: string) => {
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.bloggerId)
+
+        if (currentBlogger) {
+            const currentPost = await postsRepositories.getCurrentPost(postId)
+            if (currentPost) {
+                post.bloggerName = currentBlogger.name
+                return PostsModel.updateOne({id: postId}, {
+                    $set: post
+                })
+                    .then((result: any) => result)
+                    .catch((error: any) => null)
+            } else {
+                return null
+            }
+
+
+        } else {
+            return null
+        }
+
+    },
+
+    deletedPost: async (postId: string) => {
+        const currentPost = await postsRepositories.getCurrentPost(postId)
         if (currentPost) {
-            return currentPost;
-        }
-    },
-
-    updatePost: ({content, bloggerId, shortDescription, title, postId}: UpdatePostProps) => {
-        const currentBlogger = bloggers.find(({id}) => id === bloggerId);
-        if (currentBlogger) {
-            const currentPostId = posts.findIndex(({id}) => id === postId)
-            if (currentPostId !== -1) {
-                const newPost = {
-                    id: postId.toString(),
-                    title,
-                    shortDescription,
-                    content,
-                    bloggerId: bloggerId.toString(),
-                    bloggerName: currentBlogger.name
-                }
-                return posts.splice(currentPostId, 1, newPost)
-            }
-        }
-
-    },
-
-    deletedPost: (postId: string) => {
-        const currentPostId = posts.findIndex(({id}) => id === postId)
-        if (currentPostId !== -1) {
-            return posts.splice(currentPostId, 1);
+            return PostsModel.deleteOne({id: postId})
+                .then((result: any) => result)
+                .catch((error: any) => null)
         }
     },
 }

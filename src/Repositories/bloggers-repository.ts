@@ -3,11 +3,6 @@ import {BloggersModel} from "../DB/bloggers-scheme";
 
 
 export const bloggersRepository = {
-    getBloggers: async () => {
-        return BloggersModel.find()
-            .then((result: any) => result)
-            .catch((error: any) => null);
-    },
 
     createBlogger: async (newBlogger: BloggerType) => {
         const currentBlogger = new BloggersModel(newBlogger)

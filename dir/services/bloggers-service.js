@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bloggersService = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
 exports.bloggersService = {
-    getBloggers: () => __awaiter(void 0, void 0, void 0, function* () { return yield bloggers_repository_1.bloggersRepository.getBloggers(); }),
     createBlogger: ({ youtubeUrl, name }) => __awaiter(void 0, void 0, void 0, function* () {
         const newBlogger = {
             id: Number(new Date()).toString(),
@@ -20,9 +19,6 @@ exports.bloggersService = {
             youtubeUrl,
         };
         return yield bloggers_repository_1.bloggersRepository.createBlogger(newBlogger);
-    }),
-    getCurrentBlogger: (bloggerId) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(bloggerId);
     }),
     updateBlogger: ({ bloggerId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
         return yield bloggers_repository_1.bloggersRepository.updateBlogger({ bloggerId, name, youtubeUrl });

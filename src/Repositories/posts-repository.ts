@@ -30,6 +30,7 @@ export const postsRepositories = {
     },
 
     updatePost: async (post: PostType, postId: string) => {
+
         const currentBlogger = await bloggersRepository.getCurrentBlogger(post.bloggerId)
 
         if (currentBlogger) {
@@ -37,14 +38,18 @@ export const postsRepositories = {
             if (currentPost) {
                 post.bloggerName = currentBlogger.name
                 return PostsModel.updateOne({id: postId}, {
-                    $set: post
+                    $set: {
+                        title: post.title,
+                        shortDescription: post.shortDescription,
+                        content: post.content
+
+                    }
                 })
                     .then((result: any) => result)
                     .catch((error: any) => null)
             } else {
                 return null
             }
-
 
         } else {
             return null

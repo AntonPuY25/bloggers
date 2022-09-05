@@ -13,20 +13,38 @@ exports.bloggersRoute = void 0;
 const express_1 = require("express");
 const middleWares_1 = require("../middleWares/middleWares");
 const bloggers_service_1 = require("../services/bloggers-service");
+const query_bloggers_repository_1 = require("../Repositories/queryReposotories/query-bloggers-repository");
 exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield bloggers_service_1.bloggersService.getBloggers());
+    res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers());
 }));
 exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, youtubeUrl } = req.body;
     const currentBlogger = yield bloggers_service_1.bloggersService.createBlogger({ name, youtubeUrl });
-    res.status(201).send(currentBlogger);
+    if (currentBlogger) {
+        const newBlogger = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+        };
+        res.status(201).send(newBlogger);
+    }
+    else {
+        res.send(404);
+    }
 }));
 exports.bloggersRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bloggerId = req.params.id;
-    const currentBlogger = yield bloggers_service_1.bloggersService.getCurrentBlogger(bloggerId);
+    const currentBlogger = yield query_bloggers_repository_1.queryBloggersRepository.getCurrentBlogger(bloggerId);
     if (currentBlogger && bloggerId) {
-        res.status(200).send(currentBlogger);
+        const newBlogger = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+        };
+        res.status(200).send(newBlogger);
     }
     else {
         res.send(404);

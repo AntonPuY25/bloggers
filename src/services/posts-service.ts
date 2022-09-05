@@ -1,8 +1,7 @@
 import {postsRepositories} from "../Repositories/posts-repository";
-import {CreatePostProps, UpdatePostProps} from "../interfaces/interfaces";
+import {CreatePostProps, DbPostType, ResponseDataPostType, UpdatePostProps} from "../interfaces/interfaces";
 
 export const postsService = {
-    getPosts: async () => await postsRepositories.getPosts(),
 
     createPost: async ({content, bloggerId, shortDescription, title}: CreatePostProps) => {
         const newPost = {
@@ -13,13 +12,25 @@ export const postsService = {
             bloggerId: bloggerId.toString(),
         }
 
-        return await postsRepositories.createPost(newPost)
+        const postFromBd: DbPostType = await postsRepositories.createPost(newPost)
+
+        if (postFromBd) {
+            return {
+                id: postFromBd.id,
+                createdAt: postFromBd.createdAt,
+                content: postFromBd.content,
+                shortDescription: postFromBd.shortDescription,
+                title: postFromBd.title,
+                bloggerName: postFromBd.bloggerName,
+                bloggerId: postFromBd.bloggerId.toString(),
+            }
+        }
     },
 
     updatePost: async ({content, bloggerId, shortDescription, title, postId}: UpdatePostProps) => {
 
         const newPost = {
-            id: Number(new Date()).toString(),
+            id: postId,
             title,
             shortDescription,
             content,
@@ -27,10 +38,6 @@ export const postsService = {
         }
 
         return await postsRepositories.updatePost(newPost, postId)
-    },
-
-    getCurrentPost: async (postId: string) => {
-        return await postsRepositories.getCurrentPost(postId)
     },
 
     deletedPost: async (postId: string) => {

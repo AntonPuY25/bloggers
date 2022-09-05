@@ -9,11 +9,12 @@ import {
 } from "../middleWares/middleWares";
 import {getCurrentFieldError} from "../helpers/helpers";
 import {postsService} from "../services/posts-service";
+import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
 
 export const postsRoute = Router({});
 
 postsRoute.get('/',  async (req: Request, res: Response) => {
-    res.send(await postsService.getPosts())
+    res.send(await queryPostsRepository.getPosts())
 })
 
 postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre,async (req: Request, res: Response) => {
@@ -30,7 +31,7 @@ postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidato
 postsRoute.get('/:id', async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost =await postsService.getCurrentPost(postId)
+    const currentPost =await queryPostsRepository.getCurrentPost(postId)
     if (currentPost) {
         res.send(currentPost)
     } else {

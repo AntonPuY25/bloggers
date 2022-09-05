@@ -9,14 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testingRoute = void 0;
-const express_1 = require("express");
-const testing_service_1 = require("../services/testing-service");
-exports.testingRoute = (0, express_1.Router)({});
-exports.testingRoute.delete('/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { success } = yield testing_service_1.testingService.allClear();
-    if (success) {
-        res.sendStatus(204);
-    }
-}));
-//# sourceMappingURL=testing-route.js.map
+exports.testingService = void 0;
+const testing_repository_1 = require("../Repositories/testing-repository");
+exports.testingService = {
+    allClear: () => __awaiter(void 0, void 0, void 0, function* () { return yield testing_repository_1.testingRepository.allClear(); })
+};
+//# sourceMappingURL=testing-service.js.map

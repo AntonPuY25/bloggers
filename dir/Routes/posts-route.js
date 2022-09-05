@@ -14,9 +14,10 @@ const express_1 = require("express");
 const middleWares_1 = require("../middleWares/middleWares");
 const helpers_1 = require("../helpers/helpers");
 const posts_service_1 = require("../services/posts-service");
+const query_posts_repository_1 = require("../Repositories/queryReposotories/query-posts-repository");
 exports.postsRoute = (0, express_1.Router)({});
 exports.postsRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield posts_service_1.postsService.getPosts());
+    res.send(yield query_posts_repository_1.queryPostsRepository.getPosts());
 }));
 exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const currentPost = yield posts_service_1.postsService.createPost(req.body);
@@ -29,7 +30,7 @@ exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_
 }));
 exports.postsRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.id;
-    const currentPost = yield posts_service_1.postsService.getCurrentPost(postId);
+    const currentPost = yield query_posts_repository_1.queryPostsRepository.getCurrentPost(postId);
     if (currentPost) {
         res.send(currentPost);
     }

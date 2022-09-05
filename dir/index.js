@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 const mongoUri = 'mongodb+srv://PuY:5718096010@cluster0.kusse.mongodb.net/Lesson?retryWrites=true&w=majority';
-app.use('/bloggers', bloggers_route_1.bloggersRoute);
+app.use('/blogs', bloggers_route_1.bloggersRoute);
 app.use('/posts', posts_route_1.postsRoute);
 app.use('/testing', testing_route_1.testingRoute);
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {

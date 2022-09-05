@@ -12,11 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bloggersRepository = void 0;
 const bloggers_scheme_1 = require("../DB/bloggers-scheme");
 exports.bloggersRepository = {
-    getBloggers: () => __awaiter(void 0, void 0, void 0, function* () {
-        return bloggers_scheme_1.BloggersModel.find()
-            .then((result) => result)
-            .catch((error) => null);
-    }),
     createBlogger: (newBlogger) => __awaiter(void 0, void 0, void 0, function* () {
         const currentBlogger = new bloggers_scheme_1.BloggersModel(newBlogger);
         return currentBlogger.save()

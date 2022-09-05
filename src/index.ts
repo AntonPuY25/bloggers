@@ -18,7 +18,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 const mongoUri = 'mongodb+srv://PuY:5718096010@cluster0.kusse.mongodb.net/Lesson?retryWrites=true&w=majority';
 
-app.use('/bloggers', bloggersRoute)
+app.use('/blogs', bloggersRoute)
 app.use('/posts', postsRoute)
 app.use('/testing', testingRoute)
 

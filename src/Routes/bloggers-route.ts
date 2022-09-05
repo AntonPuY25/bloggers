@@ -2,11 +2,12 @@ import {Request, Response, Router} from "express";
 import {authorizationMiddleWare, errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
 import {bloggersService} from "../services/bloggers-service";
 import {ResponseDataBloggerType} from "../interfaces/interfaces";
+import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
 
 export const bloggersRoute = Router({})
 
 bloggersRoute.get('/', async (req: Request, res: Response) => {
-    res.send(await bloggersService.getBloggers())
+    res.send(await queryBloggersRepository.getBloggers())
 })
 
 bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
@@ -32,7 +33,7 @@ bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, er
 bloggersRoute.get('/:id', async (req: Request, res: Response) => {
     const bloggerId = req.params.id;
 
-    const currentBlogger = await bloggersService.getCurrentBlogger(bloggerId)
+    const currentBlogger = await queryBloggersRepository.getCurrentBlogger(bloggerId)
 
 
     if (currentBlogger && bloggerId) {

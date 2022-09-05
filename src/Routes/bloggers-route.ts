@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {authorizationMiddleWare, errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
 import {bloggersService} from "../services/bloggers-service";
+import {ResponseDataBloggerType} from "../interfaces/interfaces";
 
 export const bloggersRoute = Router({})
 
@@ -12,7 +13,19 @@ bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, er
     const {name, youtubeUrl} = req.body;
 
     const currentBlogger = await bloggersService.createBlogger({name, youtubeUrl})
-    res.status(201).send(currentBlogger)
+    if (currentBlogger) {
+        const newBlogger: ResponseDataBloggerType = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+
+        }
+        res.status(201).send(newBlogger)
+    } else {
+        res.send(404)
+    }
+
 
 })
 
@@ -21,8 +34,17 @@ bloggersRoute.get('/:id', async (req: Request, res: Response) => {
 
     const currentBlogger = await bloggersService.getCurrentBlogger(bloggerId)
 
+
     if (currentBlogger && bloggerId) {
-        res.status(200).send(currentBlogger)
+
+        const newBlogger: ResponseDataBloggerType = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+
+        }
+        res.status(200).send(newBlogger)
     } else {
         res.send(404)
     }
@@ -35,6 +57,7 @@ bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator, urlValidator, 
     const currentBlogger = await bloggersService.updateBlogger({bloggerId, name, youtubeUrl})
 
     if (currentBlogger && bloggerId) {
+
         res.send(204)
     } else {
         res.send(404)

@@ -24,7 +24,13 @@ export interface BloggerType {
     id: string
     name: string
     youtubeUrl: string
-    createdAt?: string
+}
+
+export interface ResponseDataBloggerType {
+    id: string
+    name: string
+    youtubeUrl: string
+    createdAt: string
 }
 
 export interface PostType {

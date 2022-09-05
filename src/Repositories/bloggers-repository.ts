@@ -12,7 +12,7 @@ export const bloggersRepository = {
     createBlogger: async (newBlogger: BloggerType) => {
         const currentBlogger = new BloggersModel(newBlogger)
 
-        return currentBlogger.save()
+         return currentBlogger.save()
             .then((result: any) => result)
             .catch(() => null)
     },
@@ -23,6 +23,7 @@ export const bloggersRepository = {
             .then((result: any) => result)
             .catch((error: any) => null)
     },
+
     updateBlogger: async ({bloggerId, name, youtubeUrl}: UpdateBloggerProps) => {
 
         const currentBlogger = await bloggersRepository.getCurrentBlogger(bloggerId)

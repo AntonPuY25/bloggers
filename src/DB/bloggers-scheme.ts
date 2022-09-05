@@ -15,10 +15,6 @@ const bloggersSchema = new Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: String,
-        required: true,
-    }
 }, {timestamps: true})
 
 export const BloggersModel = mongoose.model('Bloggers', bloggersSchema)

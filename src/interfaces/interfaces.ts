@@ -32,6 +32,16 @@ export interface ResponseDataBloggerType {
     youtubeUrl: string
     createdAt: string
 }
+export interface DbBloggerType {
+    id: string
+    name: string
+    youtubeUrl: string
+    createdAt: string
+    _id: string
+    updatedAt:string
+
+}
+
 
 export interface PostType {
     id: string

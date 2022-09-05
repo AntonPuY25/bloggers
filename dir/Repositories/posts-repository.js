@@ -40,7 +40,11 @@ exports.postsRepositories = {
             if (currentPost) {
                 post.bloggerName = currentBlogger.name;
                 return post_scheme_1.PostsModel.updateOne({ id: postId }, {
-                    $set: post
+                    $set: {
+                        title: post.title,
+                        shortDescription: post.shortDescription,
+                        content: post.content
+                    }
                 })
                     .then((result) => result)
                     .catch((error) => null);

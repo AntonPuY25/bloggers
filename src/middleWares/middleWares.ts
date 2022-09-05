@@ -10,7 +10,7 @@ export const titleValidator = body('title').trim().isLength({min: 3, max: 30})
 export const descriptionValidator = body('shortDescription').trim().isLength({min: 3, max: 100})
 export const contentValidator = body('content').trim().isLength({min: 3, max: 1000})
 export const bloggerIdValidator = body('bloggerId').trim().isLength({min: 1, max: 30}).custom(async (value:string)=>{
-    const currentBlogger = bloggersRepository.getCurrentBlogger(value)
+    const currentBlogger =await bloggersRepository.getCurrentBlogger(value)
     if(!currentBlogger){
         throw new Error('Not found this blogger');
     }else{

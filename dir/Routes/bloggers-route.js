@@ -20,13 +20,30 @@ exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, f
 exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, youtubeUrl } = req.body;
     const currentBlogger = yield bloggers_service_1.bloggersService.createBlogger({ name, youtubeUrl });
-    res.status(201).send(currentBlogger);
+    if (currentBlogger) {
+        const newBlogger = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+        };
+        res.status(201).send(newBlogger);
+    }
+    else {
+        res.send(404);
+    }
 }));
 exports.bloggersRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bloggerId = req.params.id;
     const currentBlogger = yield bloggers_service_1.bloggersService.getCurrentBlogger(bloggerId);
     if (currentBlogger && bloggerId) {
-        res.status(200).send(currentBlogger);
+        const newBlogger = {
+            id: currentBlogger.id,
+            name: currentBlogger.name,
+            youtubeUrl: currentBlogger.youtubeUrl,
+            createdAt: currentBlogger.createdAt,
+        };
+        res.status(200).send(newBlogger);
     }
     else {
         res.send(404);

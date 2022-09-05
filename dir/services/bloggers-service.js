@@ -12,7 +12,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bloggersService = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
 exports.bloggersService = {
-    getBloggers: () => __awaiter(void 0, void 0, void 0, function* () { return yield bloggers_repository_1.bloggersRepository.getBloggers(); }),
+    getBloggers: () => __awaiter(void 0, void 0, void 0, function* () {
+        const bloggers = yield bloggers_repository_1.bloggersRepository.getBloggers();
+        if (bloggers) {
+            return bloggers.reduce((acc, item) => {
+                const newBlogger = {
+                    id: item.id,
+                    name: item.name,
+                    youtubeUrl: item.youtubeUrl,
+                    createdAt: item.createdAt,
+                };
+                acc.push(newBlogger);
+                return acc;
+            }, []);
+        }
+        else {
+            return null;
+        }
+    }),
     createBlogger: ({ youtubeUrl, name }) => __awaiter(void 0, void 0, void 0, function* () {
         const newBlogger = {
             id: Number(new Date()).toString(),

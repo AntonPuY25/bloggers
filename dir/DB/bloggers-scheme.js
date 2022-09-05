@@ -19,10 +19,6 @@ const bloggersSchema = new Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: String,
-        required: true,
-    }
 }, { timestamps: true });
 exports.BloggersModel = mongoose_1.default.model('Bloggers', bloggersSchema);
 //# sourceMappingURL=bloggers-scheme.js.map

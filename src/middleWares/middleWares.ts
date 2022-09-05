@@ -1,7 +1,7 @@
-import {bloggers} from "../DB/store";
+import {NextFunction, Request, Response} from "express";
+import {bloggersRepository} from "../Repositories/bloggers-repository";
 
 const {body, validationResult} = require('express-validator');
-import {NextFunction, Request, Response} from "express";
 
 export const urlValidator = body('youtubeUrl').trim().isURL().isLength({min: 3, max: 100});
 export const nameValidator = body('name').trim().isLength({min: 3, max: 15});
@@ -9,8 +9,8 @@ export const nameValidator = body('name').trim().isLength({min: 3, max: 15});
 export const titleValidator = body('title').trim().isLength({min: 3, max: 30})
 export const descriptionValidator = body('shortDescription').trim().isLength({min: 3, max: 100})
 export const contentValidator = body('content').trim().isLength({min: 3, max: 1000})
-export const bloggerIdValidator = body('bloggerId').trim().isLength({min: 1, max: 30}).custom((value:string)=>{
-    const currentBlogger = bloggers.find(({id}) => id === value);
+export const bloggerIdValidator = body('bloggerId').trim().isLength({min: 1, max: 30}).custom(async (value:string)=>{
+    const currentBlogger = bloggersRepository.getCurrentBlogger(value)
     if(!currentBlogger){
         throw new Error('Not found this blogger');
     }else{

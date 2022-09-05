@@ -1,10 +1,11 @@
-import {bloggers, posts} from "../DB/store";
+import {BloggersModel} from "../DB/bloggers-scheme";
+import {PostsModel} from "../DB/post-scheme";
 
 
 export const testingRepository = {
-    allClear: ()=>{
-        posts.splice(0)
-        bloggers.splice(0)
+    allClear: async ()=>{
+       await BloggersModel.deleteMany({})
+       await PostsModel.deleteMany({})
         return {
             success: true
         }

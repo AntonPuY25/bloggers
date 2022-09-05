@@ -1,10 +1,10 @@
 import {Request, Response, Router} from "express";
-import {testingRepository} from "../Repositories/testing-repository";
+import {testingService} from "../services/testing-service";
 
 export const testingRoute = Router({});
 
-testingRoute.delete('/all-data', (req: Request, res: Response) => {
-    const {success} = testingRepository.allClear()
+testingRoute.delete('/all-data', async (req: Request, res: Response) => {
+    const {success} = await testingService.allClear()
 
     if(success){
         res.sendStatus(204)

@@ -16,7 +16,14 @@ const bloggers_service_1 = require("../services/bloggers-service");
 const query_bloggers_repository_1 = require("../Repositories/queryReposotories/query-bloggers-repository");
 exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers());
+    const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = req.query;
+    res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers({
+        pageSize: Number(pageSize),
+        pageNumber: Number(pageNumber),
+        sortBy: sortBy,
+        sortDirection: sortDirection,
+        searchNameTerm: searchNameTerm
+    }));
 }));
 exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, youtubeUrl } = req.body;

@@ -55,6 +55,7 @@ export interface DbPostType {
     title: string
     __v: number
 }
+
 export interface ResponseDataPostType {
     id: string
     createdAt: string
@@ -66,7 +67,6 @@ export interface ResponseDataPostType {
 }
 
 
-
 export interface PostType {
     id: string
     title: string
@@ -76,3 +76,28 @@ export interface PostType {
     bloggerName?: string
 }
 
+export interface GetBloggersParamsType {
+    searchNameTerm: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: string,
+}
+
+export interface GetBloggerItemsResponseType {
+    id: string,
+    name: string,
+    youtubeUrl: string,
+    createdAt: string
+
+}
+
+
+export interface GetBloggerResponseType {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: GetBloggerItemsResponseType[]
+
+}

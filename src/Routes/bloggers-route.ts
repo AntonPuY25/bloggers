@@ -7,7 +7,14 @@ import {queryBloggersRepository} from "../Repositories/queryReposotories/query-b
 export const bloggersRoute = Router({})
 
 bloggersRoute.get('/', async (req: Request, res: Response) => {
-    res.send(await queryBloggersRepository.getBloggers())
+    const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query;
+    res.send(await queryBloggersRepository.getBloggers({
+        pageSize: Number(pageSize),
+        pageNumber: Number(pageNumber),
+        sortBy: sortBy as string,
+        sortDirection: sortDirection as string,
+        searchNameTerm: searchNameTerm as string
+    }))
 })
 
 bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {

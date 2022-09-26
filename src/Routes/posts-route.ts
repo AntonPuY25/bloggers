@@ -13,12 +13,19 @@ import {queryPostsRepository} from "../Repositories/queryReposotories/query-post
 
 export const postsRoute = Router({});
 
-postsRoute.get('/',  async (req: Request, res: Response) => {
-    res.send(await queryPostsRepository.getPosts())
+postsRoute.get('/', async (req: Request, res: Response) => {
+
+    const {pageNumber, pageSize, sortBy, sortDirection} = req.query;
+    res.send(await queryPostsRepository.getPosts({
+        pageSize: pageSize ? Number(pageSize) : 10,
+        pageNumber: pageNumber ? Number(pageNumber) : 1,
+        sortBy: sortBy as string,
+        sortDirection: sortDirection as string,
+    }))
 })
 
-postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre,async (req: Request, res: Response) => {
-    const currentPost =  await postsService.createPost(req.body)
+postsRoute.post('/', authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, async (req: Request, res: Response) => {
+    const currentPost = await postsService.createPost(req.body)
 
     if (currentPost) {
         res.status(201).send(currentPost)
@@ -31,7 +38,7 @@ postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidato
 postsRoute.get('/:id', async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost =await queryPostsRepository.getCurrentPost(postId)
+    const currentPost = await queryPostsRepository.getCurrentPost(postId)
     if (currentPost) {
         res.send(currentPost)
     } else {
@@ -39,8 +46,9 @@ postsRoute.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre,async (req: Request, res: Response) => {
+postsRoute.put('/:id', authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, bloggerIdValidator, errorMiddleWAre, async (req: Request, res: Response) => {
     const postId = req.params.id;
+    console.log(req.body, 'req.body')
 
     const currentPost = await postsService.updatePost({...req.body, postId})
     if (currentPost) {
@@ -51,10 +59,10 @@ postsRoute.put('/:id',authorizationMiddleWare, titleValidator, descriptionValida
 
 })
 
-postsRoute.delete('/:id', authorizationMiddleWare,async (req: Request, res: Response) => {
+postsRoute.delete('/:id', authorizationMiddleWare, async (req: Request, res: Response) => {
     const postId = req.params.id;
 
-    const currentPost =await postsService.deletedPost(postId)
+    const currentPost = await postsService.deletedPost(postId)
     if (currentPost) {
         res.send(204)
     } else {

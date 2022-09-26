@@ -7,25 +7,31 @@ import {
 } from "../../interfaces/interfaces";
 
 export const queryBloggersRepository = {
-    getBloggers: async ({searchNameTerm, pageNumber, pageSize, sortBy, sortDirection}: GetBloggersParamsType) => {
+    getBloggers: async ({
+                            searchNameTerm,
+                            pageNumber = 1,
+                            pageSize = 10,
+                            sortBy,
+                            sortDirection
+                        }: GetBloggersParamsType) => {
         const findOptions = searchNameTerm ? {name: {$regex: searchNameTerm}} : {};
 
-        const skipCount = Math.ceil((pageNumber - 1) * pageSize);
+        const skipCount = (pageNumber - 1) * pageSize;
 
         const skipData = pageNumber ? skipCount : 0;
-        const limitData = pageSize || 0;
+        const limitData = pageSize;
 
         const totalCount = await BloggersModel.count();
 
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
 
-        const sortCreateData = sortBy === 'createdAt' ? 1 : -1
-        const sortNameData = sortDirection === 'asc' ? 1 : -1
+
+        const sortCreateData = sortBy ? sortBy : 'createdAt'
+        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1
 
 
         return BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
-            'createdAt': sortCreateData,
-            'name': sortNameData
+            [sortCreateData]: sortDirectionData
         })
             .then((result: any) => {
                 if (result) {
@@ -42,10 +48,10 @@ export const queryBloggersRepository = {
                     }, [])
 
                     return {
-                        pageSize: Number(pageSize) || 0,
-                        page: Number(pageNumber) || 0,
-                        totalCount: Number(totalCount),
                         pagesCount,
+                        page: Number(pageNumber),
+                        pageSize: Number(pageSize),
+                        totalCount: Number(totalCount),
                         items,
 
 

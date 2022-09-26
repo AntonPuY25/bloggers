@@ -17,7 +17,13 @@ const posts_service_1 = require("../services/posts-service");
 const query_posts_repository_1 = require("../Repositories/queryReposotories/query-posts-repository");
 exports.postsRoute = (0, express_1.Router)({});
 exports.postsRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield query_posts_repository_1.queryPostsRepository.getPosts());
+    const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
+    res.send(yield query_posts_repository_1.queryPostsRepository.getPosts({
+        pageSize: pageSize ? Number(pageSize) : 10,
+        pageNumber: pageNumber ? Number(pageNumber) : 1,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
+    }));
 }));
 exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const currentPost = yield posts_service_1.postsService.createPost(req.body);
@@ -40,6 +46,7 @@ exports.postsRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
 }));
 exports.postsRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.id;
+    console.log(req.body, 'req.body');
     const currentPost = yield posts_service_1.postsService.updatePost(Object.assign(Object.assign({}, req.body), { postId }));
     if (currentPost) {
         res.send(204);

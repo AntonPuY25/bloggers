@@ -15,12 +15,13 @@ const middleWares_1 = require("../middleWares/middleWares");
 const bloggers_service_1 = require("../services/bloggers-service");
 const query_bloggers_repository_1 = require("../Repositories/queryReposotories/query-bloggers-repository");
 const posts_service_1 = require("../services/posts-service");
+const query_posts_repository_1 = require("../Repositories/queryReposotories/query-posts-repository");
 exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = req.query;
     res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers({
-        pageSize: Number(pageSize),
-        pageNumber: Number(pageNumber),
+        pageSize: pageSize ? Number(pageSize) : 10,
+        pageNumber: pageNumber ? Number(pageNumber) : 1,
         sortBy: sortBy,
         sortDirection: sortDirection,
         searchNameTerm: searchNameTerm
@@ -47,6 +48,23 @@ exports.bloggersRoute.post('/:blogId/posts', middleWares_1.authorizationMiddleWa
     const currentBlogger = yield posts_service_1.postsService.createPost(Object.assign(Object.assign({}, req.body), { blogId }));
     if (currentBlogger) {
         res.status(201).send(currentBlogger);
+    }
+    else {
+        res.send(404);
+    }
+}));
+exports.bloggersRoute.get('/:blogId/posts', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { blogId } = req.params;
+    const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
+    const currentBlogger = yield query_posts_repository_1.queryPostsRepository.getPosts({
+        pageSize: pageSize ? Number(pageSize) : 10,
+        pageNumber: pageNumber ? Number(pageNumber) : 1,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
+        blogId: blogId
+    });
+    if (currentBlogger) {
+        res.status(200).send(currentBlogger);
     }
     else {
         res.send(404);

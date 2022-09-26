@@ -84,6 +84,14 @@ export interface GetBloggersParamsType {
     sortDirection: string,
 }
 
+export interface GetPostsParamsType {
+    blogId?: string,
+    pageNumber?: number,
+    pageSize?: number,
+    sortBy?: string,
+    sortDirection?: string,
+}
+
 export interface GetBloggerItemsResponseType {
     id: string,
     name: string,
@@ -101,3 +109,6 @@ export interface GetBloggerResponseType {
     items: GetBloggerItemsResponseType[]
 
 }
+
+export interface GetPostsResponseType extends GetBloggerResponseType {
+};

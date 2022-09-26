@@ -24,7 +24,7 @@ const postsSchema = new Schema({
         required: true,
     },
     blogId: {
-        type: Number,
+        type: String,
         required: true,
     },
     blogName: {

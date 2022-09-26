@@ -12,23 +12,41 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryPostsRepository = void 0;
 const post_scheme_1 = require("../../DB/post-scheme");
 exports.queryPostsRepository = {
-    getPosts: () => __awaiter(void 0, void 0, void 0, function* () {
-        return post_scheme_1.PostsModel.find()
+    getPosts: ({ blogId, sortBy, sortDirection, pageNumber = 1, pageSize = 10 }) => __awaiter(void 0, void 0, void 0, function* () {
+        const postsFilterData = blogId ? { blogId: blogId } : {};
+        const skipCount = (pageNumber - 1) * pageSize;
+        console.log(sortDirection, 'sortDirection');
+        const skipData = pageNumber ? skipCount : 0;
+        const limitData = pageSize;
+        const totalCount = yield post_scheme_1.PostsModel.find(postsFilterData).count();
+        const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
+        const sortCreateData = sortBy ? sortBy : 'createdAt';
+        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1;
+        return post_scheme_1.PostsModel.find(postsFilterData).skip(skipData).limit(limitData).sort({
+            [sortCreateData]: sortDirectionData
+        })
             .then((result) => {
-            if (result) {
-                return result.reduce((acc, item) => {
+            if (result.length) {
+                const items = result.reduce((acc, item) => {
                     const newPost = {
+                        id: item.id,
+                        title: item.title,
+                        shortDescription: item.shortDescription,
+                        content: item.content,
                         blogId: item.blogId.toString(),
                         blogName: item.blogName,
-                        content: item.content,
                         createdAt: item.createdAt,
-                        id: item.id,
-                        shortDescription: item.shortDescription,
-                        title: item.title,
                     };
                     acc.push(newPost);
                     return acc;
                 }, []);
+                return {
+                    pagesCount,
+                    page: Number(pageNumber),
+                    pageSize: Number(pageSize),
+                    totalCount: Number(totalCount),
+                    items,
+                };
             }
             else {
                 return null;

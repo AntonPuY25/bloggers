@@ -12,18 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryBloggersRepository = void 0;
 const bloggers_scheme_1 = require("../../DB/bloggers-scheme");
 exports.queryBloggersRepository = {
-    getBloggers: ({ searchNameTerm, pageNumber, pageSize, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
+    getBloggers: ({ searchNameTerm, pageNumber = 1, pageSize = 10, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
         const findOptions = searchNameTerm ? { name: { $regex: searchNameTerm } } : {};
-        const skipCount = Math.ceil((pageNumber - 1) * pageSize);
+        const skipCount = (pageNumber - 1) * pageSize;
         const skipData = pageNumber ? skipCount : 0;
-        const limitData = pageSize || 0;
+        const limitData = pageSize;
         const totalCount = yield bloggers_scheme_1.BloggersModel.count();
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-        const sortCreateData = sortBy === 'createdAt' ? 1 : -1;
-        const sortNameData = sortDirection === 'asc' ? 1 : -1;
+        const sortCreateData = sortBy ? sortBy : 'createdAt';
+        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1;
         return bloggers_scheme_1.BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
-            'createdAt': sortCreateData,
-            'name': sortNameData
+            [sortCreateData]: sortDirectionData
         })
             .then((result) => {
             if (result) {
@@ -38,10 +37,10 @@ exports.queryBloggersRepository = {
                     return acc;
                 }, []);
                 return {
-                    pageSize: Number(pageSize) || 0,
-                    page: Number(pageNumber) || 0,
-                    totalCount: Number(totalCount),
                     pagesCount,
+                    page: Number(pageNumber),
+                    pageSize: Number(pageSize),
+                    totalCount: Number(totalCount),
                     items,
                 };
             }

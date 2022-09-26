@@ -8,8 +8,8 @@ export const queryPostsRepository = {
                 if (result) {
                     return result.reduce((acc: ResponseDataPostType[], item: DbPostType) => {
                         const newPost: ResponseDataPostType = {
-                            bloggerId: item.bloggerId.toString(),
-                            bloggerName: item.bloggerName,
+                            blogId: item.blogId.toString(),
+                            blogName: item.blogName,
                             content: item.content,
                             createdAt: item.createdAt,
                             id: item.id,
@@ -25,6 +25,7 @@ export const queryPostsRepository = {
             })
             .catch(() => null)
     },
+
     getCurrentPost: async (postId: string) => {
         return PostsModel.findOne({id: postId})
             .then((result: any) => {
@@ -35,8 +36,8 @@ export const queryPostsRepository = {
                         content: result.content,
                         shortDescription: result.shortDescription,
                         title: result.title,
-                        bloggerName: result.bloggerName,
-                        bloggerId: result.bloggerId.toString(),
+                        blogName: result.blogName,
+                        blogId: result.blogId.toString(),
                     }
                     return responsePost
                 }else{

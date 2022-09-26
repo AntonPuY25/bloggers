@@ -18,8 +18,8 @@ exports.queryPostsRepository = {
             if (result) {
                 return result.reduce((acc, item) => {
                     const newPost = {
-                        bloggerId: item.bloggerId.toString(),
-                        bloggerName: item.bloggerName,
+                        blogId: item.blogId.toString(),
+                        blogName: item.blogName,
                         content: item.content,
                         createdAt: item.createdAt,
                         id: item.id,
@@ -46,8 +46,8 @@ exports.queryPostsRepository = {
                     content: result.content,
                     shortDescription: result.shortDescription,
                     title: result.title,
-                    bloggerName: result.bloggerName,
-                    bloggerId: result.bloggerId.toString(),
+                    blogName: result.blogName,
+                    blogId: result.blogId.toString(),
                 };
                 return responsePost;
             }

@@ -23,7 +23,7 @@ postsRoute.post('/',authorizationMiddleWare, titleValidator, descriptionValidato
     if (currentPost) {
         res.status(201).send(currentPost)
     } else {
-        res.status(400).send(getCurrentFieldError('bloggerId', 'This blogger not found'))
+        res.status(400).send(getCurrentFieldError('blogId', 'This blogger not found'))
     }
 
 })

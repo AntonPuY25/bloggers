@@ -18,15 +18,15 @@ exports.bloggersRepository = {
             .then((result) => result)
             .catch(() => null);
     }),
-    getCurrentBlogger: (bloggerId) => __awaiter(void 0, void 0, void 0, function* () {
-        return bloggers_scheme_1.BloggersModel.findOne({ id: bloggerId })
+    getCurrentBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
+        return bloggers_scheme_1.BloggersModel.findOne({ id: blogId })
             .then((result) => result)
             .catch((error) => null);
     }),
-    updateBlogger: ({ bloggerId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
-        const currentBlogger = yield exports.bloggersRepository.getCurrentBlogger(bloggerId);
+    updateBlogger: ({ blogId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentBlogger = yield exports.bloggersRepository.getCurrentBlogger(blogId);
         if (currentBlogger) {
-            return bloggers_scheme_1.BloggersModel.updateOne({ id: bloggerId }, {
+            return bloggers_scheme_1.BloggersModel.updateOne({ id: blogId }, {
                 $set: {
                     name,
                     youtubeUrl
@@ -39,10 +39,10 @@ exports.bloggersRepository = {
             return null;
         }
     }),
-    deleteBlogger: (bloggerId) => __awaiter(void 0, void 0, void 0, function* () {
-        const currentBlogger = yield exports.bloggersRepository.getCurrentBlogger(bloggerId);
+    deleteBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
+        const currentBlogger = yield exports.bloggersRepository.getCurrentBlogger(blogId);
         if (currentBlogger) {
-            return bloggers_scheme_1.BloggersModel.deleteOne({ id: bloggerId })
+            return bloggers_scheme_1.BloggersModel.deleteOne({ id: blogId })
                 .then((result) => result)
                 .catch((error) => null);
         }

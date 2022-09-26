@@ -12,19 +12,19 @@ export const bloggersRepository = {
             .catch(() => null)
     },
 
-    getCurrentBlogger: async (bloggerId: string) => {
+    getCurrentBlogger: async (blogId: string) => {
 
-        return BloggersModel.findOne({id: bloggerId})
+        return BloggersModel.findOne({id: blogId})
             .then((result: any) => result)
             .catch((error: any) => null)
     },
 
-    updateBlogger: async ({bloggerId, name, youtubeUrl}: UpdateBloggerProps) => {
+    updateBlogger: async ({blogId, name, youtubeUrl}: UpdateBloggerProps) => {
 
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(bloggerId)
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
 
         if (currentBlogger) {
-            return BloggersModel.updateOne({id: bloggerId}, {
+            return BloggersModel.updateOne({id: blogId}, {
                 $set: {
                     name,
                     youtubeUrl
@@ -37,12 +37,12 @@ export const bloggersRepository = {
         }
 
     },
-    deleteBlogger: async (bloggerId: string) => {
+    deleteBlogger: async (blogId: string) => {
 
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(bloggerId)
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
 
         if (currentBlogger) {
-            return BloggersModel.deleteOne({id: bloggerId})
+            return BloggersModel.deleteOne({id: blogId})
                 .then((result: any) => result)
                 .catch((error: any) => null)
         } else {

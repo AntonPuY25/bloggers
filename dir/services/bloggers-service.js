@@ -20,11 +20,11 @@ exports.bloggersService = {
         };
         return yield bloggers_repository_1.bloggersRepository.createBlogger(newBlogger);
     }),
-    updateBlogger: ({ bloggerId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield bloggers_repository_1.bloggersRepository.updateBlogger({ bloggerId, name, youtubeUrl });
+    updateBlogger: ({ blogId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield bloggers_repository_1.bloggersRepository.updateBlogger({ blogId, name, youtubeUrl });
     }),
-    deleteBlogger: (bloggerId) => __awaiter(void 0, void 0, void 0, function* () {
-        return yield bloggers_repository_1.bloggersRepository.deleteBlogger(bloggerId);
+    deleteBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield bloggers_repository_1.bloggersRepository.deleteBlogger(blogId);
     }),
 };
 //# sourceMappingURL=bloggers-service.js.map

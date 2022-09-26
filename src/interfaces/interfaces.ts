@@ -4,7 +4,7 @@ export interface CreateBloggerProps {
 }
 
 export interface UpdateBloggerProps {
-    bloggerId: string
+    blogId: string
     name: string
     youtubeUrl: string
 }
@@ -13,7 +13,7 @@ export interface CreatePostProps {
     title: string
     shortDescription: string
     content: string
-    bloggerId: string
+    blogId: string
 }
 
 export interface UpdatePostProps extends CreatePostProps {
@@ -48,8 +48,8 @@ export interface DbPostType {
     createdAt: string
     _id: string
     updatedAt: string
-    bloggerId: string
-    bloggerName: string
+    blogId: string
+    blogName: string
     content: string
     shortDescription: string
     title: string
@@ -59,11 +59,11 @@ export interface DbPostType {
 export interface ResponseDataPostType {
     id: string
     createdAt: string
-    bloggerName: string
+    blogName: string
     content: string
     shortDescription: string
     title: string
-    bloggerId: number | string
+    blogId: number | string
 }
 
 
@@ -72,8 +72,8 @@ export interface PostType {
     title: string
     shortDescription: string
     content: string
-    bloggerId: string
-    bloggerName?: string
+    blogId: string
+    blogName?: string
 }
 
 export interface GetBloggersParamsType {

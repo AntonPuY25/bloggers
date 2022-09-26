@@ -54,8 +54,8 @@ export const queryBloggersRepository = {
             })
             .catch((error: any) => null);
     },
-    getCurrentBlogger: async (bloggerId: string) => {
-        return BloggersModel.findOne({id: bloggerId})
+    getCurrentBlogger: async (blogId: string) => {
+        return BloggersModel.findOne({id: blogId})
             .then((result: any) => result)
             .catch((error: any) => null)
     },

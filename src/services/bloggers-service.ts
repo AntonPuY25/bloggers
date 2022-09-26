@@ -14,12 +14,13 @@ export const bloggersService = {
 
     },
 
-    updateBlogger: async ({bloggerId, name, youtubeUrl}: UpdateBloggerProps) => {
-        return await bloggersRepository.updateBlogger({bloggerId, name, youtubeUrl})
+    updateBlogger: async ({blogId, name, youtubeUrl}: UpdateBloggerProps) => {
+        return await bloggersRepository.updateBlogger({blogId, name, youtubeUrl})
 
     },
 
-    deleteBlogger: async (bloggerId: string) => {
-        return await bloggersRepository.deleteBlogger(bloggerId)
+    deleteBlogger: async (blogId: string) => {
+        return await bloggersRepository.deleteBlogger(blogId)
     },
+
 }

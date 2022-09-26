@@ -4,18 +4,13 @@ import {PostsModel} from "../DB/post-scheme";
 
 
 export const postsRepositories = {
-    getPosts: async () => {
-        return PostsModel.find()
-            .then((result: any) => result)
-            .catch(() => null)
-    },
 
     createPost: async (post: PostType) => {
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.bloggerId);
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId);
 
 
         if (currentBlogger) {
-            post.bloggerName = currentBlogger.name
+            post.blogName = currentBlogger.name
 
             const currentPost = new PostsModel(post)
             return currentPost.save()
@@ -31,12 +26,12 @@ export const postsRepositories = {
 
     updatePost: async (post: PostType, postId: string) => {
 
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.bloggerId)
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId)
 
         if (currentBlogger) {
             const currentPost = await postsRepositories.getCurrentPost(postId)
             if (currentPost) {
-                post.bloggerName = currentBlogger.name
+                post.blogName = currentBlogger.name
                 return PostsModel.updateOne({id: postId}, {
                     $set: {
                         title: post.title,

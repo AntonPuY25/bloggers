@@ -1,8 +1,15 @@
 import {Request, Response, Router} from "express";
-import {authorizationMiddleWare, errorMiddleWAre, nameValidator, urlValidator} from "../middleWares/middleWares";
+import {
+    authorizationMiddleWare, bloggerIdValidator, contentValidator, descriptionValidator,
+    errorMiddleWAre,
+    nameValidator,
+    titleValidator,
+    urlValidator
+} from "../middleWares/middleWares";
 import {bloggersService} from "../services/bloggers-service";
 import {ResponseDataBloggerType} from "../interfaces/interfaces";
 import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
+import {postsService} from "../services/posts-service";
 
 export const bloggersRoute = Router({})
 
@@ -37,13 +44,27 @@ bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, er
 
 })
 
+bloggersRoute.post('/:blogId/posts', authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, errorMiddleWAre, async (req: Request, res: Response) => {
+
+    const {blogId} = req.params;
+    const currentBlogger = await postsService.createPost({...req.body,blogId})
+
+    if (currentBlogger) {
+        res.status(201).send(currentBlogger)
+    } else {
+        res.send(404)
+    }
+
+})
+
+
 bloggersRoute.get('/:id', async (req: Request, res: Response) => {
-    const bloggerId = req.params.id;
+    const blogId = req.params.id;
 
-    const currentBlogger = await queryBloggersRepository.getCurrentBlogger(bloggerId)
+    const currentBlogger = await queryBloggersRepository.getCurrentBlogger(blogId)
 
 
-    if (currentBlogger && bloggerId) {
+    if (currentBlogger && blogId) {
 
         const newBlogger: ResponseDataBloggerType = {
             id: currentBlogger.id,
@@ -59,12 +80,12 @@ bloggersRoute.get('/:id', async (req: Request, res: Response) => {
 })
 
 bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
-    const bloggerId = req.params.id;
+    const blogId = req.params.id;
     const {name, youtubeUrl} = req.body;
 
-    const currentBlogger = await bloggersService.updateBlogger({bloggerId, name, youtubeUrl})
+    const currentBlogger = await bloggersService.updateBlogger({blogId, name, youtubeUrl})
 
-    if (currentBlogger && bloggerId) {
+    if (currentBlogger && blogId) {
 
         res.send(204)
     } else {
@@ -73,10 +94,10 @@ bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator, urlValidator, 
 })
 
 bloggersRoute.delete('/:id', authorizationMiddleWare, async (req: Request, res: Response) => {
-    const bloggerId = req.params.id;
-    const currentBlogger = await bloggersService.deleteBlogger(bloggerId)
+    const blogId = req.params.id;
+    const currentBlogger = await bloggersService.deleteBlogger(blogId)
 
-    if (currentBlogger && bloggerId) {
+    if (currentBlogger && blogId) {
         res.sendStatus(204)
     } else {
         res.sendStatus(404)

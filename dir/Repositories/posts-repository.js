@@ -13,15 +13,10 @@ exports.postsRepositories = void 0;
 const bloggers_repository_1 = require("./bloggers-repository");
 const post_scheme_1 = require("../DB/post-scheme");
 exports.postsRepositories = {
-    getPosts: () => __awaiter(void 0, void 0, void 0, function* () {
-        return post_scheme_1.PostsModel.find()
-            .then((result) => result)
-            .catch(() => null);
-    }),
     createPost: (post) => __awaiter(void 0, void 0, void 0, function* () {
-        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.bloggerId);
+        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.blogId);
         if (currentBlogger) {
-            post.bloggerName = currentBlogger.name;
+            post.blogName = currentBlogger.name;
             const currentPost = new post_scheme_1.PostsModel(post);
             return currentPost.save()
                 .then((result) => result)
@@ -34,11 +29,11 @@ exports.postsRepositories = {
             .catch((error) => null);
     }),
     updatePost: (post, postId) => __awaiter(void 0, void 0, void 0, function* () {
-        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.bloggerId);
+        const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.blogId);
         if (currentBlogger) {
             const currentPost = yield exports.postsRepositories.getCurrentPost(postId);
             if (currentPost) {
-                post.bloggerName = currentBlogger.name;
+                post.blogName = currentBlogger.name;
                 return post_scheme_1.PostsModel.updateOne({ id: postId }, {
                     $set: {
                         title: post.title,

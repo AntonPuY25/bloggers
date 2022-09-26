@@ -3,13 +3,13 @@ import {CreatePostProps, DbPostType, ResponseDataPostType, UpdatePostProps} from
 
 export const postsService = {
 
-    createPost: async ({content, bloggerId, shortDescription, title}: CreatePostProps) => {
+    createPost: async ({content, blogId, shortDescription, title}: CreatePostProps) => {
         const newPost = {
             id: Number(new Date()).toString(),
             title,
             shortDescription,
             content,
-            bloggerId: bloggerId.toString(),
+            blogId: blogId.toString(),
         }
 
         const postFromBd: DbPostType = await postsRepositories.createPost(newPost)
@@ -21,20 +21,20 @@ export const postsService = {
                 content: postFromBd.content,
                 shortDescription: postFromBd.shortDescription,
                 title: postFromBd.title,
-                bloggerName: postFromBd.bloggerName,
-                bloggerId: postFromBd.bloggerId.toString(),
+                blogName: postFromBd.blogName,
+                blogId: postFromBd.blogId.toString(),
             }
         }
     },
 
-    updatePost: async ({content, bloggerId, shortDescription, title, postId}: UpdatePostProps) => {
+    updatePost: async ({content, blogId, shortDescription, title, postId}: UpdatePostProps) => {
 
         const newPost = {
             id: postId,
             title,
             shortDescription,
             content,
-            bloggerId: bloggerId.toString(),
+            blogId: blogId.toString(),
         }
 
         return await postsRepositories.updatePost(newPost, postId)

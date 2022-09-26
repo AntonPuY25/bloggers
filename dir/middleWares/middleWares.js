@@ -17,7 +17,7 @@ exports.nameValidator = body('name').trim().isLength({ min: 3, max: 15 });
 exports.titleValidator = body('title').trim().isLength({ min: 3, max: 30 });
 exports.descriptionValidator = body('shortDescription').trim().isLength({ min: 3, max: 100 });
 exports.contentValidator = body('content').trim().isLength({ min: 3, max: 1000 });
-exports.bloggerIdValidator = body('bloggerId').trim().isLength({ min: 1, max: 30 }).custom((value) => __awaiter(void 0, void 0, void 0, function* () {
+exports.bloggerIdValidator = body('blogId').trim().isLength({ min: 1, max: 30 }).custom((value) => __awaiter(void 0, void 0, void 0, function* () {
     const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(value);
     if (!currentBlogger) {
         throw new Error('Not found this blogger');

@@ -19,11 +19,11 @@ const postsSchema = new Schema({
         type: String,
         required: true,
     },
-    bloggerId: {
+    blogId: {
         type: Number,
         required: true,
     },
-    bloggerName: {
+    blogName: {
         type: String,
         required: true,
     },

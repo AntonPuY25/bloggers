@@ -48,8 +48,8 @@ exports.queryBloggersRepository = {
         })
             .catch((error) => null);
     }),
-    getCurrentBlogger: (bloggerId) => __awaiter(void 0, void 0, void 0, function* () {
-        return bloggers_scheme_1.BloggersModel.findOne({ id: bloggerId })
+    getCurrentBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
+        return bloggers_scheme_1.BloggersModel.findOne({ id: blogId })
             .then((result) => result)
             .catch((error) => null);
     }),

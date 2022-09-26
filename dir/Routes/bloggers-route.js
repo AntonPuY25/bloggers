@@ -14,6 +14,7 @@ const express_1 = require("express");
 const middleWares_1 = require("../middleWares/middleWares");
 const bloggers_service_1 = require("../services/bloggers-service");
 const query_bloggers_repository_1 = require("../Repositories/queryReposotories/query-bloggers-repository");
+const posts_service_1 = require("../services/posts-service");
 exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = req.query;
@@ -41,10 +42,20 @@ exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWar
         res.send(404);
     }
 }));
+exports.bloggersRoute.post('/:blogId/posts', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { blogId } = req.params;
+    const currentBlogger = yield posts_service_1.postsService.createPost(Object.assign(Object.assign({}, req.body), { blogId }));
+    if (currentBlogger) {
+        res.status(201).send(currentBlogger);
+    }
+    else {
+        res.send(404);
+    }
+}));
 exports.bloggersRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const bloggerId = req.params.id;
-    const currentBlogger = yield query_bloggers_repository_1.queryBloggersRepository.getCurrentBlogger(bloggerId);
-    if (currentBlogger && bloggerId) {
+    const blogId = req.params.id;
+    const currentBlogger = yield query_bloggers_repository_1.queryBloggersRepository.getCurrentBlogger(blogId);
+    if (currentBlogger && blogId) {
         const newBlogger = {
             id: currentBlogger.id,
             name: currentBlogger.name,
@@ -58,10 +69,10 @@ exports.bloggersRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0
     }
 }));
 exports.bloggersRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const bloggerId = req.params.id;
+    const blogId = req.params.id;
     const { name, youtubeUrl } = req.body;
-    const currentBlogger = yield bloggers_service_1.bloggersService.updateBlogger({ bloggerId, name, youtubeUrl });
-    if (currentBlogger && bloggerId) {
+    const currentBlogger = yield bloggers_service_1.bloggersService.updateBlogger({ blogId, name, youtubeUrl });
+    if (currentBlogger && blogId) {
         res.send(204);
     }
     else {
@@ -69,9 +80,9 @@ exports.bloggersRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleW
     }
 }));
 exports.bloggersRoute.delete('/:id', middleWares_1.authorizationMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const bloggerId = req.params.id;
-    const currentBlogger = yield bloggers_service_1.bloggersService.deleteBlogger(bloggerId);
-    if (currentBlogger && bloggerId) {
+    const blogId = req.params.id;
+    const currentBlogger = yield bloggers_service_1.bloggersService.deleteBlogger(blogId);
+    if (currentBlogger && blogId) {
         res.sendStatus(204);
     }
     else {

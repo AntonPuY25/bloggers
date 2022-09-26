@@ -25,7 +25,7 @@ exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_
         res.status(201).send(currentPost);
     }
     else {
-        res.status(400).send((0, helpers_1.getCurrentFieldError)('bloggerId', 'This blogger not found'));
+        res.status(400).send((0, helpers_1.getCurrentFieldError)('blogId', 'This blogger not found'));
     }
 }));
 exports.postsRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

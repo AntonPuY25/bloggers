@@ -13,7 +13,7 @@ export const queryPostsRepository = {
         const totalCount = await PostsModel.find(postsFilterData).count();
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
         const sortCreateData = sortBy ? sortBy : 'createdAt'
-        const sortDirectionData = sortDirection === 'asc'|| !sortDirection  ? 1 : -1
+        const sortDirectionData = sortDirection === 'asc'   ? 1 : -1
 
 
 

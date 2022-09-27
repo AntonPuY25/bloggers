@@ -5,6 +5,7 @@ import {
     GetBloggersParamsType,
     ResponseDataBloggerType
 } from "../../interfaces/interfaces";
+import {log} from "util";
 
 export const queryBloggersRepository = {
     getBloggers: async ({
@@ -14,20 +15,27 @@ export const queryBloggersRepository = {
                             sortBy,
                             sortDirection
                         }: GetBloggersParamsType) => {
-        const findOptions = searchNameTerm ? {name: {$regex: searchNameTerm}} : {};
+
+        console.log(searchNameTerm, 'searchNameTerm')
+        const findOptions = searchNameTerm ? {
+                "$or":
+                    [{name: {$regex: searchNameTerm}},
+                        {name: {$regex: searchNameTerm.toLowerCase()}}]
+            }
+            : {};
 
         const skipCount = (pageNumber - 1) * pageSize;
 
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
 
-        const totalCount = await BloggersModel.count();
+        const totalCount = await BloggersModel.find(findOptions).count();
 
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
 
 
         const sortCreateData = sortBy ? sortBy : 'createdAt'
-        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1
+        const sortDirectionData = sortDirection === 'asc' ? 1 : -1
 
 
         return BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
@@ -60,9 +68,9 @@ export const queryBloggersRepository = {
             })
             .catch((error: any) => null);
     },
-    getCurrentBlogger: async (blogId: string) => {
-        return BloggersModel.findOne({id: blogId})
-            .then((result: any) => result)
-            .catch((error: any) => null)
-    },
-}
+        getCurrentBlogger: async (blogId: string) => {
+            return BloggersModel.findOne({id: blogId})
+                .then((result: any) => result)
+                .catch((error: any) => null)
+        },
+    }

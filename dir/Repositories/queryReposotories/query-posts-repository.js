@@ -21,7 +21,7 @@ exports.queryPostsRepository = {
         const totalCount = yield post_scheme_1.PostsModel.find(postsFilterData).count();
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
         const sortCreateData = sortBy ? sortBy : 'createdAt';
-        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1;
+        const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
         return post_scheme_1.PostsModel.find(postsFilterData).skip(skipData).limit(limitData).sort({
             [sortCreateData]: sortDirectionData
         })

@@ -13,14 +13,19 @@ exports.queryBloggersRepository = void 0;
 const bloggers_scheme_1 = require("../../DB/bloggers-scheme");
 exports.queryBloggersRepository = {
     getBloggers: ({ searchNameTerm, pageNumber = 1, pageSize = 10, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
-        const findOptions = searchNameTerm ? { name: { $regex: searchNameTerm } } : {};
+        console.log(searchNameTerm, 'searchNameTerm');
+        const findOptions = searchNameTerm ? {
+            "$or": [{ name: { $regex: searchNameTerm } },
+                { name: { $regex: searchNameTerm.toLowerCase() } }]
+        }
+            : {};
         const skipCount = (pageNumber - 1) * pageSize;
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
-        const totalCount = yield bloggers_scheme_1.BloggersModel.count();
+        const totalCount = yield bloggers_scheme_1.BloggersModel.find(findOptions).count();
         const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
         const sortCreateData = sortBy ? sortBy : 'createdAt';
-        const sortDirectionData = sortDirection === 'asc' || !sortDirection ? 1 : -1;
+        const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
         return bloggers_scheme_1.BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
             [sortCreateData]: sortDirectionData
         })

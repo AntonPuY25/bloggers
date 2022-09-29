@@ -6,8 +6,6 @@ export const queryPostsRepository = {
         const postsFilterData = blogId ? {blogId: blogId} : {}
         const skipCount = (pageNumber - 1) * pageSize;
 
-        console.log(sortDirection,'sortDirection')
-
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = await PostsModel.find(postsFilterData).count();

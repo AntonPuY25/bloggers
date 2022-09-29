@@ -15,7 +15,6 @@ exports.queryPostsRepository = {
     getPosts: ({ blogId, sortBy, sortDirection, pageNumber = 1, pageSize = 10 }) => __awaiter(void 0, void 0, void 0, function* () {
         const postsFilterData = blogId ? { blogId: blogId } : {};
         const skipCount = (pageNumber - 1) * pageSize;
-        console.log(sortDirection, 'sortDirection');
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = yield post_scheme_1.PostsModel.find(postsFilterData).count();

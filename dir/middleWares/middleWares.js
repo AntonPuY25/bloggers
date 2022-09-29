@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.nameValidator = exports.urlValidator = void 0;
+exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
 const { body, validationResult } = require('express-validator');
 exports.urlValidator = body('youtubeUrl').trim().isURL().isLength({ min: 3, max: 100 });
 exports.nameValidator = body('name').trim().isLength({ min: 3, max: 15 });
+exports.loginValidator = body('login').trim().isLength({ min: 3, max: 10 });
+exports.passwordValidator = body('password').trim().isLength({ min: 6, max: 20 });
+exports.emailValidator = body('email').trim().isEmail().isLength({ min: 3 });
 exports.titleValidator = body('title').trim().isLength({ min: 3, max: 30 });
 exports.descriptionValidator = body('shortDescription').trim().isLength({ min: 3, max: 100 });
 exports.contentValidator = body('content').trim().isLength({ min: 3, max: 1000 });

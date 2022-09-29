@@ -18,6 +18,8 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const posts_route_1 = require("./Routes/posts-route");
 const testing_route_1 = require("./Routes/testing-route");
 const mongoose_1 = __importDefault(require("mongoose"));
+const usersRoute_1 = require("./Routes/usersRoute");
+const auth_route_1 = require("./Routes/auth-route");
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +31,9 @@ app.get('/', (req, res) => {
 const mongoUri = 'mongodb+srv://PuY:5718096010@cluster0.kusse.mongodb.net/Lesson?retryWrites=true&w=majority';
 app.use('/blogs', bloggers_route_1.bloggersRoute);
 app.use('/posts', posts_route_1.postsRoute);
+app.use('/users', usersRoute_1.usersRoute);
 app.use('/testing', testing_route_1.testingRoute);
+app.use('/auth', auth_route_1.authRoute);
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connect(mongoUri)
         .then((res) => console.log('success'))

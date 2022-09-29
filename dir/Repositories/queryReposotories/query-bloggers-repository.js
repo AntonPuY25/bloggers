@@ -13,9 +13,8 @@ exports.queryBloggersRepository = void 0;
 const bloggers_scheme_1 = require("../../DB/bloggers-scheme");
 exports.queryBloggersRepository = {
     getBloggers: ({ searchNameTerm, pageNumber = 1, pageSize = 10, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(searchNameTerm, 'searchNameTerm');
         const findOptions = searchNameTerm ? {
-            "$or": [{ name: { $regex: searchNameTerm } },
+            $or: [{ name: { $regex: searchNameTerm } },
                 { name: { $regex: searchNameTerm.toLowerCase() } }]
         }
             : {};

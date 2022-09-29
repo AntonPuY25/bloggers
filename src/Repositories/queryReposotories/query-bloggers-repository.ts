@@ -5,7 +5,6 @@ import {
     GetBloggersParamsType,
     ResponseDataBloggerType
 } from "../../interfaces/interfaces";
-import {log} from "util";
 
 export const queryBloggersRepository = {
     getBloggers: async ({
@@ -16,9 +15,8 @@ export const queryBloggersRepository = {
                             sortDirection
                         }: GetBloggersParamsType) => {
 
-        console.log(searchNameTerm, 'searchNameTerm')
         const findOptions = searchNameTerm ? {
-                "$or":
+                $or:
                     [{name: {$regex: searchNameTerm}},
                         {name: {$regex: searchNameTerm.toLowerCase()}}]
             }
@@ -68,9 +66,9 @@ export const queryBloggersRepository = {
             })
             .catch((error: any) => null);
     },
-        getCurrentBlogger: async (blogId: string) => {
-            return BloggersModel.findOne({id: blogId})
-                .then((result: any) => result)
-                .catch((error: any) => null)
-        },
-    }
+    getCurrentBlogger: async (blogId: string) => {
+        return BloggersModel.findOne({id: blogId})
+            .then((result: any) => result)
+            .catch((error: any) => null)
+    },
+}

@@ -112,3 +112,61 @@ export interface GetBloggerResponseType {
 
 export interface GetPostsResponseType extends GetBloggerResponseType {
 };
+
+export interface GetUsersParamsType {
+    searchLoginTerm?: string,
+    searchEmailTerm?: string,
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: string,
+}
+
+export interface GetUsersParamsRequestType {
+    searchLoginTerm?: string,
+    searchEmailTerm?: string,
+    pageNumber?: string,
+    pageSize?: string,
+    sortBy?: string,
+    sortDirection?: string,
+}
+
+export interface UsersType {
+    id: string,
+    login: string,
+    email: string,
+    createdAt?: string,
+}
+
+export interface UserWithPasswordType extends UsersType {
+    password: string;
+}
+
+export interface DbUserType {
+    id: string
+    createdAt: string
+    _id: string
+    updatedAt: string
+    login: string
+    email: string
+    __v: number
+}
+export interface GetUsersResponseType {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: UsersType[]
+
+}
+
+export interface CreateUserRequestBodyType {
+    login: string
+    password: string
+    email: string
+}
+
+export interface AuthRequestBodyType {
+    login: string
+    password: string
+}

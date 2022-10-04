@@ -20,9 +20,10 @@ const testing_route_1 = require("./Routes/testing-route");
 const mongoose_1 = __importDefault(require("mongoose"));
 const usersRoute_1 = require("./Routes/usersRoute");
 const auth_route_1 = require("./Routes/auth-route");
+const settings_1 = require("./settings/settings");
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = settings_1.settings.MONGO_URI;
 app.use((0, cors_1.default)());
 app.use((0, body_parser_1.default)());
 app.get('/', (req, res) => {

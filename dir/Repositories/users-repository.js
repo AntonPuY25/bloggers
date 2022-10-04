@@ -21,6 +21,7 @@ exports.usersRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const passwordSalt = yield bcrypt_1.default.genSalt(10);
             const passwordHash = yield (0, helpers_1.getGeneratedHashPassword)(newUser.password, passwordSalt);
+            console.log(passwordHash, 'passwordHash');
             const currentUser = new users_scheme_1.UsersModel(Object.assign(Object.assign({}, newUser), { password: passwordHash, salt: passwordSalt }));
             return currentUser.save()
                 .then((result) => {

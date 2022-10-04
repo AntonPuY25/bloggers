@@ -9,6 +9,7 @@ export const usersRepository = {
     async createUser(newUser: UserWithPasswordType) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await getGeneratedHashPassword(newUser.password, passwordSalt)
+        console.log(passwordHash,'passwordHash')
         const currentUser = new UsersModel({...newUser, password: passwordHash, salt: passwordSalt})
         return currentUser.save()
             .then((result: any) => {

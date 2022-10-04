@@ -7,10 +7,11 @@ import {testingRoute} from "./Routes/testing-route";
 import mongoose from "mongoose";
 import {usersRoute} from "./Routes/usersRoute";
 import {authRoute} from "./Routes/auth-route";
+import {settings} from "./settings/settings";
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3000
+const port = settings.MONGO_URI
 
 app.use(cors())
 app.use(bodyParser())

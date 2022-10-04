@@ -77,5 +77,10 @@ export const queryUsersRepository = {
         } else {
             return null
         }
-    }
+    },
+    getCurrentUser: async (userId: string) => {
+        return UsersModel.findOne({id: userId})
+            .then((result: any) => result)
+            .catch((error: any) => null)
+    },
 }

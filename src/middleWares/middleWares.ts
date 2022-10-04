@@ -1,5 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
+import {jwtService} from "../services/jwy-servive";
+import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
+import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 
 const {body, validationResult} = require('express-validator');
 
@@ -46,6 +49,20 @@ export const authorizationMiddleWare = (req: Request, res: Response, next: NextF
     } else {
         return next()
     }
+}
 
+export const authMiddleWare = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.authorization) {
+        return res.sendStatus(401);
+    }
 
+    const token = req.headers.authorization.split(' ')[1];
+
+    const userId = await jwtService.getUserIdNyToken(token)
+
+    if (userId) {
+        req.user = await queryUsersRepository.getCurrentUser(userId)
+        return next()
+    }
+    return res.send(401)
 }

@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
+exports.authMiddleWare = exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
+const jwy_servive_1 = require("../services/jwy-servive");
+const query_users_repository_1 = require("../Repositories/queryReposotories/query-users-repository");
 const { body, validationResult } = require('express-validator');
 exports.urlValidator = body('youtubeUrl').trim().isURL().isLength({ min: 3, max: 100 });
 exports.nameValidator = body('name').trim().isLength({ min: 3, max: 15 });
@@ -54,4 +56,17 @@ const authorizationMiddleWare = (req, res, next) => {
     }
 };
 exports.authorizationMiddleWare = authorizationMiddleWare;
+const authMiddleWare = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.headers.authorization) {
+        return res.sendStatus(401);
+    }
+    const token = req.headers.authorization.split(' ')[1];
+    const userId = yield jwy_servive_1.jwtService.getUserIdNyToken(token);
+    if (userId) {
+        req.user = yield query_users_repository_1.queryUsersRepository.getCurrentUser(userId);
+        return next();
+    }
+    return res.send(401);
+});
+exports.authMiddleWare = authMiddleWare;
 //# sourceMappingURL=middleWares.js.map

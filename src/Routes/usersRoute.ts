@@ -38,7 +38,6 @@ usersRoute.post('/', loginValidator, passwordValidator, emailValidator,authoriza
     const {email, login, password} = req.body
 
     const currentUser = await usersService.createUser({email, login, password})
-    console.log(currentUser,'currentUser')
     if (currentUser) {
         res.status(201).send(currentUser)
     } else {

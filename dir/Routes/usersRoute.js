@@ -37,7 +37,6 @@ exports.usersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.usersRoute.post('/', middleWares_1.loginValidator, middleWares_1.passwordValidator, middleWares_1.emailValidator, middleWares_1.authorizationMiddleWare, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, login, password } = req.body;
     const currentUser = yield users_service_1.usersService.createUser({ email, login, password });
-    console.log(currentUser, 'currentUser');
     if (currentUser) {
         res.status(201).send(currentUser);
     }

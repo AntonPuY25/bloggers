@@ -12,15 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoute = void 0;
 const express_1 = require("express");
 const auth_service_1 = require("../services/auth-service");
+const jwy_servive_1 = require("../services/jwy-servive");
+const middleWares_1 = require("../middleWares/middleWares");
 exports.authRoute = (0, express_1.Router)({});
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, password } = req.body;
     const authResult = yield auth_service_1.authService.authUser({ login, password });
     if (authResult) {
-        res.sendStatus(204);
+        const token = yield jwy_servive_1.jwtService.createJwt(authResult);
+        res.status(200).send(token.data);
     }
     else {
         res.sendStatus(401);
     }
+}));
+exports.authRoute.get('/me', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).send({
+        email: req.user.email,
+        login: req.user.login,
+        userId: req.user.id,
+    });
 }));
 //# sourceMappingURL=auth-route.js.map

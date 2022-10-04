@@ -12,6 +12,6 @@ export const getCurrentFieldError = (field: string, message: string) => {
 }
 
 export const getGeneratedHashPassword = async (password: string, salt: string) => {
-    return await bcrypt.hash(password, salt)
+    return await bcrypt.hash('12345' , '$2a$10$r3ZkRK.LvdRbbW26VFzZ8.')
 
 }

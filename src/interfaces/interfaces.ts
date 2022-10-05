@@ -170,3 +170,7 @@ export interface AuthRequestBodyType {
     login: string
     password: string
 }
+
+export interface UpdateCommentBodyParamsType {
+    content: string
+}

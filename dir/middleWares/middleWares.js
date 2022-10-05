@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authMiddleWare = exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
+exports.authMiddleWare = exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.contentCommentValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
 const jwy_servive_1 = require("../services/jwy-servive");
 const query_users_repository_1 = require("../Repositories/queryReposotories/query-users-repository");
@@ -22,6 +22,7 @@ exports.emailValidator = body('email').trim().isEmail().isLength({ min: 3 });
 exports.titleValidator = body('title').trim().isLength({ min: 3, max: 30 });
 exports.descriptionValidator = body('shortDescription').trim().isLength({ min: 3, max: 100 });
 exports.contentValidator = body('content').trim().isLength({ min: 3, max: 1000 });
+exports.contentCommentValidator = body('content').trim().isLength({ min: 20, max: 300 });
 exports.bloggerIdValidator = body('blogId').trim().isLength({ min: 1, max: 30 }).custom((value) => __awaiter(void 0, void 0, void 0, function* () {
     const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(value);
     if (!currentBlogger) {

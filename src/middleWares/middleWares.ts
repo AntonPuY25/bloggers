@@ -14,6 +14,7 @@ export const emailValidator = body('email').trim().isEmail().isLength({min: 3});
 export const titleValidator = body('title').trim().isLength({min: 3, max: 30})
 export const descriptionValidator = body('shortDescription').trim().isLength({min: 3, max: 100})
 export const contentValidator = body('content').trim().isLength({min: 3, max: 1000})
+export const contentCommentValidator = body('content').trim().isLength({min: 20, max: 300})
 export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30}).custom(async (value: string) => {
     const currentBlogger = await bloggersRepository.getCurrentBlogger(value)
     if (!currentBlogger) {

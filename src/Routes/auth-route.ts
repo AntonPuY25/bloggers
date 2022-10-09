@@ -2,11 +2,11 @@ import {Request, Response, Router} from "express";
 import {AuthRequestBodyType} from "../interfaces/interfaces";
 import {authService} from "../services/auth-service";
 import {jwtService} from "../services/jwy-servive";
-import {authMiddleWare} from "../middleWares/middleWares";
+import {authMiddleWare, authorizationMiddleWare} from "../middleWares/middleWares";
 
 export const authRoute = Router({});
 
-authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
+authRoute.post('/login',async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body
 
     const authResult = await authService.authUser({login, password});

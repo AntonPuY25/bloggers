@@ -15,6 +15,8 @@ const middleWares_1 = require("../middleWares/middleWares");
 const helpers_1 = require("../helpers/helpers");
 const posts_service_1 = require("../services/posts-service");
 const query_posts_repository_1 = require("../Repositories/queryReposotories/query-posts-repository");
+const posts_repository_1 = require("../Repositories/posts-repository");
+const comments_repository_1 = require("../Repositories/comments-repository");
 exports.postsRoute = (0, express_1.Router)({});
 exports.postsRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
@@ -63,6 +65,52 @@ exports.postsRoute.delete('/:id', middleWares_1.authorizationMiddleWare, (req, r
     }
     else {
         res.send(404);
+    }
+}));
+exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middleWares_1.contentCommentValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postId } = req.params;
+    const { content } = req.body;
+    const { id, login } = req.user;
+    const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
+    if (currentPost) {
+        const currentComment = yield comments_repository_1.commentsRepository.createComment({
+            postId,
+            content,
+            userId: id,
+            userLogin: login
+        });
+        if (currentComment) {
+            res.status(201).send(currentComment);
+        }
+        else {
+            res.sendStatus(404);
+        }
+    }
+    else {
+        res.sendStatus(404);
+    }
+}));
+exports.postsRoute.get('/:postId/comments', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postId } = req.params;
+    const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
+    const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
+    if (currentPost) {
+        const comments = yield comments_repository_1.commentsRepository.getCommentsForCurrentPost({
+            pageSize: pageSize ? Number(pageSize) : 10,
+            pageNumber: pageNumber ? Number(pageNumber) : 1,
+            sortBy: sortBy,
+            sortDirection: sortDirection,
+            postId
+        });
+        if (comments) {
+            res.status(200).send(comments);
+        }
+        else {
+            res.sendStatus(404);
+        }
+    }
+    else {
+        res.sendStatus(404);
     }
 }));
 //# sourceMappingURL=posts-route.js.map

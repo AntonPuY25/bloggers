@@ -60,4 +60,5 @@ export const postsRepositories = {
                 .catch((error: any) => null)
         }
     },
+
 }

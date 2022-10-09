@@ -151,6 +151,7 @@ export interface DbUserType {
     email: string
     __v: number
 }
+
 export interface GetUsersResponseType {
     pagesCount: number,
     page: number,
@@ -173,4 +174,59 @@ export interface AuthRequestBodyType {
 
 export interface UpdateCommentBodyParamsType {
     content: string
+}
+
+export interface CommentDataType {
+    id: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+    createdAt: string,
+}
+
+export interface CommentType {
+    id: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+    postId: string
+}
+
+export interface CreateCommentPropsType {
+    postId: string,
+    userId: string,
+    userLogin: string,
+    content: string
+}
+
+export enum sortDirectionType  {
+    asc= 'asc',
+    desc= 'desc'
+}
+
+export interface GetCommentsQueryType {
+    pageNumber: string,
+    pageSize: string,
+    sortBy: string,
+    sortDirection: sortDirectionType,
+
+}
+
+export interface GetCommentForCurrentPostType {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: sortDirectionType,
+    postId: string,
+}
+
+export interface DbCommentsType {
+    _id: string,
+    id: string,
+    content: string,
+    userId: string,
+    userLogin: string,
+    postId: string,
+    createdAt: string,
+    updatedAt: string,
 }

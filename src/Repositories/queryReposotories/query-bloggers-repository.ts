@@ -5,12 +5,13 @@ import {
     GetBloggersParamsType,
     ResponseDataBloggerType
 } from "../../interfaces/interfaces";
+import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
 export const queryBloggersRepository = {
     getBloggers: async ({
                             searchNameTerm,
-                            pageNumber = 1,
-                            pageSize = 10,
+                            pageNumber ,
+                            pageSize,
                             sortBy,
                             sortDirection
                         }: GetBloggersParamsType) => {
@@ -22,18 +23,13 @@ export const queryBloggersRepository = {
             }
             : {};
 
-        const skipCount = (pageNumber - 1) * pageSize;
-
+        const skipCount = getSkipCountData(pageNumber,pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
-
         const totalCount = await BloggersModel.find(findOptions).count();
-
-        const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-
-
-        const sortCreateData = sortBy ? sortBy : 'createdAt'
-        const sortDirectionData = sortDirection === 'asc' ? 1 : -1
+        const pagesCount = getPagesCountData(totalCount,pageSize);
+        const sortCreateData = getSortCreatedData(sortBy)
+        const sortDirectionData = getSortDirectionData(sortDirection)
 
 
         return BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
@@ -55,20 +51,19 @@ export const queryBloggersRepository = {
 
                     return {
                         pagesCount,
-                        page: Number(pageNumber),
-                        pageSize: Number(pageSize),
+                        page: pageNumber,
+                        pageSize: pageSize,
                         totalCount: Number(totalCount),
                         items,
-
-
                     } as GetBloggerResponseType;
                 }
             })
-            .catch((error: any) => null);
+            .catch(() => null);
     },
+
     getCurrentBlogger: async (blogId: string) => {
         return BloggersModel.findOne({id: blogId})
             .then((result: any) => result)
-            .catch((error: any) => null)
+            .catch(() => null)
     },
 }

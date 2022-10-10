@@ -29,17 +29,13 @@ exports.commentsRoute.put('/:commentId', middleWares_1.authMiddleWare, middleWar
     const { commentId } = req.params;
     const { id } = req.user;
     const currentComment = yield comments_repository_1.commentsRepository.getCurrentComment(commentId);
-    if (currentComment) {
-        if (currentComment.userId !== id) {
-            return res.sendStatus(403);
-        }
-        const result = yield comments_repository_1.commentsRepository.updateCurrentComment(commentId, content);
-        if (result) {
-            res.sendStatus(204);
-        }
-        else {
-            res.sendStatus(404);
-        }
+    if (!currentComment)
+        return res.sendStatus(404);
+    if (currentComment.userId !== id)
+        return res.sendStatus(403);
+    const result = yield comments_repository_1.commentsRepository.updateCurrentComment(commentId, content);
+    if (result) {
+        res.sendStatus(204);
     }
     else {
         res.sendStatus(404);
@@ -49,17 +45,13 @@ exports.commentsRoute.delete('/:commentId', middleWares_1.authMiddleWare, (req, 
     const { commentId } = req.params;
     const { id } = req.user;
     const currentComment = yield comments_repository_1.commentsRepository.getCurrentComment(commentId);
-    if (currentComment) {
-        if (currentComment.userId !== id) {
-            return res.sendStatus(403);
-        }
-        const result = yield comments_repository_1.commentsRepository.deleteCurrentComment(commentId);
-        if (result) {
-            res.sendStatus(204);
-        }
-        else {
-            res.sendStatus(404);
-        }
+    if (!currentComment)
+        return res.sendStatus(404);
+    if (currentComment.userId !== id)
+        return res.sendStatus(403);
+    const result = yield comments_repository_1.commentsRepository.deleteCurrentComment(commentId);
+    if (result) {
+        res.sendStatus(204);
     }
     else {
         res.sendStatus(404);

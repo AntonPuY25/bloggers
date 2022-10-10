@@ -14,19 +14,18 @@ const express_1 = require("express");
 const query_users_repository_1 = require("../Repositories/queryReposotories/query-users-repository");
 const middleWares_1 = require("../middleWares/middleWares");
 const users_service_1 = require("../services/users-service");
+const helpers_1 = require("../helpers/helpers");
 exports.usersRoute = (0, express_1.Router)({});
 exports.usersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } = req.query;
-    console.log(searchEmailTerm, 'searchEmailTerm');
-    console.log(searchLoginTerm, 'searchLoginTerm');
-    const currentUser = yield query_users_repository_1.queryUsersRepository.getUsers({
-        pageNumber: pageNumber ? Number(pageNumber) : 1,
-        pageSize: pageSize ? Number(pageSize) : 10,
-        sortBy: sortBy ? sortBy : 'createdAt',
-        sortDirection: sortDirection ? sortDirection : 'desc',
-        searchLoginTerm: searchLoginTerm || '',
-        searchEmailTerm: searchEmailTerm || '',
-    });
+    const currentUser = yield query_users_repository_1.queryUsersRepository.getUsers((0, helpers_1.getUsersData)({
+        pageSize,
+        pageNumber,
+        sortBy,
+        sortDirection,
+        searchEmailTerm,
+        searchLoginTerm
+    }));
     if (currentUser) {
         res.status(200).send(currentUser);
     }

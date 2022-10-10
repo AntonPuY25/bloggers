@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryUsersRepository = void 0;
 const users_scheme_1 = require("../../DB/users-scheme");
+const helpers_1 = require("../../helpers/helpers");
 exports.queryUsersRepository = {
     getUsers({ pageNumber, pageSize, searchEmailTerm, searchLoginTerm, sortBy, sortDirection }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -18,46 +19,34 @@ exports.queryUsersRepository = {
                 $or: [{ login: { $regex: searchLoginTerm, $options: '-i' } },
                     { email: { $regex: searchEmailTerm, $options: '-i' } }]
             } : {};
-            const skipCount = (pageNumber - 1) * pageSize;
+            const skipCount = (0, helpers_1.getSkipCountData)(pageNumber, pageSize);
             const skipData = pageNumber ? skipCount : 0;
             const limitData = pageSize;
             const totalCount = yield users_scheme_1.UsersModel.find(findData).count();
-            const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-            const sortCreateData = sortBy ? sortBy : 'createdAt';
-            const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
+            const pagesCount = (0, helpers_1.getPagesCountData)(totalCount, pageSize);
+            const sortCreateData = (0, helpers_1.getSortCreatedData)(sortBy);
+            const sortDirectionData = (0, helpers_1.getSortDirectionData)(sortDirection);
             return users_scheme_1.UsersModel.find(findData).skip(skipData).limit(limitData).sort({
                 [sortCreateData]: sortDirectionData
             })
                 .then((result) => {
-                console.log(result, 'result');
-                if (result.length) {
-                    const items = result.reduce((acc, item) => {
-                        const newUser = {
-                            id: item.id,
-                            email: item.email,
-                            login: item.login,
-                            createdAt: item.createdAt,
-                        };
-                        acc.push(newUser);
-                        return acc;
-                    }, []);
-                    return {
-                        pagesCount,
-                        page: Number(pageNumber),
-                        pageSize: Number(pageSize),
-                        totalCount: Number(totalCount),
-                        items,
+                const items = result.reduce((acc, item) => {
+                    const newUser = {
+                        id: item.id,
+                        email: item.email,
+                        login: item.login,
+                        createdAt: item.createdAt,
                     };
-                }
-                else {
-                    return {
-                        pagesCount,
-                        page: Number(pageNumber),
-                        pageSize: Number(pageSize),
-                        totalCount: Number(totalCount),
-                        items: [],
-                    };
-                }
+                    acc.push(newUser);
+                    return acc;
+                }, []);
+                return {
+                    pagesCount,
+                    page: pageNumber,
+                    pageSize,
+                    totalCount,
+                    items,
+                };
             })
                 .catch(() => null);
         });
@@ -68,7 +57,7 @@ exports.queryUsersRepository = {
             if (currentUser.length) {
                 return users_scheme_1.UsersModel.deleteOne({ id: userId })
                     .then((result) => result)
-                    .catch((error) => null);
+                    .catch(() => null);
             }
             else {
                 return null;
@@ -78,7 +67,7 @@ exports.queryUsersRepository = {
     getCurrentUser: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         return users_scheme_1.UsersModel.findOne({ id: userId })
             .then((result) => result)
-            .catch((error) => null);
+            .catch(() => null);
     }),
 };
 //# sourceMappingURL=query-users-repository.js.map

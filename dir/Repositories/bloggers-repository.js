@@ -21,7 +21,7 @@ exports.bloggersRepository = {
     getCurrentBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
         return bloggers_scheme_1.BloggersModel.findOne({ id: blogId })
             .then((result) => result)
-            .catch((error) => null);
+            .catch(() => null);
     }),
     updateBlogger: ({ blogId, name, youtubeUrl }) => __awaiter(void 0, void 0, void 0, function* () {
         const currentBlogger = yield exports.bloggersRepository.getCurrentBlogger(blogId);
@@ -33,7 +33,7 @@ exports.bloggersRepository = {
                 }
             })
                 .then((result) => result)
-                .catch((error) => null);
+                .catch(() => null);
         }
         else {
             return null;
@@ -44,7 +44,7 @@ exports.bloggersRepository = {
         if (currentBlogger) {
             return bloggers_scheme_1.BloggersModel.deleteOne({ id: blogId })
                 .then((result) => result)
-                .catch((error) => null);
+                .catch(() => null);
         }
         else {
             return null;

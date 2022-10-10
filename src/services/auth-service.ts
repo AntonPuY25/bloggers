@@ -7,20 +7,13 @@ export const authService = {
     async authUser({login, password}: AuthRequestBodyType) {
 
         const currentUser = await usersRepository.getCurrentUser(login);
+        if (!currentUser) return null
 
-        if (currentUser) {
-            const passwordSalt = currentUser.salt;
-            const passwordHash = await getGeneratedHashPassword(password, passwordSalt)
+        const passwordSalt = currentUser.salt;
+        const passwordHash = await getGeneratedHashPassword(password, passwordSalt)
+        if (passwordHash === currentUser.password) return currentUser;
 
-            if (passwordHash === currentUser.password) {
-                return currentUser
-            }
-            return null
-        } else {
-            return null
-        }
-
-
+        return null
     }
 
 }

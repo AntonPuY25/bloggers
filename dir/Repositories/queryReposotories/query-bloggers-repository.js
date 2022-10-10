@@ -11,20 +11,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryBloggersRepository = void 0;
 const bloggers_scheme_1 = require("../../DB/bloggers-scheme");
+const helpers_1 = require("../../helpers/helpers");
 exports.queryBloggersRepository = {
-    getBloggers: ({ searchNameTerm, pageNumber = 1, pageSize = 10, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
+    getBloggers: ({ searchNameTerm, pageNumber, pageSize, sortBy, sortDirection }) => __awaiter(void 0, void 0, void 0, function* () {
         const findOptions = searchNameTerm ? {
             $or: [{ name: { $regex: searchNameTerm } },
                 { name: { $regex: searchNameTerm.toLowerCase() } }]
         }
             : {};
-        const skipCount = (pageNumber - 1) * pageSize;
+        const skipCount = (0, helpers_1.getSkipCountData)(pageNumber, pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = yield bloggers_scheme_1.BloggersModel.find(findOptions).count();
-        const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-        const sortCreateData = sortBy ? sortBy : 'createdAt';
-        const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
+        const pagesCount = (0, helpers_1.getPagesCountData)(totalCount, pageSize);
+        const sortCreateData = (0, helpers_1.getSortCreatedData)(sortBy);
+        const sortDirectionData = (0, helpers_1.getSortDirectionData)(sortDirection);
         return bloggers_scheme_1.BloggersModel.find(findOptions).skip(skipData).limit(limitData).sort({
             [sortCreateData]: sortDirectionData
         })
@@ -42,19 +43,19 @@ exports.queryBloggersRepository = {
                 }, []);
                 return {
                     pagesCount,
-                    page: Number(pageNumber),
-                    pageSize: Number(pageSize),
+                    page: pageNumber,
+                    pageSize: pageSize,
                     totalCount: Number(totalCount),
                     items,
                 };
             }
         })
-            .catch((error) => null);
+            .catch(() => null);
     }),
     getCurrentBlogger: (blogId) => __awaiter(void 0, void 0, void 0, function* () {
         return bloggers_scheme_1.BloggersModel.findOne({ id: blogId })
             .then((result) => result)
-            .catch((error) => null);
+            .catch(() => null);
     }),
 };
 //# sourceMappingURL=query-bloggers-repository.js.map

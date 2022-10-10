@@ -13,11 +13,13 @@ exports.testingRepository = void 0;
 const bloggers_scheme_1 = require("../DB/bloggers-scheme");
 const post_scheme_1 = require("../DB/post-scheme");
 const users_scheme_1 = require("../DB/users-scheme");
+const comments_scheme_1 = require("../DB/comments-scheme");
 exports.testingRepository = {
     allClear: () => __awaiter(void 0, void 0, void 0, function* () {
         yield bloggers_scheme_1.BloggersModel.deleteMany({});
         yield post_scheme_1.PostsModel.deleteMany({});
         yield users_scheme_1.UsersModel.deleteMany({});
+        yield comments_scheme_1.CommentsModel.deleteMany({});
         return {
             success: true
         };

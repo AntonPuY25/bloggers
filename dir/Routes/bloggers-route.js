@@ -16,27 +16,23 @@ const bloggers_service_1 = require("../services/bloggers-service");
 const query_bloggers_repository_1 = require("../Repositories/queryReposotories/query-bloggers-repository");
 const posts_service_1 = require("../services/posts-service");
 const query_posts_repository_1 = require("../Repositories/queryReposotories/query-posts-repository");
+const helpers_1 = require("../helpers/helpers");
 exports.bloggersRoute = (0, express_1.Router)({});
 exports.bloggersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = req.query;
-    res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers({
-        pageSize: pageSize ? Number(pageSize) : 10,
-        pageNumber: pageNumber ? Number(pageNumber) : 1,
-        sortBy: sortBy,
-        sortDirection: sortDirection,
-        searchNameTerm: searchNameTerm
-    }));
+    res.send(yield query_bloggers_repository_1.queryBloggersRepository.getBloggers((0, helpers_1.getBloggersData)({
+        pageSize,
+        sortBy,
+        sortDirection,
+        pageNumber,
+        searchNameTerm
+    })));
 }));
 exports.bloggersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.nameValidator, middleWares_1.urlValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, youtubeUrl } = req.body;
     const currentBlogger = yield bloggers_service_1.bloggersService.createBlogger({ name, youtubeUrl });
     if (currentBlogger) {
-        const newBlogger = {
-            id: currentBlogger.id,
-            name: currentBlogger.name,
-            youtubeUrl: currentBlogger.youtubeUrl,
-            createdAt: currentBlogger.createdAt,
-        };
+        const newBlogger = (0, helpers_1.getNewResponseBlogger)(currentBlogger);
         res.status(201).send(newBlogger);
     }
     else {
@@ -74,12 +70,7 @@ exports.bloggersRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0
     const blogId = req.params.id;
     const currentBlogger = yield query_bloggers_repository_1.queryBloggersRepository.getCurrentBlogger(blogId);
     if (currentBlogger && blogId) {
-        const newBlogger = {
-            id: currentBlogger.id,
-            name: currentBlogger.name,
-            youtubeUrl: currentBlogger.youtubeUrl,
-            createdAt: currentBlogger.createdAt,
-        };
+        const newBlogger = (0, helpers_1.getNewResponseBlogger)(currentBlogger);
         res.status(200).send(newBlogger);
     }
     else {

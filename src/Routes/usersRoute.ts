@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express";
 import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
-import {CreateUserRequestBodyType, GetUsersParamsRequestType, UserWithPasswordType} from "../interfaces/interfaces";
+import {GetUsersParamsRequestType, UserWithPasswordType} from "../interfaces/interfaces";
 import {
     authorizationMiddleWare,
     emailValidator,
@@ -9,50 +9,62 @@ import {
     passwordValidator
 } from "../middleWares/middleWares";
 import {usersService} from "../services/users-service";
+import {getUsersData} from "../helpers/helpers";
+import {GetUsersDataType} from "../helpers/types";
 
 
 export const usersRoute = Router({});
 
-usersRoute.get('/', async (req: Request<{}, {}, {}, GetUsersParamsRequestType>, res: Response) => {
-    const {pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm} = req.query;
-    console.log(searchEmailTerm,'searchEmailTerm')
-    console.log(searchLoginTerm,'searchLoginTerm')
-    const currentUser = await queryUsersRepository.getUsers({
-        pageNumber: pageNumber ? Number(pageNumber) : 1,
-        pageSize: pageSize ? Number(pageSize) : 10,
-        sortBy: sortBy ? sortBy : 'createdAt',
-        sortDirection: sortDirection ? sortDirection : 'desc',
-        searchLoginTerm: searchLoginTerm || '',
-        searchEmailTerm: searchEmailTerm || '',
+usersRoute.get('/',
+    async (req: Request<{}, {}, {},
+        GetUsersParamsRequestType>, res: Response) => {
+
+        const {
+            pageNumber, pageSize, sortBy,
+            sortDirection, searchEmailTerm, searchLoginTerm
+        } = req.query;
+
+        const currentUser = await queryUsersRepository.getUsers(
+            getUsersData({
+                pageSize,
+                pageNumber,
+                sortBy,
+                sortDirection,
+                searchEmailTerm,
+                searchLoginTerm
+            } as GetUsersDataType)
+        )
+
+        if (currentUser) {
+            res.status(200).send(currentUser)
+        } else {
+            res.sendStatus(404)
+        }
     })
 
-    if (currentUser) {
-        res.status(200).send(currentUser)
-    } else {
-        res.sendStatus(404)
-    }
-})
+usersRoute.post('/', loginValidator, passwordValidator, emailValidator, authorizationMiddleWare, errorMiddleWAre,
+    async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
+        const {email, login, password} = req.body
 
-usersRoute.post('/', loginValidator, passwordValidator, emailValidator,authorizationMiddleWare, errorMiddleWAre, async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
+        const currentUser = await usersService.createUser(
+            {email, login, password})
 
-    const {email, login, password} = req.body
+        if (currentUser) {
+            res.status(201).send(currentUser)
+        } else {
+            res.sendStatus(404)
+        }
+    })
 
-    const currentUser = await usersService.createUser({email, login, password})
-    if (currentUser) {
-        res.status(201).send(currentUser)
-    } else {
-        res.sendStatus(404)
-    }
-})
+usersRoute.delete('/:userId', authorizationMiddleWare,
+    async (req: Request, res: Response) => {
 
-usersRoute.delete('/:userId', authorizationMiddleWare,async (req: Request, res: Response) => {
-    const {userId} = req.params;
-    const result = await queryUsersRepository.deleteUser(userId);
+        const {userId} = req.params;
+        const result = await queryUsersRepository.deleteUser(userId);
 
-    if (result) {
-        res.sendStatus(204)
-    } else {
-        res.sendStatus(404)
-    }
-
-})
+        if (result) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(404)
+        }
+    })

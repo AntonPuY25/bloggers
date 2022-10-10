@@ -3,7 +3,6 @@ import {BloggersModel} from "../DB/bloggers-scheme";
 
 
 export const bloggersRepository = {
-
     createBlogger: async (newBlogger: BloggerType) => {
         const currentBlogger = new BloggersModel(newBlogger)
 
@@ -16,7 +15,7 @@ export const bloggersRepository = {
 
         return BloggersModel.findOne({id: blogId})
             .then((result: any) => result)
-            .catch((error: any) => null)
+            .catch(() => null)
     },
 
     updateBlogger: async ({blogId, name, youtubeUrl}: UpdateBloggerProps) => {
@@ -31,20 +30,20 @@ export const bloggersRepository = {
                 }
             })
                 .then((result: any) => result)
-                .catch((error: any) => null)
+                .catch(() => null)
         } else {
             return null
         }
 
     },
+
     deleteBlogger: async (blogId: string) => {
 
         const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
-
         if (currentBlogger) {
             return BloggersModel.deleteOne({id: blogId})
                 .then((result: any) => result)
-                .catch((error: any) => null)
+                .catch(() => null)
         } else {
             return null
         }

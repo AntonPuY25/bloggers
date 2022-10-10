@@ -27,10 +27,11 @@ exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 exports.authRoute.get('/me', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { login, id, email } = req.user;
     res.status(200).send({
-        email: req.user.email,
-        login: req.user.login,
-        userId: req.user.id,
+        email,
+        login,
+        userId: id,
     });
 }));
 //# sourceMappingURL=auth-route.js.map

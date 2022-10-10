@@ -26,27 +26,24 @@ exports.postsRepositories = {
     getCurrentPost: (postId) => __awaiter(void 0, void 0, void 0, function* () {
         return post_scheme_1.PostsModel.findOne({ id: postId })
             .then((result) => result)
-            .catch((error) => null);
+            .catch(() => null);
     }),
     updatePost: (post, postId) => __awaiter(void 0, void 0, void 0, function* () {
         const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(post.blogId);
-        if (currentBlogger) {
-            const currentPost = yield exports.postsRepositories.getCurrentPost(postId);
-            if (currentPost) {
-                post.blogName = currentBlogger.name;
-                return post_scheme_1.PostsModel.updateOne({ id: postId }, {
-                    $set: {
-                        title: post.title,
-                        shortDescription: post.shortDescription,
-                        content: post.content
-                    }
-                })
-                    .then((result) => result)
-                    .catch((error) => null);
-            }
-            else {
-                return null;
-            }
+        if (!currentBlogger)
+            return null;
+        const currentPost = yield exports.postsRepositories.getCurrentPost(postId);
+        if (currentPost) {
+            post.blogName = currentBlogger.name;
+            return post_scheme_1.PostsModel.updateOne({ id: postId }, {
+                $set: {
+                    title: post.title,
+                    shortDescription: post.shortDescription,
+                    content: post.content
+                }
+            })
+                .then((result) => result)
+                .catch(() => null);
         }
         else {
             return null;
@@ -57,7 +54,7 @@ exports.postsRepositories = {
         if (currentPost) {
             return post_scheme_1.PostsModel.deleteOne({ id: postId })
                 .then((result) => result)
-                .catch((error) => null);
+                .catch(() => null);
         }
     }),
 };

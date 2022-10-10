@@ -1,17 +1,17 @@
 import {PostsModel} from "../../DB/post-scheme";
 import {DbPostType, GetPostsParamsType, GetPostsResponseType, ResponseDataPostType} from "../../interfaces/interfaces";
+import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
 export const queryPostsRepository = {
-    getPosts: async ({blogId, sortBy, sortDirection, pageNumber=1, pageSize=10}: GetPostsParamsType) => {
+    getPosts: async ({blogId, sortBy, sortDirection, pageNumber, pageSize}: GetPostsParamsType) => {
         const postsFilterData = blogId ? {blogId: blogId} : {}
-        const skipCount = (pageNumber - 1) * pageSize;
-
+        const skipCount = getSkipCountData(pageNumber,pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = await PostsModel.find(postsFilterData).count();
-        const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-        const sortCreateData = sortBy ? sortBy : 'createdAt'
-        const sortDirectionData = sortDirection === 'asc'   ? 1 : -1
+        const pagesCount = getPagesCountData(totalCount,pageSize);
+        const sortCreateData = getSortCreatedData(sortBy)
+        const sortDirectionData = getSortDirectionData(sortDirection)
 
 
 
@@ -70,6 +70,6 @@ export const queryPostsRepository = {
                     return null
                 }
             })
-            .catch((error: any) => null)
+            .catch(() => null)
     },
 }

@@ -1,7 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {jwtService} from "../services/jwy-servive";
-import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
 import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 
 const {body, validationResult} = require('express-validator');
@@ -15,7 +14,8 @@ export const titleValidator = body('title').trim().isLength({min: 3, max: 30})
 export const descriptionValidator = body('shortDescription').trim().isLength({min: 3, max: 100})
 export const contentValidator = body('content').trim().isLength({min: 3, max: 1000})
 export const contentCommentValidator = body('content').trim().isLength({min: 20, max: 300})
-export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30}).custom(async (value: string) => {
+export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30})
+    .custom(async (value: string) => {
     const currentBlogger = await bloggersRepository.getCurrentBlogger(value)
     if (!currentBlogger) {
         throw new Error('Not found this blogger');
@@ -23,7 +23,6 @@ export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 3
         return true
     }
 })
-
 
 export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction) => {
     const errors: any[] = validationResult(req).errors;
@@ -37,7 +36,6 @@ export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction)
         const errorMessage = errorsWithoutDuplicate.map((item: any) => {
             return {message: `${item.param} incorrect`, field: item.param}
         });
-
 
         return res.status(400).send({errorsMessages: errorMessage});
     }
@@ -57,12 +55,12 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
         return res.sendStatus(401);
     }
     const token = req.headers.authorization.split(' ')[1];
-
     const userId = await jwtService.getUserIdNyToken(token)
 
     if (userId) {
         req.user = await queryUsersRepository.getCurrentUser(userId)
         return next()
     }
+
     return res.send(401)
 }

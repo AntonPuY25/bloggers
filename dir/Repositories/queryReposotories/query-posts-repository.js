@@ -11,16 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryPostsRepository = void 0;
 const post_scheme_1 = require("../../DB/post-scheme");
+const helpers_1 = require("../../helpers/helpers");
 exports.queryPostsRepository = {
-    getPosts: ({ blogId, sortBy, sortDirection, pageNumber = 1, pageSize = 10 }) => __awaiter(void 0, void 0, void 0, function* () {
+    getPosts: ({ blogId, sortBy, sortDirection, pageNumber, pageSize }) => __awaiter(void 0, void 0, void 0, function* () {
         const postsFilterData = blogId ? { blogId: blogId } : {};
-        const skipCount = (pageNumber - 1) * pageSize;
+        const skipCount = (0, helpers_1.getSkipCountData)(pageNumber, pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = yield post_scheme_1.PostsModel.find(postsFilterData).count();
-        const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
-        const sortCreateData = sortBy ? sortBy : 'createdAt';
-        const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
+        const pagesCount = (0, helpers_1.getPagesCountData)(totalCount, pageSize);
+        const sortCreateData = (0, helpers_1.getSortCreatedData)(sortBy);
+        const sortDirectionData = (0, helpers_1.getSortDirectionData)(sortDirection);
         return post_scheme_1.PostsModel.find(postsFilterData).skip(skipData).limit(limitData).sort({
             [sortCreateData]: sortDirectionData
         })
@@ -72,7 +73,7 @@ exports.queryPostsRepository = {
                 return null;
             }
         })
-            .catch((error) => null);
+            .catch(() => null);
     }),
 };
 //# sourceMappingURL=query-posts-repository.js.map

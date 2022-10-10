@@ -85,11 +85,11 @@ export interface GetBloggersParamsType {
 }
 
 export interface GetPostsParamsType {
+    pageNumber: number,
+    pageSize: number,
+    sortBy: string,
+    sortDirection: string,
     blogId?: string,
-    pageNumber?: number,
-    pageSize?: number,
-    sortBy?: string,
-    sortDirection?: string,
 }
 
 export interface GetBloggerItemsResponseType {
@@ -202,14 +202,6 @@ export interface CreateCommentPropsType {
 export enum sortDirectionType  {
     asc= 'asc',
     desc= 'desc'
-}
-
-export interface GetCommentsQueryType {
-    pageNumber: string,
-    pageSize: string,
-    sortBy: string,
-    sortDirection: sortDirectionType,
-
 }
 
 export interface GetCommentForCurrentPostType {

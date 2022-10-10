@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRepository = void 0;
 const comments_scheme_1 = require("../DB/comments-scheme");
+const helpers_1 = require("../helpers/helpers");
 exports.commentsRepository = {
     createComment({ content, userId, postId, userLogin }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,16 +40,15 @@ exports.commentsRepository = {
     },
     getCommentsForCurrentPost({ postId, sortBy, sortDirection, pageNumber, pageSize }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const skipCount = (pageNumber - 1) * pageSize;
-            const sortCreateData = sortBy ? sortBy : 'createdAt';
-            const sortDirectionData = sortDirection === 'asc' ? 1 : -1;
+            const skipCount = (0, helpers_1.getSkipCountData)(pageNumber, pageSize);
+            const sortCreateData = (0, helpers_1.getSortCreatedData)(sortBy);
+            const sortDirectionData = (0, helpers_1.getSortDirectionData)(sortDirection);
             const totalCount = yield comments_scheme_1.CommentsModel.find({ postId: postId }).count();
-            const pagesCount = Math.ceil(Number(totalCount) / pageSize) || 0;
+            const pagesCount = (0, helpers_1.getPagesCountData)(totalCount, pageSize);
             try {
                 const result = yield comments_scheme_1.CommentsModel.find({ postId: postId }).skip(skipCount)
                     .limit(pageSize)
                     .sort({ [sortCreateData]: sortDirectionData });
-                console.log(result, 'result');
                 if (result.length) {
                     const items = result.reduce((acc, item) => {
                         const newComment = {
@@ -83,12 +83,13 @@ exports.commentsRepository = {
             try {
                 const result = yield comments_scheme_1.CommentsModel.find({ id: commentId });
                 if (result.length) {
+                    const { id, userId, content, userLogin, createdAt } = result[0];
                     return {
-                        id: result[0].id,
-                        userId: result[0].userId,
-                        content: result[0].content,
-                        userLogin: result[0].userLogin,
-                        createdAt: result[0].createdAt
+                        id,
+                        userId,
+                        content,
+                        userLogin,
+                        createdAt
                     };
                 }
                 else {

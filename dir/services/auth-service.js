@@ -16,17 +16,13 @@ exports.authService = {
     authUser({ login, password }) {
         return __awaiter(this, void 0, void 0, function* () {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUser(login);
-            if (currentUser) {
-                const passwordSalt = currentUser.salt;
-                const passwordHash = yield (0, helpers_1.getGeneratedHashPassword)(password, passwordSalt);
-                if (passwordHash === currentUser.password) {
-                    return currentUser;
-                }
+            if (!currentUser)
                 return null;
-            }
-            else {
-                return null;
-            }
+            const passwordSalt = currentUser.salt;
+            const passwordHash = yield (0, helpers_1.getGeneratedHashPassword)(password, passwordSalt);
+            if (passwordHash === currentUser.password)
+                return currentUser;
+            return null;
         });
     }
 };

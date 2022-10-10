@@ -20,12 +20,12 @@ const comments_repository_1 = require("../Repositories/comments-repository");
 exports.postsRoute = (0, express_1.Router)({});
 exports.postsRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
-    res.send(yield query_posts_repository_1.queryPostsRepository.getPosts({
-        pageSize: pageSize ? Number(pageSize) : 10,
-        pageNumber: pageNumber ? Number(pageNumber) : 1,
-        sortBy: sortBy,
-        sortDirection: sortDirection,
-    }));
+    res.send(yield query_posts_repository_1.queryPostsRepository.getPosts((0, helpers_1.getPostsData)({
+        pageSize,
+        pageNumber,
+        sortBy,
+        sortDirection
+    })));
 }));
 exports.postsRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const currentPost = yield posts_service_1.postsService.createPost(req.body);
@@ -48,7 +48,6 @@ exports.postsRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
 }));
 exports.postsRoute.put('/:id', middleWares_1.authorizationMiddleWare, middleWares_1.titleValidator, middleWares_1.descriptionValidator, middleWares_1.contentValidator, middleWares_1.bloggerIdValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.id;
-    console.log(req.body, 'req.body');
     const currentPost = yield posts_service_1.postsService.updatePost(Object.assign(Object.assign({}, req.body), { postId }));
     if (currentPost) {
         res.send(204);
@@ -72,19 +71,16 @@ exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middl
     const { content } = req.body;
     const { id, login } = req.user;
     const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
-    if (currentPost) {
-        const currentComment = yield comments_repository_1.commentsRepository.createComment({
-            postId,
-            content,
-            userId: id,
-            userLogin: login
-        });
-        if (currentComment) {
-            res.status(201).send(currentComment);
-        }
-        else {
-            res.sendStatus(404);
-        }
+    if (!currentPost)
+        return res.sendStatus(404);
+    const currentComment = yield comments_repository_1.commentsRepository.createComment({
+        postId,
+        content,
+        userId: id,
+        userLogin: login
+    });
+    if (currentComment) {
+        res.status(201).send(currentComment);
     }
     else {
         res.sendStatus(404);
@@ -94,20 +90,17 @@ exports.postsRoute.get('/:postId/comments', (req, res) => __awaiter(void 0, void
     const { postId } = req.params;
     const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
     const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
-    if (currentPost) {
-        const comments = yield comments_repository_1.commentsRepository.getCommentsForCurrentPost({
-            pageSize: pageSize ? Number(pageSize) : 10,
-            pageNumber: pageNumber ? Number(pageNumber) : 1,
-            sortBy: sortBy,
-            sortDirection: sortDirection,
-            postId
-        });
-        if (comments) {
-            res.status(200).send(comments);
-        }
-        else {
-            res.sendStatus(404);
-        }
+    if (!currentPost)
+        return res.sendStatus(404);
+    const postData = (0, helpers_1.getPostsData)({
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection
+    });
+    const comments = yield comments_repository_1.commentsRepository.getCommentsForCurrentPost(Object.assign({ postId }, postData));
+    if (comments) {
+        res.status(200).send(comments);
     }
     else {
         res.sendStatus(404);

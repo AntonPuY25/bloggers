@@ -3,7 +3,6 @@ import {usersRepository} from "../Repositories/users-repository";
 
 export const usersService = {
     async createUser({password, email, login}: CreateUserRequestBodyType) {
-
         const newUser: UserWithPasswordType = {
             id: Number(new Date()).toString(),
             login,
@@ -12,6 +11,5 @@ export const usersService = {
         }
 
         return await usersRepository.createUser(newUser)
-
     }
 }

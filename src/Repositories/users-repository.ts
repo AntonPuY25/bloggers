@@ -5,12 +5,13 @@ import {getGeneratedHashPassword} from "../helpers/helpers";
 
 
 export const usersRepository = {
-
     async createUser(newUser: UserWithPasswordType) {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await getGeneratedHashPassword(newUser.password, passwordSalt)
 
-        const currentUser = new UsersModel({...newUser, password: passwordHash, salt: passwordSalt})
+        const currentUser = new UsersModel(
+            {...newUser, password: passwordHash, salt: passwordSalt})
+
         return currentUser.save()
             .then((result: any) => {
                 if (result) {
@@ -24,10 +25,10 @@ export const usersRepository = {
             })
             .catch(() => null)
     },
-    async getCurrentUser(login:string) {
 
+    async getCurrentUser(login: string) {
         return UsersModel.find({login})
-            .then((result: any) =>result[0])
+            .then((result: any) => result[0])
             .catch(() => null)
     }
 

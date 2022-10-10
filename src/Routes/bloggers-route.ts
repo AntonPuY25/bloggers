@@ -13,44 +13,48 @@ import {ResponseDataBloggerType} from "../interfaces/interfaces";
 import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
 import {postsService} from "../services/posts-service";
 import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
+import {getBloggersData, getNewResponseBlogger} from "../helpers/helpers";
+import {GetBloggersData} from "../helpers/types";
 
 export const bloggersRoute = Router({})
 
 bloggersRoute.get('/', async (req: Request, res: Response) => {
     const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query;
-    res.send(await queryBloggersRepository.getBloggers({
-        pageSize: pageSize ? Number(pageSize) : 10,
-        pageNumber: pageNumber ? Number(pageNumber) : 1,
-        sortBy: sortBy as string,
-        sortDirection: sortDirection as string,
-        searchNameTerm: searchNameTerm as string
-    }))
+    res.send(await queryBloggersRepository.getBloggers(getBloggersData({
+        pageSize,
+        sortBy,
+        sortDirection,
+        pageNumber,
+        searchNameTerm
+    } as GetBloggersData)))
 })
 
-bloggersRoute.post('/', authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
-    const {name, youtubeUrl} = req.body;
+bloggersRoute.post('/', authorizationMiddleWare,
+    nameValidator,
+    urlValidator,
+    errorMiddleWAre, async (req: Request, res: Response) => {
+        const {name, youtubeUrl} = req.body;
 
-    const currentBlogger = await bloggersService.createBlogger({name, youtubeUrl})
-    if (currentBlogger) {
-        const newBlogger: ResponseDataBloggerType = {
-            id: currentBlogger.id,
-            name: currentBlogger.name,
-            youtubeUrl: currentBlogger.youtubeUrl,
-            createdAt: currentBlogger.createdAt,
+        const currentBlogger = await bloggersService.createBlogger(
+            {name, youtubeUrl})
 
+        if (currentBlogger) {
+            const newBlogger: ResponseDataBloggerType =
+                getNewResponseBlogger(currentBlogger)
+
+            res.status(201).send(newBlogger)
+        } else {
+            res.send(404)
         }
-        res.status(201).send(newBlogger)
-    } else {
-        res.send(404)
-    }
 
 
-})
+    })
 
 bloggersRoute.post('/:blogId/posts', authorizationMiddleWare, titleValidator, descriptionValidator, contentValidator, errorMiddleWAre, async (req: Request, res: Response) => {
 
     const {blogId} = req.params;
-    const currentBlogger = await postsService.createPost({...req.body, blogId})
+    const currentBlogger = await postsService.createPost(
+        {...req.body, blogId})
 
     if (currentBlogger) {
         res.status(201).send(currentBlogger)
@@ -83,19 +87,10 @@ bloggersRoute.get('/:blogId/posts', async (req: Request, res: Response) => {
 
 bloggersRoute.get('/:id', async (req: Request, res: Response) => {
     const blogId = req.params.id;
-
     const currentBlogger = await queryBloggersRepository.getCurrentBlogger(blogId)
 
-
     if (currentBlogger && blogId) {
-
-        const newBlogger: ResponseDataBloggerType = {
-            id: currentBlogger.id,
-            name: currentBlogger.name,
-            youtubeUrl: currentBlogger.youtubeUrl,
-            createdAt: currentBlogger.createdAt,
-
-        }
+        const newBlogger: ResponseDataBloggerType = getNewResponseBlogger(currentBlogger)
         res.status(200).send(newBlogger)
     } else {
         res.send(404)
@@ -106,10 +101,10 @@ bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator, urlValidator, 
     const blogId = req.params.id;
     const {name, youtubeUrl} = req.body;
 
-    const currentBlogger = await bloggersService.updateBlogger({blogId, name, youtubeUrl})
+    const currentBlogger = await bloggersService.updateBlogger(
+        {blogId, name, youtubeUrl})
 
     if (currentBlogger && blogId) {
-
         res.send(204)
     } else {
         res.send(404)

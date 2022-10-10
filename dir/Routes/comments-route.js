@@ -38,7 +38,7 @@ exports.commentsRoute.put('/:commentId', middleWares_1.authMiddleWare, middleWar
         }
     }
     else {
-        res.sendStatus(403);
+        res.sendStatus(404);
     }
 }));
 exports.commentsRoute.delete('/:commentId', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,7 +50,7 @@ exports.commentsRoute.delete('/:commentId', middleWares_1.authMiddleWare, (req, 
             res.sendStatus(204);
         }
         else {
-            res.sendStatus(403);
+            res.sendStatus(404);
         }
     }
     else {

@@ -90,7 +90,7 @@ exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middl
         res.sendStatus(404);
     }
 }));
-exports.postsRoute.get('/:postId/comments', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRoute.get('/:postId/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { postId } = req.params;
     const { pageNumber, pageSize, sortBy, sortDirection } = req.query;
     const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);

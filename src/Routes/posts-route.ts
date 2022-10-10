@@ -102,7 +102,7 @@ postsRoute.post('/:postId/comments', authMiddleWare, contentCommentValidator, er
 
 })
 
-postsRoute.get('/:postId/comments', authMiddleWare,
+postsRoute.get('/:postId/comments',
     async (req: Request<{ postId: string }, {}, {}, {
         pageNumber: string,
         pageSize: string,
@@ -130,7 +130,6 @@ postsRoute.get('/:postId/comments', authMiddleWare,
             } else {
                 res.sendStatus(404)
             }
-
         } else {
             res.sendStatus(404)
         }

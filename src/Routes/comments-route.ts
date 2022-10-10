@@ -32,7 +32,7 @@ commentsRoute.put('/:commentId', authMiddleWare, contentCommentValidator, errorM
         }
 
     } else {
-        res.sendStatus(403)
+        res.sendStatus(404)
     }
 })
 
@@ -45,7 +45,7 @@ commentsRoute.delete('/:commentId', authMiddleWare, async (req: Request<{ commen
         if (result) {
             res.sendStatus(204)
         } else {
-            res.sendStatus(403)
+            res.sendStatus(404)
         }
 
     } else {

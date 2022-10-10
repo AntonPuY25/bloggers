@@ -26,7 +26,7 @@ const getCurrentFieldError = (field, message) => {
 };
 exports.getCurrentFieldError = getCurrentFieldError;
 const getGeneratedHashPassword = (password, salt) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield bcrypt_1.default.hash('12345', '$2a$10$r3ZkRK.LvdRbbW26VFzZ8.');
+    return yield bcrypt_1.default.hash(password, salt);
 });
 exports.getGeneratedHashPassword = getGeneratedHashPassword;
 //# sourceMappingURL=helpers.js.map

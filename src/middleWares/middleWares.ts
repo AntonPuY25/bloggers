@@ -56,9 +56,6 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
     if (!req.headers.authorization) {
         return res.sendStatus(401);
     }
-
-    console.log('Hello')
-
     const token = req.headers.authorization.split(' ')[1];
 
     const userId = await jwtService.getUserIdNyToken(token)

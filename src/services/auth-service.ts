@@ -6,8 +6,7 @@ export const authService = {
 
     async authUser({login, password}: AuthRequestBodyType) {
 
-        const currentUser = await usersRepository.getCurrentUser(login)
-
+        const currentUser = await usersRepository.getCurrentUser(login);
 
         if (currentUser) {
             const passwordSalt = currentUser.salt;

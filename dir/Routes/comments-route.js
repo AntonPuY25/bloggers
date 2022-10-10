@@ -27,8 +27,12 @@ exports.commentsRoute.get('/:commentId', (req, res) => __awaiter(void 0, void 0,
 exports.commentsRoute.put('/:commentId', middleWares_1.authMiddleWare, middleWares_1.contentCommentValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { content } = req.body;
     const { commentId } = req.params;
+    const { id } = req.user;
     const currentComment = yield comments_repository_1.commentsRepository.getCurrentComment(commentId);
     if (currentComment) {
+        if (currentComment.userId !== id) {
+            return res.sendStatus(403);
+        }
         const result = yield comments_repository_1.commentsRepository.updateCurrentComment(commentId, content);
         if (result) {
             res.sendStatus(204);
@@ -43,8 +47,12 @@ exports.commentsRoute.put('/:commentId', middleWares_1.authMiddleWare, middleWar
 }));
 exports.commentsRoute.delete('/:commentId', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { commentId } = req.params;
+    const { id } = req.user;
     const currentComment = yield comments_repository_1.commentsRepository.getCurrentComment(commentId);
     if (currentComment) {
+        if (currentComment.userId !== id) {
+            return res.sendStatus(403);
+        }
         const result = yield comments_repository_1.commentsRepository.deleteCurrentComment(commentId);
         if (result) {
             res.sendStatus(204);

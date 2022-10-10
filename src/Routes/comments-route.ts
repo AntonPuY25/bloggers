@@ -20,10 +20,15 @@ commentsRoute.get('/:commentId', async (req: Request<{ commentId: string }, {}, 
 commentsRoute.put('/:commentId', authMiddleWare, contentCommentValidator, errorMiddleWAre, async (req: Request<{ commentId: string }, {}, UpdateCommentBodyParamsType, {}>, res: Response) => {
     const {content} = req.body;
     const {commentId} = req.params;
-
+    const {id} = req.user!;
 
     const currentComment = await commentsRepository.getCurrentComment(commentId);
+
+
     if (currentComment) {
+        if(currentComment.userId !==id){
+            return res.sendStatus(403);
+        }
         const result = await commentsRepository.updateCurrentComment(commentId, content);
         if (result) {
             res.sendStatus(204)
@@ -38,16 +43,21 @@ commentsRoute.put('/:commentId', authMiddleWare, contentCommentValidator, errorM
 
 commentsRoute.delete('/:commentId', authMiddleWare, async (req: Request<{ commentId: string }, {}, {}, {}>, res: Response) => {
     const {commentId} = req.params;
+    const {id} = req.user!;
 
     const currentComment = await commentsRepository.getCurrentComment(commentId);
+
+
     if (currentComment) {
+        if(currentComment.userId !==id){
+            return res.sendStatus(403);
+        }
         const result = await commentsRepository.deleteCurrentComment(commentId);
         if (result) {
             res.sendStatus(204)
         } else {
             res.sendStatus(404)
         }
-
     } else {
         res.sendStatus(404)
     }

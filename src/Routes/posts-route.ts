@@ -10,7 +10,7 @@ import {
     titleValidator
 } from "../middleWares/middleWares";
 import {getCurrentFieldError, getPostsData} from "../helpers/helpers";
-import {postsService} from "../services/posts-service";
+import {postsService} from "../domains/posts-service";
 import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
 import {sortDirectionType, UpdateCommentBodyParamsType} from "../interfaces/interfaces";
 import {postsRepositories} from "../Repositories/posts-repository";

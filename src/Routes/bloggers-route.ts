@@ -8,10 +8,10 @@ import {
     titleValidator,
     urlValidator
 } from "../middleWares/middleWares";
-import {bloggersService} from "../services/bloggers-service";
+import {bloggersService} from "../domains/bloggers-service";
 import {ResponseDataBloggerType} from "../interfaces/interfaces";
 import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
-import {postsService} from "../services/posts-service";
+import {postsService} from "../domains/posts-service";
 import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
 import {getBloggersData, getNewResponseBlogger} from "../helpers/helpers";
 import {GetBloggersData} from "../helpers/types";

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
-import {jwtService} from "../services/jwy-servive";
+import {jwtService} from "../domains/jwy-servive";
 import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 
 const {body, validationResult} = require('express-validator');

@@ -8,7 +8,7 @@ import {
     loginValidator,
     passwordValidator
 } from "../middleWares/middleWares";
-import {usersService} from "../services/users-service";
+import {usersService} from "../domains/users-service";
 import {getUsersData} from "../helpers/helpers";
 import {GetUsersDataType} from "../helpers/types";
 

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testingRoute = void 0;
 const express_1 = require("express");
-const testing_service_1 = require("../services/testing-service");
+const testing_service_1 = require("../domains/testing-service");
 exports.testingRoute = (0, express_1.Router)({});
 exports.testingRoute.delete('/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { success } = yield testing_service_1.testingService.allClear();

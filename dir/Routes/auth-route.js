@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoute = void 0;
 const express_1 = require("express");
-const auth_service_1 = require("../services/auth-service");
-const jwy_servive_1 = require("../services/jwy-servive");
+const auth_service_1 = require("../domains/auth-service");
+const jwy_servive_1 = require("../domains/jwy-servive");
 const middleWares_1 = require("../middleWares/middleWares");
 exports.authRoute = (0, express_1.Router)({});
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

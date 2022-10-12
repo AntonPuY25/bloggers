@@ -9,6 +9,7 @@ import {usersRoute} from "./Routes/usersRoute";
 import {authRoute} from "./Routes/auth-route";
 import {settings} from "./settings/settings";
 import {commentsRoute} from "./Routes/comments-route";
+import {emailRouter} from "./Routes/email-router";
 
 const express = require('express')
 const app = express()
@@ -29,6 +30,7 @@ app.use('/users', usersRoute)
 app.use('/testing', testingRoute)
 app.use('/auth', authRoute)
 app.use('/comments', commentsRoute)
+app.use('/email', emailRouter)
 
 app.listen(port, async () => {
     await mongoose.connect(mongoUri)

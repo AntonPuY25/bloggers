@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {AuthRequestBodyType} from "../interfaces/interfaces";
-import {authService} from "../services/auth-service";
-import {jwtService} from "../services/jwy-servive";
+import {authService} from "../domains/auth-service";
+import {jwtService} from "../domains/jwy-servive";
 import {authMiddleWare} from "../middleWares/middleWares";
 
 export const authRoute = Router({});

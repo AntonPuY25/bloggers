@@ -12,7 +12,7 @@ import {commentsRoute} from "./Routes/comments-route";
 import {emailRouter} from "./Routes/email-router";
 
 const express = require('express')
-const app = express()
+export const app = express()
 const port = settings.MONGO_URI
 
 app.use(cors())
@@ -31,6 +31,7 @@ app.use('/testing', testingRoute)
 app.use('/auth', authRoute)
 app.use('/comments', commentsRoute)
 app.use('/email', emailRouter)
+
 
 app.listen(port, async () => {
     await mongoose.connect(mongoUri)

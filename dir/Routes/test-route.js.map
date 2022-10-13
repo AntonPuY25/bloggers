@@ -1,0 +1,1 @@
+{"version":3,"file":"test-route.js","sourceRoot":"","sources":["../../src/Routes/test-route.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qCAAgD;AAEnC,QAAA,UAAU,GAAG,IAAA,gBAAM,EAAC,EAAE,CAAC,CAAC;AAErC,kBAAU,CAAC,GAAG,CAAC,GAAG,EAAC,CAAO,GAAY,EAAE,GAAa,EAAC,EAAE;IAEpD,GAAG,CAAC,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC;QACjB,OAAO,EAAE,OAAO;KACnB,CAAC,CAAA;AAEN,CAAC,CAAA,CAAC,CAAA"}

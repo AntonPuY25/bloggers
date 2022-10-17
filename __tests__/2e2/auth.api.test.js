@@ -14,11 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const src_1 = require("../../src");
-describe('/course', () => {
-    it('It is first test for example', () => __awaiter(void 0, void 0, void 0, function* () {
-        yield (0, supertest_1.default)(src_1.app)
-            .get('/test')
-            .expect(200, { message: "Hello" });
+describe('/test', () => {
+    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(src_1.app).delete('/testing/all-data');
+    }));
+    it('should delete a new user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const test = 1;
+        expect(test).toEqual(1);
     }));
 });
-//# sourceMappingURL=course.api.test.js.map
+//# sourceMappingURL=auth.api.test.js.map

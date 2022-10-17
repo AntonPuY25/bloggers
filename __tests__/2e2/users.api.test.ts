@@ -2,7 +2,7 @@ import request from 'supertest';
 import {app} from "../../src";
 
 
-describe('/course', () => {
+describe('/users', () => {
 
     beforeAll(async () => {
         await request(app).delete('/testing/all-data')
@@ -37,7 +37,7 @@ describe('/course', () => {
             .expect(204)
 
         await request(app)
-            .get(`/users`)
+            .get(`/users/${currentUser.id}`)
             .expect(404)
 
 

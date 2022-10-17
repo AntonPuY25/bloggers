@@ -24,7 +24,6 @@ const auth_route_1 = require("./Routes/auth-route");
 const settings_1 = require("./settings/settings");
 const comments_route_1 = require("./Routes/comments-route");
 const email_router_1 = require("./Routes/email-router");
-const test_route_1 = require("./Routes/test-route");
 const express = require('express');
 exports.app = express();
 const port = settings_1.settings.MONGO_URI;
@@ -41,7 +40,6 @@ exports.app.use('/testing', testing_route_1.testingRoute);
 exports.app.use('/auth', auth_route_1.authRoute);
 exports.app.use('/comments', comments_route_1.commentsRoute);
 exports.app.use('/email', email_router_1.emailRouter);
-exports.app.use('/test', test_route_1.testRouter);
 exports.app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connect(mongoUri)
         .then((res) => console.log('success'))

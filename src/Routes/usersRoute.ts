@@ -42,7 +42,7 @@ usersRoute.get('/',
         }
     })
 
-usersRoute.post('/', loginValidator, passwordValidator, emailValidator, authorizationMiddleWare, errorMiddleWAre,
+usersRoute.post('/', loginValidator, passwordValidator, emailValidator, errorMiddleWAre,
     async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
         const {email, login, password} = req.body
 
@@ -56,7 +56,7 @@ usersRoute.post('/', loginValidator, passwordValidator, emailValidator, authoriz
         }
     })
 
-usersRoute.delete('/:userId', authorizationMiddleWare,
+usersRoute.delete('/:userId',
     async (req: Request, res: Response) => {
 
         const {userId} = req.params;

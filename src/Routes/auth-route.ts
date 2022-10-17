@@ -7,7 +7,7 @@ import {authMiddleWare} from "../middleWares/middleWares";
 export const authRoute = Router({});
 
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
-    const {login, password} = req.body
+    const {login, password} = req.body;
 
     const authResult = await authService.authUser({login, password});
 

@@ -136,6 +136,7 @@ export interface UsersType {
     login: string,
     email: string,
     createdAt?: string,
+    isConfirmed?: string,
 }
 
 export interface UserWithPasswordType extends UsersType {

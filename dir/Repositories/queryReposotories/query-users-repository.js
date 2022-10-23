@@ -33,9 +33,10 @@ exports.queryUsersRepository = {
                 const items = result.reduce((acc, item) => {
                     const newUser = {
                         id: item.id,
-                        email: item.email,
-                        login: item.login,
+                        email: item.userData.email,
+                        login: item.userData.login,
                         createdAt: item.createdAt,
+                        isConfirmed: item.emailConfirmation.isConfirmed,
                     };
                     acc.push(newUser);
                     return acc;

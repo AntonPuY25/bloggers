@@ -15,7 +15,7 @@ export const emailAdapter = {
             from: 'Anton Kliashchonak',  // sender address
             to: email, // list of receivers
             subject, // Subject line
-            html: `<b>${message}</b>`, // html body
+            html: message, // html body
         });
 
     }

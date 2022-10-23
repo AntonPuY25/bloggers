@@ -11,21 +11,37 @@ const usersSchema = new Schema({
         type: String,
         required: true,
     },
-    login: {
-        type: String,
-        required: true,
+    userData: {
+        login: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+        },
+        salt: {
+            type: String,
+            required: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        }
     },
-    email: {
-        type: String,
-        required: true,
-    },
-    salt: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
+    emailConfirmation: {
+        confirmationCode: {
+            type: String,
+            required: true,
+        },
+        expirationDate: {
+            type: String,
+            required: true,
+        },
+        isConfirmed: {
+            type: Boolean,
+            required: true
+        }
     }
 }, { timestamps: true });
 exports.UsersModel = mongoose_1.default.model('Users', usersSchema);

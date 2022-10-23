@@ -1,8 +1,9 @@
-import request from 'supertest';
-import {app} from "../../src";
+import request from "supertest";
+import {app} from "../../index";
 
 
-describe('/users', () => {
+
+describe('/auth',()=>{
 
     beforeAll(async () => {
         await request(app).delete('/testing/all-data')
@@ -30,18 +31,16 @@ describe('/users', () => {
         currentUser = result.body;
     })
 
-    it('should delete a new user', async () => {
+    it('should auth a created user', async () => {
 
         await request(app)
-            .delete(`/users/${currentUser.id}`)
-            .expect(204)
-
-        await request(app)
-            .get(`/users/${currentUser.id}`)
-            .expect(404)
-
+            .post('/auth/login')
+            .send({
+                "login":"puy25",
+                "password": "123123"
+            })
+            .expect(200)
 
     })
-
 
 })

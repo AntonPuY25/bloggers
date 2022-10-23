@@ -14,13 +14,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const src_1 = require("../../src");
-describe('/test', () => {
+describe('/auth', () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, supertest_1.default)(src_1.app).delete('/testing/all-data');
     }));
-    it('should delete a new user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const test = 1;
-        expect(test).toEqual(1);
+    let currentUser = null;
+    it('should create a new user with correct Data', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield (0, supertest_1.default)(src_1.app)
+            .post('/users')
+            .send({
+            "login": "puy25",
+            "email": "puy25@bk.ru",
+            "password": "123123"
+        })
+            .expect(201);
+        expect(result.body.email).toEqual("puy25@bk.ru");
+        expect(result.body.login).toEqual("puy25");
+        expect(result.body.id).toBeDefined();
+        currentUser = result.body;
+    }));
+    it('should auth a created user', () => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, supertest_1.default)(src_1.app)
+            .post('/auth/login')
+            .send({
+            "login": "puy25",
+            "password": "123123"
+        })
+            .expect(200);
     }));
 });
 //# sourceMappingURL=auth.api.test.js.map

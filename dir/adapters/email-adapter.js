@@ -28,7 +28,7 @@ exports.emailAdapter = {
                 from: 'Anton Kliashchonak',
                 to: email,
                 subject,
-                html: `<b>${message}</b>`, // html body
+                html: message, // html body
             });
         });
     }

@@ -29,7 +29,7 @@ bloggersRoute.get('/', async (req: Request, res: Response) => {
     } as GetBloggersData)))
 })
 
-bloggersRoute.post('/',
+bloggersRoute.post('/',authorizationMiddleWare,
     nameValidator,
     urlValidator,
     errorMiddleWAre, async (req: Request, res: Response) => {
@@ -50,7 +50,7 @@ bloggersRoute.post('/',
 
     })
 
-bloggersRoute.post('/:blogId/posts', titleValidator, descriptionValidator, contentValidator, errorMiddleWAre, async (req: Request, res: Response) => {
+bloggersRoute.post('/:blogId/posts', authorizationMiddleWare,titleValidator, descriptionValidator, contentValidator, errorMiddleWAre, async (req: Request, res: Response) => {
 
     const {blogId} = req.params;
     const currentBlogger = await postsService.createPost(
@@ -97,7 +97,7 @@ bloggersRoute.get('/:id', async (req: Request, res: Response) => {
     }
 })
 
-bloggersRoute.put('/:id', nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
+bloggersRoute.put('/:id',authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
     const blogId = req.params.id;
     const {name, youtubeUrl} = req.body;
 
@@ -111,7 +111,7 @@ bloggersRoute.put('/:id', nameValidator, urlValidator, errorMiddleWAre, async (r
     }
 })
 
-bloggersRoute.delete('/:id', async (req: Request, res: Response) => {
+bloggersRoute.delete('/:id', authorizationMiddleWare,async (req: Request, res: Response) => {
     const blogId = req.params.id;
     const currentBlogger = await bloggersService.deleteBlogger(blogId)
 

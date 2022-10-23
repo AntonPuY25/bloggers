@@ -13,9 +13,14 @@ exports.emailManager = void 0;
 exports.emailManager = {
     getRecoveryMessageEmail(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const email = user.email;
-            const message = "<h1>Hello , thanks fo you attention</h1>";
-            const subject = user.subject;
+            const link = `https://somesite.com/confirm-email?code=${user.emailConfirmation.confirmationCode}`;
+            const email = user.userData.email;
+            const message = " <h1>Thank for your registration</h1>\n" +
+                "       <p>To finish registration please follow the link below:\n" +
+                `          <a href=${link}>complete registration</a>\n` +
+                "      </p>\n" +
+                `<b>${user.emailConfirmation.confirmationCode}</b>`;
+            const subject = "Confirm your email, please.";
             return {
                 email, message, subject
             };

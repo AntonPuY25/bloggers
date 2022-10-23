@@ -1,5 +1,5 @@
 import request from "supertest";
-import {app} from "../../src";
+import {app} from "../../index";
 
 
 describe('/blogs', () => {
@@ -63,8 +63,6 @@ describe('/blogs', () => {
     })
 
 
-
-
     it('Should create post for current blog', async ()=>{
 
         const result = await request(app)
@@ -80,9 +78,6 @@ describe('/blogs', () => {
             expect(result.body.shortDescription).toEqual('AAAAAAAAAAAAAAAAAAAA')
             expect(result.body.content).toEqual('No content')
             expect(result.body.blogId).toEqual(currentBlog.id)
-
-
-
     })
 
     it('Should get posts for current blog', async ()=>{

@@ -2,9 +2,57 @@ import {Request, Response, Router} from "express";
 import {AuthRequestBodyType} from "../interfaces/interfaces";
 import {authService} from "../domains/auth-service";
 import {jwtService} from "../domains/jwy-servive";
-import {authMiddleWare} from "../middleWares/middleWares";
+import {
+    authMiddleWare, emailDuplicationValidator,
+    emailValidator,
+    errorMiddleWAre, loginDuplicationValidator,
+    loginValidator,
+    passwordValidator
+} from "../middleWares/middleWares";
+import {
+    RegistrationBodyTypes,
+    RegistrationConfirmationBodyTypes,
+    RegistrationResendingEmailBodyTypes
+} from "../interfaces/registration-types/interface";
 
 export const authRoute = Router({});
+
+
+authRoute.post('/registration', loginValidator, passwordValidator, emailValidator,emailDuplicationValidator,loginDuplicationValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) => {
+
+    const {login, password, email} = req.body;
+
+    const currentUser = await authService.registerUser({email, login, password})
+
+    if (!currentUser) return res.sendStatus(404);
+
+    res.sendStatus(204)
+})
+
+authRoute.post('/registration-confirmation', async (req: Request<{}, {}, RegistrationConfirmationBodyTypes, {}>, res: Response) => {
+    const {code} = req.body;
+
+    const result = await authService.confirmEmail({code})
+
+    if (result) {
+        return res.sendStatus(204)
+    } else {
+        return res.sendStatus(404)
+    }
+})
+
+
+authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
+    const {email} = req.body;
+
+    const result = await authService.resendEmail({email})
+
+    if (result) {
+        return res.sendStatus(204)
+    } else {
+        return res.sendStatus(404)
+    }
+})
 
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;

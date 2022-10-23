@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {jwtService} from "../domains/jwy-servive";
 import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
+import {usersRepository} from "../Repositories/users-repository";
 
 const {body, validationResult} = require('express-validator');
 
@@ -16,13 +17,32 @@ export const contentValidator = body('content').trim().isLength({min: 3, max: 10
 export const contentCommentValidator = body('content').trim().isLength({min: 20, max: 300})
 export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30})
     .custom(async (value: string) => {
-    const currentBlogger = await bloggersRepository.getCurrentBlogger(value)
-    if (!currentBlogger) {
-        throw new Error('Not found this blogger');
-    } else {
-        return true
-    }
-})
+        const currentBlogger = await bloggersRepository.getCurrentBlogger(value)
+        if (!currentBlogger) {
+            throw new Error('Not found this blogger');
+        } else {
+            return true
+        }
+    })
+export const emailDuplicationValidator = body('email').trim().isLength({min: 3})
+    .custom(async (email: string) => {
+        const currentUser = await usersRepository.getCurrentUserByEmail({email})
+        if (currentUser) {
+            throw new Error('Current email already exist')
+        } else {
+            return true;
+        }
+    })
+
+export const loginDuplicationValidator = body('login').trim().isLength({min: 3})
+    .custom(async (login: string) => {
+        const currentUser = await usersRepository.getCurrentUser(login)
+        if (currentUser) {
+            throw new Error('Current login already exist')
+        } else {
+            return true;
+        }
+    })
 
 export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction) => {
     const errors: any[] = validationResult(req).errors;
@@ -33,11 +53,24 @@ export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction)
             const duplicate = errors.find((el, i) => (i < index && el.param === item.param));
             return !duplicate;
         })
+        let isDuplicatedEmail = false;
+
         const errorMessage = errorsWithoutDuplicate.map((item: any) => {
-            return {message: `${item.param} incorrect`, field: item.param}
+            if (item?.msg && item.msg === 'Current email already exist') {
+                isDuplicatedEmail = true
+            }
+
+            return {message: item?.msg ? item.msg : `${item.param} incorrect`, field: item.param}
+
+
         });
 
-        return res.status(400).send({errorsMessages: errorMessage});
+        return res.status(400).send({
+            errorsMessages: isDuplicatedEmail ?[{
+                "message": "Current email already exist",
+                "field": "email"
+            }] : errorMessage
+        });
     }
     next()
 };

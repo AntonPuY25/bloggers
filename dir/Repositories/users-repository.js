@@ -8,32 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRepository = void 0;
 const users_scheme_1 = require("../DB/users-scheme");
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const helpers_1 = require("../helpers/helpers");
 exports.usersRepository = {
-    createUser(newUser) {
+    createUser(userDb) {
         return __awaiter(this, void 0, void 0, function* () {
-            const passwordSalt = yield bcrypt_1.default.genSalt(10);
-            const passwordHash = yield (0, helpers_1.getGeneratedHashPassword)(newUser.password, passwordSalt);
-            const currentUser = new users_scheme_1.UsersModel(Object.assign(Object.assign({}, newUser), { password: passwordHash, salt: passwordSalt }));
-            return currentUser.save()
-                .then((result) => {
+            const user = new users_scheme_1.UsersModel(userDb);
+            try {
+                const result = yield user.save();
                 if (result) {
-                    return {
-                        id: result.id,
-                        email: result.email,
-                        login: result.login,
-                        createdAt: result.createdAt,
-                    };
+                    return userDb;
                 }
-            })
-                .catch(() => null);
+            }
+            catch (e) {
+                return null;
+            }
         });
     },
     getCurrentUser(login) {
@@ -42,6 +32,31 @@ exports.usersRepository = {
                 .then((result) => result[0])
                 .catch(() => null);
         });
-    }
+    },
+    getCurrentUserByCode({ code }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return users_scheme_1.UsersModel.find({ 'emailConfirmation.confirmationCode': code })
+                .then((result) => result[0])
+                .catch(() => null);
+        });
+    },
+    getCurrentUserByEmail({ email }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return users_scheme_1.UsersModel.find({ 'userData.email': email })
+                .then((result) => result[0])
+                .catch(() => null);
+        });
+    },
+    confirmEmail(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return users_scheme_1.UsersModel.updateOne({ id }, {
+                $set: {
+                    'emailConfirmation.isConfirmed': true
+                }
+            })
+                .then((result) => result)
+                .catch(() => null);
+        });
+    },
 };
 //# sourceMappingURL=users-repository.js.map

@@ -1,4 +1,4 @@
-import {DbUserType, GetUsersParamsType, GetUsersResponseType, UsersType} from "../../interfaces/interfaces";
+import {GetUsersParamsType, GetUsersResponseType, UsersType} from "../../interfaces/interfaces";
 import {UsersModel} from "../../DB/users-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
@@ -32,12 +32,13 @@ export const queryUsersRepository = {
         })
             .then((result: any) => {
 
-                const items = result.reduce((acc: UsersType[], item: DbUserType) => {
+                const items = result.reduce((acc: UsersType[], item: any) => {
                     const newUser: UsersType = {
                         id: item.id,
-                        email: item.email,
-                        login: item.login,
+                        email: item.userData.email,
+                        login: item.userData.login,
                         createdAt: item.createdAt,
+                        isConfirmed: item.emailConfirmation.isConfirmed,
                     }
                     acc.push(newUser)
                     return acc

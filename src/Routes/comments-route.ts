@@ -25,6 +25,7 @@ commentsRoute.put('/:commentId', authMiddleWare,
         const {id} = req.user!;
 
         const currentComment = await commentsRepository.getCurrentComment(commentId);
+
         if (!currentComment) return res.sendStatus(404)
 
         if (currentComment.userId !== id) return res.sendStatus(403)

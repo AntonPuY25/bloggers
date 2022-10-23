@@ -64,13 +64,19 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
     if (!req.headers.authorization) {
         return res.sendStatus(401);
     }
+
     const token = req.headers.authorization.split(' ')[1];
-    const userId = await jwtService.getUserIdNyToken(token)
+    const userId = await jwtService.getUserIdByToken(token)
 
     if (userId) {
-        req.user = await queryUsersRepository.getCurrentUser(userId)
-        return next()
+        const currentUser =  await queryUsersRepository.getCurrentUser(userId);
+        if(currentUser){
+            req.user = currentUser
+            return next()
+        }else{
+            return res.sendStatus(403)
+        }
     }
 
-    return res.send(401)
+    return res.sendStatus(401)
 }

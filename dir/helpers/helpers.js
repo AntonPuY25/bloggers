@@ -87,7 +87,7 @@ const duplicatedEmail = (email) => __awaiter(void 0, void 0, void 0, function* (
         return {
             "errorsMessages": [
                 {
-                    "message": "This email is already confirm",
+                    "message": "This email is already exist",
                     "field": 'email'
                 }
             ]
@@ -99,12 +99,14 @@ const duplicatedEmail = (email) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.duplicatedEmail = duplicatedEmail;
 const duplicatedLogin = (login) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(login, 'login');
     const currentUser = yield users_repository_1.usersRepository.getCurrentUser(login);
+    console.log(currentUser, 'currentUser');
     if (currentUser) {
         return {
             "errorsMessages": [
                 {
-                    "message": "This email is already confirm",
+                    "message": "This login is already exist",
                     "field": 'login'
                 }
             ]

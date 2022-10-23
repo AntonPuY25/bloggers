@@ -70,8 +70,7 @@ exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middl
     var _a, _b;
     const { postId } = req.params;
     const { content } = req.body;
-    const { id } = req.user;
-    console.log(req.user, 'req.user');
+    const { id } = req === null || req === void 0 ? void 0 : req.user;
     const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
     if (!currentPost)
         return res.sendStatus(404);

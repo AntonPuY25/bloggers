@@ -15,7 +15,7 @@ const email_manager_1 = require("../managers/email-manager");
 exports.emailService = {
     sendEmail({ email, subject, message }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const recoveryData = yield email_manager_1.emailManager.getRecoveryMessageEmail({
+            const recoveryData = yield email_manager_1.emailManager.getRecoveryMessageEmailByUser({
                 id: '1',
                 userData: { email, salt: '123', login: 'PuY', password: '123' },
                 emailConfirmation: { confirmationCode: '13sd', isConfirmed: false, expirationDate: new Date() }

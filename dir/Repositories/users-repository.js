@@ -26,9 +26,24 @@ exports.usersRepository = {
             }
         });
     },
+    updateUser(id, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield users_scheme_1.UsersModel.updateOne({ id }, {
+                    $set: {
+                        'emailConfirmation.confirmationCode': code
+                    }
+                });
+                return true;
+            }
+            catch (e) {
+                return null;
+            }
+        });
+    },
     getCurrentUser(login) {
         return __awaiter(this, void 0, void 0, function* () {
-            return users_scheme_1.UsersModel.find({ login })
+            return users_scheme_1.UsersModel.find({ 'userData.login': login })
                 .then((result) => result[0])
                 .catch(() => null);
         });

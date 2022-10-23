@@ -18,7 +18,7 @@ export const jwtService = {
         }
     },
 
-    async getUserIdNyToken(token: string) {
+    async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 

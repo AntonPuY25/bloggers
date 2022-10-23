@@ -90,9 +90,8 @@ postsRoute.post('/:postId/comments', authMiddleWare,
 
         const {postId} = req.params;
         const {content} = req.body;
-        const {id} = req.user!;
+        const {id} = req?.user!;
 
-        console.log(req.user,'req.user')
 
         const currentPost = await postsRepositories.getCurrentPost(postId)
 

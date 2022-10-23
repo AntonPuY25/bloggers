@@ -43,12 +43,10 @@ exports.authService = {
             };
             const currentUser = yield users_repository_1.usersRepository.createUser(userDb);
             if (currentUser) {
-                const email = yield email_manager_1.emailManager.getRecoveryMessageEmail(currentUser);
+                const email = yield email_manager_1.emailManager.getRecoveryMessageEmailByUser(currentUser);
                 const sentEmail = yield email_adapter_1.emailAdapter.sendEmail(email);
                 if (sentEmail) {
-                    return {
-                        message: 'Hello'
-                    };
+                    return userDb;
                 }
                 else {
                     return null;
@@ -81,7 +79,7 @@ exports.authService = {
             else {
                 return {
                     isError: true,
-                    message: ''
+                    message: { errorsMessages: [{ message: 'This User is not found', field: 'code' }] }
                 };
             }
         });
@@ -92,19 +90,23 @@ exports.authService = {
             if (currentUser) {
                 if (currentUser.emailConfirmation.isConfirmed)
                     return (0, helpers_1.isConfirmedEmailError)('email');
-                const email = yield email_manager_1.emailManager.getRecoveryMessageEmail(currentUser);
-                const sentEmail = yield email_adapter_1.emailAdapter.sendEmail(email);
-                if (sentEmail) {
-                    return {
-                        isError: false,
-                        message: '',
-                    };
+                const newCode = (0, uuid_1.v4)();
+                const isUpdatedUser = yield users_repository_1.usersRepository.updateUser(currentUser.id, newCode);
+                if (isUpdatedUser) {
+                    const email = yield email_manager_1.emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email, newCode);
+                    const sentEmail = yield email_adapter_1.emailAdapter.sendEmail(email);
+                    if (sentEmail) {
+                        return {
+                            isError: false,
+                            message: '',
+                        };
+                    }
                 }
             }
             else {
                 return {
                     isError: true,
-                    message: '',
+                    message: { errorsMessages: [{ message: 'This User is not found', field: 'email' }] },
                 };
             }
         });

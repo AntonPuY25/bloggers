@@ -2,7 +2,7 @@ import {UsersModel} from "../DB/users-scheme";
 import {
     RegisterUserType,
     RegistrationConfirmationBodyTypes,
-    RegistrationResendingEmailBodyTypes
+    RegistrationResendingEmailBodyTypes, UpdateUserType
 } from "../interfaces/registration-types/interface";
 
 
@@ -20,8 +20,21 @@ export const usersRepository = {
             }
 
         },
+    async updateUser(id: string, code: string) {
+        try {
+            await UsersModel.updateOne({id},{
+                $set:{
+                    'emailConfirmation.confirmationCode':code
+                }
+            })
+            return true
+        } catch (e) {
+            return null
+        }
+
+    },
     async getCurrentUser(login: string) {
-        return UsersModel.find({login})
+        return UsersModel.find({'userData.login':login})
             .then((result: any) => result[0])
             .catch(() => null)
     },

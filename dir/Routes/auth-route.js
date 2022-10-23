@@ -33,6 +33,7 @@ exports.authRoute.post('/registration-confirmation', middleWares_1.codeValidator
     const { code } = req.body;
     console.log(code, 'code');
     const result = yield auth_service_1.authService.confirmEmail({ code });
+    console.log(result, 'result');
     if (result === null || result === void 0 ? void 0 : result.isError) {
         return (result === null || result === void 0 ? void 0 : result.message) ? res.status(400).send(result.message) : res.sendStatus(400);
     }

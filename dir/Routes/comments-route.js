@@ -28,7 +28,9 @@ exports.commentsRoute.put('/:commentId', middleWares_1.authMiddleWare, middleWar
     const { content } = req.body;
     const { commentId } = req.params;
     const { id } = req.user;
+    console.log(id, 'id');
     const currentComment = yield comments_repository_1.commentsRepository.getCurrentComment(commentId);
+    console.log(currentComment, 'currentComment');
     if (!currentComment)
         return res.sendStatus(404);
     if (currentComment.userId !== id)

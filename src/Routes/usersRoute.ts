@@ -10,6 +10,7 @@ import {
 } from "../middleWares/middleWares";
 import {getUsersData} from "../helpers/helpers";
 import {GetUsersDataType} from "../helpers/types";
+import {authService} from "../domains/auth-service";
 
 
 export const usersRoute = Router({});
@@ -41,19 +42,19 @@ usersRoute.get('/',
         }
     })
 
-// usersRoute.post('/', loginValidator, passwordValidator, emailValidator, errorMiddleWAre,
-//     async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
-//         const {email, login, password} = req.body
-//
-//         const currentUser = await usersService.createUser(
-//             {email, login, password})
-//
-//         if (currentUser) {
-//             res.status(201).send(currentUser)
-//         } else {
-//             res.sendStatus(404)
-//         }
-//     })
+usersRoute.post('/',authorizationMiddleWare, loginValidator, passwordValidator, emailValidator, errorMiddleWAre,
+    async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
+        const {email, login, password} = req.body
+
+        const currentUser = await authService.registerUser(
+            {email, login, password})
+
+        if (currentUser) {
+            res.status(201).send(currentUser)
+        } else {
+            res.sendStatus(404)
+        }
+    })
 
 usersRoute.delete('/:userId',
     async (req: Request, res: Response) => {

@@ -11,7 +11,7 @@ import {v4 as uuidv4} from "uuid";
 import {add} from "date-fns";
 import {emailManager} from "../managers/email-manager";
 import {emailAdapter} from "../adapters/email-adapter";
-import {isError} from "util";
+
 
 
 export const authService = {
@@ -39,13 +39,11 @@ export const authService = {
 
         const currentUser = await usersRepository.createUser(userDb)
         if (currentUser) {
-            const email = await emailManager.getRecoveryMessageEmail(currentUser)
+            const email = await emailManager.getRecoveryMessageEmailByUser(currentUser)
             const sentEmail = await emailAdapter.sendEmail(email)
 
             if (sentEmail) {
-                return {
-                    message: 'Hello'
-                }
+                return userDb
             } else {
                 return null;
             }
@@ -78,7 +76,7 @@ export const authService = {
         } else {
             return {
                 isError:true,
-                message:''
+                message:{ errorsMessages: [{ message: 'This User is not found', field: 'code' }] }
             }
         }
 
@@ -90,20 +88,27 @@ export const authService = {
 
         if (currentUser) {
             if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('email')
-            const email = await emailManager.getRecoveryMessageEmail(currentUser)
-            const sentEmail = await emailAdapter.sendEmail(email)
 
-            if (sentEmail) {
-                return {
-                    isError:false,
-                    message: '',
+            const newCode = uuidv4()
+
+            const isUpdatedUser = await usersRepository.updateUser(currentUser.id , newCode)
+
+            if(isUpdatedUser){
+                const email = await emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email,newCode)
+                const sentEmail = await emailAdapter.sendEmail(email)
+
+                if (sentEmail) {
+                    return {
+                        isError: false,
+                        message: '',
+                    }
                 }
             }
 
         } else {
             return {
                 isError:true,
-                message: '',
+                message: { errorsMessages: [{ message: 'This User is not found', field: 'email' }] },
             }
         }
 

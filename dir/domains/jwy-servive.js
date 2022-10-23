@@ -27,7 +27,7 @@ exports.jwtService = {
             };
         });
     },
-    getUserIdNyToken(token) {
+    getUserIdByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = jsonwebtoken_1.default.verify(token, settings_1.settings.JWT_SECRET);

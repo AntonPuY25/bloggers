@@ -66,7 +66,7 @@ exports.queryUsersRepository = {
         });
     },
     getCurrentUser: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        return users_scheme_1.UsersModel.findOne({ id: userId })
+        return yield users_scheme_1.UsersModel.findOne({ id: userId })
             .then((result) => result)
             .catch(() => null);
     }),

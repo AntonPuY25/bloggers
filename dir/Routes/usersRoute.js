@@ -12,7 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRoute = void 0;
 const express_1 = require("express");
 const query_users_repository_1 = require("../Repositories/queryReposotories/query-users-repository");
+const middleWares_1 = require("../middleWares/middleWares");
 const helpers_1 = require("../helpers/helpers");
+const auth_service_1 = require("../domains/auth-service");
 exports.usersRoute = (0, express_1.Router)({});
 exports.usersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pageNumber, pageSize, sortBy, sortDirection, searchEmailTerm, searchLoginTerm } = req.query;
@@ -31,19 +33,16 @@ exports.usersRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.sendStatus(404);
     }
 }));
-// usersRoute.post('/', loginValidator, passwordValidator, emailValidator, errorMiddleWAre,
-//     async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
-//         const {email, login, password} = req.body
-//
-//         const currentUser = await usersService.createUser(
-//             {email, login, password})
-//
-//         if (currentUser) {
-//             res.status(201).send(currentUser)
-//         } else {
-//             res.sendStatus(404)
-//         }
-//     })
+exports.usersRoute.post('/', middleWares_1.authorizationMiddleWare, middleWares_1.loginValidator, middleWares_1.passwordValidator, middleWares_1.emailValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, login, password } = req.body;
+    const currentUser = yield auth_service_1.authService.registerUser({ email, login, password });
+    if (currentUser) {
+        res.status(201).send(currentUser);
+    }
+    else {
+        res.sendStatus(404);
+    }
+}));
 exports.usersRoute.delete('/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
     const result = yield query_users_repository_1.queryUsersRepository.deleteUser(userId);

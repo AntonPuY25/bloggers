@@ -41,6 +41,8 @@ authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, asy
     console.log(code, 'code')
     const result = await authService.confirmEmail({code})
 
+    console.log(result,'result')
+
     if (result?.isError) {
         return result?.message ? res.status(400).send(result.message) : res.sendStatus(400)
     } else {
@@ -49,9 +51,9 @@ authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, asy
 })
 
 
+
 authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
     const {email} = req.body;
-
     const result = await authService.resendEmail({email})
 
     if (result?.isError) {

@@ -67,8 +67,9 @@ export const queryUsersRepository = {
         }
     },
 
+
     getCurrentUser: async (userId: string) => {
-        return UsersModel.findOne({id: userId})
+        return await UsersModel.findOne({id: userId})
             .then((result: any) => result)
             .catch(() => null)
     },

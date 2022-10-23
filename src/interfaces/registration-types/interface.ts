@@ -10,6 +10,12 @@ export interface RegisterUserType {
     emailConfirmation: EmailConfirmationType,
 }
 
+export interface UpdateUserType {
+    id: string,
+    code: string
+}
+
+
 export interface UserDataType {
     login: string,
     email: string,

@@ -66,12 +66,18 @@ const authMiddleWare = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         return res.sendStatus(401);
     }
     const token = req.headers.authorization.split(' ')[1];
-    const userId = yield jwy_servive_1.jwtService.getUserIdNyToken(token);
+    const userId = yield jwy_servive_1.jwtService.getUserIdByToken(token);
     if (userId) {
-        req.user = yield query_users_repository_1.queryUsersRepository.getCurrentUser(userId);
-        return next();
+        const currentUser = yield query_users_repository_1.queryUsersRepository.getCurrentUser(userId);
+        if (currentUser) {
+            req.user = currentUser;
+            return next();
+        }
+        else {
+            return res.sendStatus(403);
+        }
     }
-    return res.send(401);
+    return res.sendStatus(401);
 });
 exports.authMiddleWare = authMiddleWare;
 //# sourceMappingURL=middleWares.js.map

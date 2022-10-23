@@ -24,6 +24,7 @@ export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 3
             return true
         }
     })
+
 export const emailDuplicationValidator = body('email').trim().isLength({min: 3})
     .custom(async (email: string) => {
         const currentUser = await usersRepository.getCurrentUserByEmail({email})
@@ -43,6 +44,7 @@ export const loginDuplicationValidator = body('login').trim().isLength({min: 3})
             return true;
         }
     })
+
 
 export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction) => {
     const errors: any[] = validationResult(req).errors;

@@ -18,7 +18,7 @@ import {
 export const authRoute = Router({});
 
 
-authRoute.post('/registration', loginValidator, passwordValidator, emailValidator,emailDuplicationValidator,loginDuplicationValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) => {
+authRoute.post('/registration', loginValidator, passwordValidator, emailValidator, emailDuplicationValidator, loginDuplicationValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) => {
 
     const {login, password, email} = req.body;
 
@@ -34,23 +34,24 @@ authRoute.post('/registration-confirmation', async (req: Request<{}, {}, Registr
 
     const result = await authService.confirmEmail({code})
 
-    if (result) {
-        return res.sendStatus(204)
+    if (result?.isError) {
+        return result?.message ? res.status(404).send(result.message) : res.sendStatus(404)
+
     } else {
-        return res.sendStatus(404)
+        return res.sendStatus(204)
     }
 })
 
 
-authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
+authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
     const {email} = req.body;
 
     const result = await authService.resendEmail({email})
 
-    if (result) {
-        return res.sendStatus(204)
+    if (result?.isError) {
+        return result?.message ? res.status(404).send(result.message) : res.sendStatus(404)
     } else {
-        return res.sendStatus(404)
+        return res.sendStatus(204)
     }
 })
 

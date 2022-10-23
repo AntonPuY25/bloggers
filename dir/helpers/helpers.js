@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSortDirectionData = exports.getSortCreatedData = exports.getPagesCountData = exports.getSkipCountData = exports.getUsersData = exports.getPostsData = exports.getNewResponseBlogger = exports.getBloggersData = exports.getGeneratedHashPassword = exports.getCurrentFieldError = void 0;
+exports.isConfirmedEmailError = exports.getSortDirectionData = exports.getSortCreatedData = exports.getPagesCountData = exports.getSkipCountData = exports.getUsersData = exports.getPostsData = exports.getNewResponseBlogger = exports.getBloggersData = exports.getGeneratedHashPassword = exports.getCurrentFieldError = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const getCurrentFieldError = (field, message) => {
     return {
@@ -68,4 +68,16 @@ const getSortCreatedData = (sortBy) => sortBy ? sortBy : 'createdAt';
 exports.getSortCreatedData = getSortCreatedData;
 const getSortDirectionData = (sortDirection) => sortDirection === 'asc' ? 1 : -1;
 exports.getSortDirectionData = getSortDirectionData;
+const isConfirmedEmailError = () => ({
+    message: {
+        "errorsMessages": [
+            {
+                "message": "This email is already confirm",
+                "field": "Email"
+            }
+        ]
+    },
+    isError: true
+});
+exports.isConfirmedEmailError = isConfirmedEmailError;
 //# sourceMappingURL=helpers.js.map

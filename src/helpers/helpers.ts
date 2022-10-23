@@ -60,11 +60,24 @@ export const getUsersData = ({
 export const getSkipCountData = (pageNumber: number, pageSize: number) =>
     (pageNumber - 1) * pageSize;
 
-export const getPagesCountData = (totalCount: number,pageSize: number)=>
+export const getPagesCountData = (totalCount: number, pageSize: number) =>
     Math.ceil(Number(totalCount) / pageSize) || 0;
 
-export const getSortCreatedData = (sortBy: string)=>
+export const getSortCreatedData = (sortBy: string) =>
     sortBy ? sortBy : 'createdAt';
 
-export const getSortDirectionData = (sortDirection: string)=>
+export const getSortDirectionData = (sortDirection: string) =>
     sortDirection === 'asc' ? 1 : -1;
+
+export const isConfirmedEmailError = () => ({
+        message: {
+            "errorsMessages": [
+                {
+                    "message": "This email is already confirm",
+                    "field": "Email"
+                }
+            ]
+        },
+        isError: true
+    }
+)

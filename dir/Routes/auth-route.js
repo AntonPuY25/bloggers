@@ -25,21 +25,21 @@ exports.authRoute.post('/registration', middleWares_1.loginValidator, middleWare
 exports.authRoute.post('/registration-confirmation', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { code } = req.body;
     const result = yield auth_service_1.authService.confirmEmail({ code });
-    if (result) {
-        return res.sendStatus(204);
+    if (result === null || result === void 0 ? void 0 : result.isError) {
+        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(404).send(result.message) : res.sendStatus(404);
     }
     else {
-        return res.sendStatus(404);
+        return res.sendStatus(204);
     }
 }));
 exports.authRoute.post('/registration-email-resending', middleWares_1.emailValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const result = yield auth_service_1.authService.resendEmail({ email });
-    if (result) {
-        return res.sendStatus(204);
+    if (result === null || result === void 0 ? void 0 : result.isError) {
+        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(404).send(result.message) : res.sendStatus(404);
     }
     else {
-        return res.sendStatus(404);
+        return res.sendStatus(204);
     }
 }));
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

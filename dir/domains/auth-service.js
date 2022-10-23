@@ -63,15 +63,26 @@ exports.authService = {
         return __awaiter(this, void 0, void 0, function* () {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUserByCode({ code });
             if (currentUser) {
+                if (currentUser.emailConfirmation.isConfirmed)
+                    return (0, helpers_1.isConfirmedEmailError)();
                 if (currentUser.emailConfirmation.expirationDate < new Date())
-                    return false;
+                    return {
+                        isError: true,
+                        message: ''
+                    };
                 const updatedUser = yield users_repository_1.usersRepository.confirmEmail(currentUser.id);
                 if (updatedUser) {
-                    return true;
+                    return {
+                        isError: false,
+                        message: ''
+                    };
                 }
             }
             else {
-                return null;
+                return {
+                    isError: true,
+                    message: ''
+                };
             }
         });
     },
@@ -79,14 +90,22 @@ exports.authService = {
         return __awaiter(this, void 0, void 0, function* () {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUserByEmail({ email });
             if (currentUser) {
+                if (currentUser.emailConfirmation.isConfirmed)
+                    return (0, helpers_1.isConfirmedEmailError)();
                 const email = yield email_manager_1.emailManager.getRecoveryMessageEmail(currentUser);
                 const sentEmail = yield email_adapter_1.emailAdapter.sendEmail(email);
                 if (sentEmail) {
-                    return true;
+                    return {
+                        isError: false,
+                        message: '',
+                    };
                 }
             }
             else {
-                return null;
+                return {
+                    isError: true,
+                    message: '',
+                };
             }
         });
     },

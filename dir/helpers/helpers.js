@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isConfirmedEmailError = exports.getSortDirectionData = exports.getSortCreatedData = exports.getPagesCountData = exports.getSkipCountData = exports.getUsersData = exports.getPostsData = exports.getNewResponseBlogger = exports.getBloggersData = exports.getGeneratedHashPassword = exports.getCurrentFieldError = void 0;
+exports.duplicatedLogin = exports.duplicatedEmail = exports.isConfirmedEmailError = exports.getSortDirectionData = exports.getSortCreatedData = exports.getPagesCountData = exports.getSkipCountData = exports.getUsersData = exports.getPostsData = exports.getNewResponseBlogger = exports.getBloggersData = exports.getGeneratedHashPassword = exports.getCurrentFieldError = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const users_repository_1 = require("../Repositories/users-repository");
 const getCurrentFieldError = (field, message) => {
     return {
         "errorsMessages": [
@@ -68,16 +69,50 @@ const getSortCreatedData = (sortBy) => sortBy ? sortBy : 'createdAt';
 exports.getSortCreatedData = getSortCreatedData;
 const getSortDirectionData = (sortDirection) => sortDirection === 'asc' ? 1 : -1;
 exports.getSortDirectionData = getSortDirectionData;
-const isConfirmedEmailError = () => ({
+const isConfirmedEmailError = (field) => ({
     message: {
         "errorsMessages": [
             {
                 "message": "This email is already confirm",
-                "field": "Email"
+                "field": field
             }
         ]
     },
     isError: true
 });
 exports.isConfirmedEmailError = isConfirmedEmailError;
+const duplicatedEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = yield users_repository_1.usersRepository.getCurrentUserByEmail({ email });
+    if (currentUser) {
+        return {
+            "errorsMessages": [
+                {
+                    "message": "This email is already confirm",
+                    "field": 'email'
+                }
+            ]
+        };
+    }
+    else {
+        return false;
+    }
+});
+exports.duplicatedEmail = duplicatedEmail;
+const duplicatedLogin = (login) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = yield users_repository_1.usersRepository.getCurrentUser(login);
+    if (currentUser) {
+        return {
+            "errorsMessages": [
+                {
+                    "message": "This email is already confirm",
+                    "field": 'login'
+                }
+            ]
+        };
+    }
+    else {
+        return false;
+    }
+});
+exports.duplicatedLogin = duplicatedLogin;
 //# sourceMappingURL=helpers.js.map

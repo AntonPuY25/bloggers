@@ -9,11 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authMiddleWare = exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.loginDuplicationValidator = exports.emailDuplicationValidator = exports.bloggerIdValidator = exports.contentCommentValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
+exports.authMiddleWare = exports.authorizationMiddleWare = exports.errorMiddleWAre = exports.bloggerIdValidator = exports.codeValidator = exports.contentCommentValidator = exports.contentValidator = exports.descriptionValidator = exports.titleValidator = exports.emailValidator = exports.passwordValidator = exports.loginValidator = exports.nameValidator = exports.urlValidator = void 0;
 const bloggers_repository_1 = require("../Repositories/bloggers-repository");
 const jwy_servive_1 = require("../domains/jwy-servive");
 const query_users_repository_1 = require("../Repositories/queryReposotories/query-users-repository");
-const users_repository_1 = require("../Repositories/users-repository");
 const { body, validationResult } = require('express-validator');
 exports.urlValidator = body('youtubeUrl').trim().isURL().isLength({ min: 3, max: 100 });
 exports.nameValidator = body('name').trim().isLength({ min: 3, max: 15 });
@@ -24,31 +23,12 @@ exports.titleValidator = body('title').trim().isLength({ min: 3, max: 30 });
 exports.descriptionValidator = body('shortDescription').trim().isLength({ min: 3, max: 100 });
 exports.contentValidator = body('content').trim().isLength({ min: 3, max: 1000 });
 exports.contentCommentValidator = body('content').trim().isLength({ min: 20, max: 300 });
+exports.codeValidator = body('code').trim().isLength({ min: 1 });
 exports.bloggerIdValidator = body('blogId').trim().isLength({ min: 1, max: 30 })
     .custom((value) => __awaiter(void 0, void 0, void 0, function* () {
     const currentBlogger = yield bloggers_repository_1.bloggersRepository.getCurrentBlogger(value);
     if (!currentBlogger) {
         throw new Error('Not found this blogger');
-    }
-    else {
-        return true;
-    }
-}));
-exports.emailDuplicationValidator = body('email').trim().isLength({ min: 3 })
-    .custom((email) => __awaiter(void 0, void 0, void 0, function* () {
-    const currentUser = yield users_repository_1.usersRepository.getCurrentUserByEmail({ email });
-    if (currentUser) {
-        throw new Error('Current email already exist');
-    }
-    else {
-        return true;
-    }
-}));
-exports.loginDuplicationValidator = body('login').trim().isLength({ min: 3 })
-    .custom((login) => __awaiter(void 0, void 0, void 0, function* () {
-    const currentUser = yield users_repository_1.usersRepository.getCurrentUser(login);
-    if (currentUser) {
-        throw new Error('Current login already exist');
     }
     else {
         return true;
@@ -62,18 +42,11 @@ const errorMiddleWAre = (req, res, next) => {
             const duplicate = errors.find((el, i) => (i < index && el.param === item.param));
             return !duplicate;
         });
-        let isDuplicatedEmail = false;
         const errorMessage = errorsWithoutDuplicate.map((item) => {
-            if ((item === null || item === void 0 ? void 0 : item.msg) && item.msg === 'Current email already exist') {
-                isDuplicatedEmail = true;
-            }
-            return { message: (item === null || item === void 0 ? void 0 : item.msg) ? item.msg : `${item.param} incorrect`, field: item.param };
+            return { message: `${item.param} incorrect`, field: item.param };
         });
         return res.status(400).send({
-            errorsMessages: isDuplicatedEmail ? [{
-                    "message": "Current email already exist",
-                    "field": "email"
-                }] : errorMessage
+            errorsMessages: errorMessage
         });
     }
     next();

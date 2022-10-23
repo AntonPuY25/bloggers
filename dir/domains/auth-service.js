@@ -64,11 +64,11 @@ exports.authService = {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUserByCode({ code });
             if (currentUser) {
                 if (currentUser.emailConfirmation.isConfirmed)
-                    return (0, helpers_1.isConfirmedEmailError)();
+                    return (0, helpers_1.isConfirmedEmailError)('code');
                 if (currentUser.emailConfirmation.expirationDate < new Date())
                     return {
                         isError: true,
-                        message: ''
+                        message: (0, helpers_1.isConfirmedEmailError)('code')
                     };
                 const updatedUser = yield users_repository_1.usersRepository.confirmEmail(currentUser.id);
                 if (updatedUser) {
@@ -91,7 +91,7 @@ exports.authService = {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUserByEmail({ email });
             if (currentUser) {
                 if (currentUser.emailConfirmation.isConfirmed)
-                    return (0, helpers_1.isConfirmedEmailError)();
+                    return (0, helpers_1.isConfirmedEmailError)('email');
                 const email = yield email_manager_1.emailManager.getRecoveryMessageEmail(currentUser);
                 const sentEmail = yield email_adapter_1.emailAdapter.sendEmail(email);
                 if (sentEmail) {
@@ -114,9 +114,9 @@ exports.authService = {
             const currentUser = yield users_repository_1.usersRepository.getCurrentUser(login);
             if (!currentUser)
                 return null;
-            const passwordSalt = currentUser.salt;
+            const passwordSalt = currentUser.userData.salt;
             const passwordHash = yield (0, helpers_1.getGeneratedHashPassword)(password, passwordSalt);
-            if (passwordHash === currentUser.password)
+            if (passwordHash === currentUser.userData.password)
                 return currentUser;
             return null;
         });

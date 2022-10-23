@@ -14,19 +14,27 @@ const express_1 = require("express");
 const auth_service_1 = require("../domains/auth-service");
 const jwy_servive_1 = require("../domains/jwy-servive");
 const middleWares_1 = require("../middleWares/middleWares");
+const helpers_1 = require("../helpers/helpers");
 exports.authRoute = (0, express_1.Router)({});
-exports.authRoute.post('/registration', middleWares_1.loginValidator, middleWares_1.passwordValidator, middleWares_1.emailValidator, middleWares_1.emailDuplicationValidator, middleWares_1.loginDuplicationValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/registration', middleWares_1.loginValidator, middleWares_1.passwordValidator, middleWares_1.emailValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, password, email } = req.body;
+    const isDuplicatedEmail = yield (0, helpers_1.duplicatedEmail)(email);
+    const isDuplicatedLogin = yield (0, helpers_1.duplicatedLogin)(login);
+    if (isDuplicatedEmail)
+        return res.status(400).send(isDuplicatedEmail);
+    if (isDuplicatedLogin)
+        return res.status(400).send(isDuplicatedLogin);
     const currentUser = yield auth_service_1.authService.registerUser({ email, login, password });
     if (!currentUser)
         return res.sendStatus(404);
     res.sendStatus(204);
 }));
-exports.authRoute.post('/registration-confirmation', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/registration-confirmation', middleWares_1.codeValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { code } = req.body;
+    console.log(code, 'code');
     const result = yield auth_service_1.authService.confirmEmail({ code });
     if (result === null || result === void 0 ? void 0 : result.isError) {
-        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(404).send(result.message) : res.sendStatus(404);
+        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(400).send(result.message) : res.sendStatus(400);
     }
     else {
         return res.sendStatus(204);
@@ -36,7 +44,7 @@ exports.authRoute.post('/registration-email-resending', middleWares_1.emailValid
     const { email } = req.body;
     const result = yield auth_service_1.authService.resendEmail({ email });
     if (result === null || result === void 0 ? void 0 : result.isError) {
-        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(404).send(result.message) : res.sendStatus(404);
+        return (result === null || result === void 0 ? void 0 : result.message) ? res.status(400).send(result.message) : res.sendStatus(404);
     }
     else {
         return res.sendStatus(204);
@@ -54,7 +62,9 @@ exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 exports.authRoute.get('/me', middleWares_1.authMiddleWare, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { login, id, email } = req.user;
+    var _a;
+    const { id } = req.user;
+    const { email, login } = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userData;
     res.status(200).send({
         email,
         login,

@@ -143,15 +143,6 @@ export interface UserWithPasswordType extends UsersType {
     password: string;
 }
 
-export interface DbUserType {
-    id: string
-    createdAt: string
-    _id: string
-    updatedAt: string
-    login: string
-    email: string
-    __v: number
-}
 
 export interface GetUsersResponseType {
     pagesCount: number,
@@ -160,12 +151,6 @@ export interface GetUsersResponseType {
     totalCount: number,
     items: UsersType[]
 
-}
-
-export interface CreateUserRequestBodyType {
-    login: string
-    password: string
-    email: string
 }
 
 export interface AuthRequestBodyType {

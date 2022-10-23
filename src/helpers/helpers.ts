@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import {GetBloggersData, GetPostsData, GetUsersDataType} from "./types";
 import {ResponseDataBloggerType, sortDirectionType} from "../interfaces/interfaces";
+import {usersRepository} from "../Repositories/users-repository";
 
 export const getCurrentFieldError = (field: string, message: string) => {
     return {
@@ -69,15 +70,47 @@ export const getSortCreatedData = (sortBy: string) =>
 export const getSortDirectionData = (sortDirection: string) =>
     sortDirection === 'asc' ? 1 : -1;
 
-export const isConfirmedEmailError = () => ({
+export const isConfirmedEmailError = (field:string) => ({
         message: {
             "errorsMessages": [
                 {
                     "message": "This email is already confirm",
-                    "field": "Email"
+                    "field": field
                 }
             ]
         },
         isError: true
     }
 )
+
+export const duplicatedEmail = async (email:string)=>{
+    const currentUser = await usersRepository.getCurrentUserByEmail({email})
+    if (currentUser) {
+    return  {
+            "errorsMessages": [
+                {
+                    "message": "This email is already confirm",
+                    "field": 'email'
+                }
+            ]
+    }
+    } else {
+        return false;
+    }
+}
+
+export const duplicatedLogin = async (login:string)=>{
+    const currentUser = await usersRepository.getCurrentUser(login)
+    if (currentUser) {
+        return  {
+                "errorsMessages":[
+                    {
+                        "message": "This email is already confirm",
+                        "field": 'login'
+                    }]
+
+        }
+    } else {
+        return false;
+    }
+}

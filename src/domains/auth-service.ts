@@ -60,10 +60,10 @@ export const authService = {
         const currentUser: RegisterUserType = await usersRepository.getCurrentUserByCode({code})
 
         if (currentUser) {
-            if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError()
+            if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('code')
             if (currentUser.emailConfirmation.expirationDate < new Date()) return {
                 isError:true,
-                message:''
+                message:isConfirmedEmailError('code')
             };
 
             const updatedUser = await usersRepository.confirmEmail(currentUser.id)
@@ -89,7 +89,7 @@ export const authService = {
         const currentUser: RegisterUserType = await usersRepository.getCurrentUserByEmail({email})
 
         if (currentUser) {
-            if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError()
+            if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('email')
             const email = await emailManager.getRecoveryMessageEmail(currentUser)
             const sentEmail = await emailAdapter.sendEmail(email)
 
@@ -111,12 +111,12 @@ export const authService = {
 
     async authUser({login, password}: AuthRequestBodyType) {
 
-        const currentUser = await usersRepository.getCurrentUser(login);
+        const currentUser:RegisterUserType = await usersRepository.getCurrentUser(login);
         if (!currentUser) return null
 
-        const passwordSalt = currentUser.salt;
+        const passwordSalt = currentUser.userData.salt;
         const passwordHash = await getGeneratedHashPassword(password, passwordSalt)
-        if (passwordHash === currentUser.password) return currentUser;
+        if (passwordHash === currentUser.userData.password) return currentUser;
 
         return null
     }

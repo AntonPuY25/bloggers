@@ -16,6 +16,7 @@ import {sortDirectionType, UpdateCommentBodyParamsType} from "../interfaces/inte
 import {postsRepositories} from "../Repositories/posts-repository";
 import {commentsRepository} from "../Repositories/comments-repository";
 import {GetPostsData} from "../helpers/types";
+import {log} from "util";
 
 export const postsRoute = Router({});
 
@@ -89,7 +90,9 @@ postsRoute.post('/:postId/comments', authMiddleWare,
 
         const {postId} = req.params;
         const {content} = req.body;
-        const {id, login} = req.user!;
+        const {id} = req.user!;
+
+        console.log(req.user,'req.user')
 
         const currentPost = await postsRepositories.getCurrentPost(postId)
 
@@ -99,7 +102,7 @@ postsRoute.post('/:postId/comments', authMiddleWare,
             postId,
             content,
             userId: id,
-            userLogin: login
+            userLogin: req?.user?.userData?.login!
         })
         if (currentComment) {
             res.status(201).send(currentComment)
@@ -134,6 +137,8 @@ postsRoute.get('/:postId/comments',
 
         const comments = await commentsRepository.getCommentsForCurrentPost(
             {postId, ...postData})
+
+        console.log(comments,'comments')
 
         if (comments) {
             res.status(200).send(comments)

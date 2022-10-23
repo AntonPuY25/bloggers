@@ -67,9 +67,11 @@ exports.postsRoute.delete('/:id', middleWares_1.authorizationMiddleWare, (req, r
     }
 }));
 exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middleWares_1.contentCommentValidator, middleWares_1.errorMiddleWAre, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const { postId } = req.params;
     const { content } = req.body;
-    const { id, login } = req.user;
+    const { id } = req.user;
+    console.log(req.user, 'req.user');
     const currentPost = yield posts_repository_1.postsRepositories.getCurrentPost(postId);
     if (!currentPost)
         return res.sendStatus(404);
@@ -77,7 +79,7 @@ exports.postsRoute.post('/:postId/comments', middleWares_1.authMiddleWare, middl
         postId,
         content,
         userId: id,
-        userLogin: login
+        userLogin: (_b = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.userData) === null || _b === void 0 ? void 0 : _b.login
     });
     if (currentComment) {
         res.status(201).send(currentComment);
@@ -99,6 +101,7 @@ exports.postsRoute.get('/:postId/comments', (req, res) => __awaiter(void 0, void
         sortDirection
     });
     const comments = yield comments_repository_1.commentsRepository.getCommentsForCurrentPost(Object.assign({ postId }, postData));
+    console.log(comments, 'comments');
     if (comments) {
         res.status(200).send(comments);
     }

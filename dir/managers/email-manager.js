@@ -10,16 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailManager = void 0;
+const settings_1 = require("../settings/settings");
 exports.emailManager = {
     getRecoveryMessageEmail(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const link = `https://somesite.com/confirm-email?code=${user.emailConfirmation.confirmationCode}`;
+            const link = `https://${settings_1.settings.JWT_SECRET}/auth/registration-confirmation?code=${user.emailConfirmation.confirmationCode}`;
             const email = user.userData.email;
             const message = " <h1>Thank for your registration</h1>\n" +
                 "       <p>To finish registration please follow the link below:\n" +
                 `          <a href=${link}>complete registration</a>\n` +
-                "      </p>\n" +
-                `<b>${user.emailConfirmation.confirmationCode}</b>`;
+                "      </p>\n";
             const subject = "Confirm your email, please.";
             return {
                 email, message, subject

@@ -34,10 +34,10 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "dev": "nodemon --inspect dir/index.js",
+    "dev": "nodemon --inspect dist/index.js",
     "watch": "tsc -w",
     "build": "tsc",
-    "start": "node dir/index.js",
+    "start": "node dist/index.js",
     "test": "jest"
   }
 }

@@ -14,8 +14,10 @@ import {emailRouter} from "./Routes/email-router";
 const express = require('express')
 export const app = express()
 const port = settings.MONGO_URI
+const cookieParser = require("cookie-parser");
 
 app.use(cors())
+app.use(cookieParser());
 app.use(bodyParser())
 
 app.get('/', (req: Request, res: Response) => {

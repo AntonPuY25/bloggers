@@ -21,6 +21,7 @@ export interface UserDataType {
     email: string,
     salt: string,
     password: string,
+    deadRefreshTokens: string[],
 }
 
 export interface EmailConfirmationType {
@@ -35,4 +36,18 @@ export interface RegistrationConfirmationBodyTypes {
 
 export interface RegistrationResendingEmailBodyTypes {
     email: string
+}
+export enum JWTTokenType {
+    accessToken='accessToken',
+    refreshToken='refreshToken',
+}
+
+export interface CreateJWTTokenType {
+    user: RegisterUserType,
+    expiresIn: string,
+    type: JWTTokenType,
+}
+export interface GetRefreshJWTTokenType {
+    refreshToken: string | {resultCode: number, data: {accessToken: string}},
+    accessToken: string | {resultCode: number, data: {accessToken: string}}
 }

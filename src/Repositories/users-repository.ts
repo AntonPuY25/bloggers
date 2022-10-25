@@ -20,7 +20,7 @@ export const usersRepository = {
             }
 
         },
-    async updateUser(id: string, code: string) {
+    async updateCodeUser(id: string, code: string) {
         try {
             await UsersModel.updateOne({id},{
                 $set:{
@@ -31,10 +31,26 @@ export const usersRepository = {
         } catch (e) {
             return null
         }
-
+    },
+    async updateJwtTokensUser(id: string, tokens: string[]) {
+        try {
+            await UsersModel.updateOne({id},{
+                $set:{
+                    'userData.deadRefreshTokens':tokens
+                }
+            })
+            return true
+        } catch (e) {
+            return null
+        }
     },
     async getCurrentUser(login: string) {
         return UsersModel.find({'userData.login':login})
+            .then((result: any) => result[0])
+            .catch(() => null)
+    },
+    async getCurrentUserById(id: string) {
+        return UsersModel.find({'id':id})
             .then((result: any) => result[0])
             .catch(() => null)
     },

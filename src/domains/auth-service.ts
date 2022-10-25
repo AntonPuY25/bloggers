@@ -27,6 +27,7 @@ export const authService = {
                 password: passwordHash,
                 salt: passwordSalt,
                 email,
+                deadRefreshTokens:[]
             },
             emailConfirmation: {
                 confirmationCode: uuidv4(),
@@ -91,7 +92,7 @@ export const authService = {
 
             const newCode = uuidv4()
 
-            const isUpdatedUser = await usersRepository.updateUser(currentUser.id , newCode)
+            const isUpdatedUser = await usersRepository.updateCodeUser(currentUser.id , newCode)
 
             if(isUpdatedUser){
                 const email = await emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email,newCode)

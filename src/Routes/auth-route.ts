@@ -10,6 +10,8 @@ import {
     passwordValidator
 } from "../middleWares/middleWares";
 import {
+    GetRefreshJWTTokenType,
+    JWTTokenType,
     RegistrationBodyTypes,
     RegistrationConfirmationBodyTypes,
     RegistrationResendingEmailBodyTypes
@@ -26,7 +28,7 @@ authRoute.post('/registration', loginValidator, passwordValidator, emailValidato
     const isDuplicatedEmail = await duplicatedEmail(email)
     const isDuplicatedLogin = await duplicatedLogin(login)
 
-    if (isDuplicatedEmail) return  res.status(400).send(isDuplicatedEmail)
+    if (isDuplicatedEmail) return res.status(400).send(isDuplicatedEmail)
     if (isDuplicatedLogin) return res.status(400).send(isDuplicatedLogin)
 
     const currentUser = await authService.registerUser({email, login, password})
@@ -41,7 +43,7 @@ authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, asy
     console.log(code, 'code')
     const result = await authService.confirmEmail({code})
 
-    console.log(result,'result')
+    console.log(result, 'result')
 
     if (result?.isError) {
         return result?.message ? res.status(400).send(result.message) : res.sendStatus(400)
@@ -49,7 +51,6 @@ authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, asy
         return res.sendStatus(204)
     }
 })
-
 
 
 authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
@@ -68,8 +69,20 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
     const authResult = await authService.authUser({login, password});
 
     if (authResult) {
-        const token = await jwtService.createJwt(authResult)
-        res.status(200).send(token.data)
+        const accessToken = await jwtService.createJwt({
+            user: authResult,
+            type: JWTTokenType.accessToken,
+            expiresIn: '20s'
+        })
+        const refreshToken = await jwtService.createJwt({
+            user: authResult,
+            type: JWTTokenType.refreshToken,
+            expiresIn: '1m'
+        })
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        }).status(200).send(accessToken)
     } else {
         res.sendStatus(401)
     }
@@ -77,11 +90,29 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
 
 authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
     const {id} = req.user!;
-    const {email,login} = req.user?.userData!
+    const {email, login} = req.user?.userData!
 
     res.status(200).send({
         email,
         login,
         userId: id,
     })
+})
+
+authRoute.post('/refresh-token', async (req: Request, res: Response) => {
+    const {refresh_token} = req.cookies;
+
+    if (!refresh_token) return res.sendStatus(401)
+
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refresh_token)
+
+    if (result) {
+        return res.cookie('refresh_token', result.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        }).status(200).send(result.accessToken)
+    } else {
+        return res.sendStatus(401)
+    }
+
 })

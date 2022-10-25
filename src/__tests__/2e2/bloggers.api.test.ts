@@ -18,10 +18,11 @@ describe('/blogs', () => {
                 "name": "Bob",
                 "youtubeUrl": "https://youtoube.com"
             })
-            .expect(201)
+
 
         currentBlog = result.body
 
+        expect(result.status).toBe(201)
         expect(result.body.name).toEqual("Bob")
         expect(result.body.youtubeUrl).toEqual("https://youtoube.com")
 

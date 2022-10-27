@@ -100,9 +100,7 @@ export const duplicatedEmail = async (email:string)=>{
 }
 
 export const duplicatedLogin = async (login:string)=>{
-    console.log(login,'login')
     const currentUser = await usersRepository.getCurrentUser(login)
-    console.log(currentUser,'currentUser')
     if (currentUser) {
         return  {
                 "errorsMessages":[

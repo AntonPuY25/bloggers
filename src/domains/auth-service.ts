@@ -44,7 +44,7 @@ export const authService = {
             const sentEmail = await emailAdapter.sendEmail(email)
 
             if (sentEmail) {
-                return userDb
+                return currentUser
             } else {
                 return null;
             }

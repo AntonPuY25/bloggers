@@ -8,6 +8,7 @@ export interface RegisterUserType {
     id: string,
     userData:UserDataType,
     emailConfirmation: EmailConfirmationType,
+    createdAt?: string,
 }
 
 export interface UpdateUserType {
@@ -26,7 +27,7 @@ export interface UserDataType {
 
 export interface EmailConfirmationType {
     confirmationCode: string,
-    expirationDate: Date,
+    expirationDate: Date | string,
     isConfirmed: boolean,
 }
 
@@ -45,9 +46,8 @@ export enum JWTTokenType {
 export interface CreateJWTTokenType {
     user: RegisterUserType,
     expiresIn: string,
-    type: JWTTokenType,
 }
 export interface GetRefreshJWTTokenType {
-    refreshToken: string | {resultCode: number, data: {accessToken: string}},
-    accessToken: string | {resultCode: number, data: {accessToken: string}}
+    refreshToken: string,
+    accessToken: string
 }

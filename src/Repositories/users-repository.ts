@@ -4,6 +4,8 @@ import {
     RegistrationConfirmationBodyTypes,
     RegistrationResendingEmailBodyTypes, UpdateUserType
 } from "../interfaces/registration-types/interface";
+import {v4 as uuidv4} from "uuid";
+import {add} from "date-fns";
 
 
 export const usersRepository = {
@@ -11,9 +13,24 @@ export const usersRepository = {
             const user = new UsersModel(userDb)
 
             try {
-                const result = await user.save()
-                if (result) {
-                    return userDb;
+                const result:any = await user.save()
+                if (result && result.userData && result.emailConfirmation) {
+                return {
+                        id: uuidv4(),
+                        userData: {
+                            login: result.userData.login,
+                            password: result.userData.password,
+                            salt: result.userData.salt,
+                            email: result.userData.email,
+                            deadRefreshTokens:result.userData.deadRefreshTokens,
+                        },
+                        emailConfirmation: {
+                            confirmationCode: result.emailConfirmation.confirmationCode,
+                            expirationDate: result.emailConfirmation.expirationDate,
+                            isConfirmed: result.emailConfirmation.isConfirmed,
+                        },
+                        createdAt: result?.createdAt,
+                    }
                 }
             } catch (e) {
                 return null
@@ -39,6 +56,7 @@ export const usersRepository = {
                     'userData.deadRefreshTokens':tokens
                 }
             })
+            console.log('Hello')
             return true
         } catch (e) {
             return null

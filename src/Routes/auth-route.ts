@@ -40,10 +40,7 @@ authRoute.post('/registration', loginValidator, passwordValidator, emailValidato
 
 authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationConfirmationBodyTypes, {}>, res: Response) => {
     const {code} = req.body;
-    console.log(code, 'code')
     const result = await authService.confirmEmail({code})
-
-    console.log(result, 'result')
 
     if (result?.isError) {
         return result?.message ? res.status(400).send(result.message) : res.sendStatus(400)
@@ -67,25 +64,40 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;
     const authResult = await authService.authUser({login, password});
-
+    console.log('login')
+    console.log(authResult, 'authResult')
     if (authResult) {
         const accessToken = await jwtService.createJwt({
             user: authResult,
-            type: JWTTokenType.accessToken,
-            expiresIn: '20s'
+            expiresIn: '10s'
         })
         const refreshToken = await jwtService.createJwt({
             user: authResult,
-            type: JWTTokenType.refreshToken,
-            expiresIn: '1m'
+            expiresIn: '20s'
         })
-        res.cookie('refresh_token', refreshToken, {
+        console.log(accessToken, refreshToken)
+        res.cookie('refreshToken', refreshToken, {
+            // expiresIn: new Date() + 20000,
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        }).status(200).send(accessToken)
+            secure: true,
+        })
+        return res.status(200).send({accessToken})
     } else {
-        res.sendStatus(401)
+        return res.sendStatus(401)
     }
+})
+
+authRoute.get('/logout', authMiddleWare, async (req: Request, res: Response) => {
+    const {refreshToken} = req.cookies;
+
+    const result = await jwtService.logout(refreshToken);
+
+    if (result) {
+        return res.sendStatus(204)
+    } else {
+        return res.sendStatus(401)
+    }
+
 })
 
 authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
@@ -100,17 +112,17 @@ authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
 })
 
 authRoute.post('/refresh-token', async (req: Request, res: Response) => {
-    const {refresh_token} = req.cookies;
+    const {refreshToken} = req.cookies;
 
-    if (!refresh_token) return res.sendStatus(401)
+    if (!refreshToken) return res.sendStatus(401)
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refresh_token)
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken)
 
     if (result) {
-        return res.cookie('refresh_token', result.refreshToken, {
+        return res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        }).status(200).send(result.accessToken)
+            secure: true,
+        }).status(200).send({'accessToken':result.accessToken})
     } else {
         return res.sendStatus(401)
     }

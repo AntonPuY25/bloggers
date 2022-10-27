@@ -86,8 +86,6 @@ describe('/blogs', () => {
             .get(`/blogs/${currentBlog.id}/posts`)
             .expect(200)
 
-        console.log(result.body,'result')
-
         expect(result.body.items[0].title).toEqual('This new Post 123')
         expect(result.body.items[0].blogId).toEqual(currentBlog.id)
 

@@ -8,7 +8,7 @@ import {
     loginValidator,
     passwordValidator
 } from "../middleWares/middleWares";
-import {getUsersData} from "../helpers/helpers";
+import {duplicatedEmail, duplicatedLogin, getUsersData} from "../helpers/helpers";
 import {GetUsersDataType} from "../helpers/types";
 import {authService} from "../domains/auth-service";
 
@@ -46,11 +46,22 @@ usersRoute.post('/',authorizationMiddleWare, loginValidator, passwordValidator, 
     async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
         const {email, login, password} = req.body
 
+        const isDuplicatedEmail = await duplicatedEmail(email)
+        const isDuplicatedLogin = await duplicatedLogin(login)
+
+        if (isDuplicatedEmail) return res.status(400).send(isDuplicatedEmail)
+        if (isDuplicatedLogin) return res.status(400).send(isDuplicatedLogin)
+
         const currentUser = await authService.registerUser(
             {email, login, password})
 
         if (currentUser) {
-            res.status(201).send(currentUser)
+            res.status(201).send({
+                id: currentUser.id,
+                login: currentUser.userData.login,
+                email: currentUser.userData.email,
+                createdAt: currentUser.createdAt
+            })
         } else {
             res.sendStatus(404)
         }

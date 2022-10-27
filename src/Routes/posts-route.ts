@@ -137,8 +137,6 @@ postsRoute.get('/:postId/comments',
         const comments = await commentsRepository.getCommentsForCurrentPost(
             {postId, ...postData})
 
-        console.log(comments,'comments')
-
         if (comments) {
             res.status(200).send(comments)
         } else {

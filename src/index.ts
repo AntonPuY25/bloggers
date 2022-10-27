@@ -18,7 +18,8 @@ const cookieParser = require("cookie-parser");
 
 app.use(cors())
 app.use(cookieParser());
-app.use(bodyParser())
+// app.use(bodyParser())
+app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!')

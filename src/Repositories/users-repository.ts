@@ -56,7 +56,6 @@ export const usersRepository = {
                     'userData.deadRefreshTokens':tokens
                 }
             })
-            console.log('Hello')
             return true
         } catch (e) {
             return null

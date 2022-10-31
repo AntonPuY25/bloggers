@@ -64,8 +64,6 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;
     const authResult = await authService.authUser({login, password});
-    console.log('login')
-    console.log(authResult, 'authResult')
     if (authResult) {
         const accessToken = await jwtService.createJwt({
             user: authResult,
@@ -75,9 +73,7 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
             user: authResult,
             expiresIn: '20s'
         })
-        console.log(accessToken, refreshToken)
         res.cookie('refreshToken', refreshToken, {
-            // expiresIn: new Date() + 20000,
             httpOnly: true,
             secure: true,
         })
@@ -87,16 +83,12 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
     }
 })
 
-authRoute.get('/logout', authMiddleWare, async (req: Request, res: Response) => {
+authRoute.post('/logout', authMiddleWare, async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
 
-    const result = await jwtService.logout(refreshToken);
+      await jwtService.logout(refreshToken);
 
-    if (result) {
         return res.sendStatus(204)
-    } else {
-        return res.sendStatus(401)
-    }
 
 })
 

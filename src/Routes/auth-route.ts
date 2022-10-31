@@ -83,12 +83,21 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
     }
 })
 
-authRoute.post('/logout', authMiddleWare, async (req: Request, res: Response) => {
+authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
+    if (!refreshToken) return res.sendStatus(401)
 
-      await jwtService.logout(refreshToken);
+    const userId = await jwtService.getUserIdByToken(refreshToken)
 
-        return res.sendStatus(204)
+
+    if (userId) {
+        const result = await jwtService.logout(refreshToken);
+        if (result) {
+            return res.sendStatus(204)
+        }
+    }
+    return res.sendStatus(401)
+
 
 })
 
@@ -114,7 +123,7 @@ authRoute.post('/refresh-token', async (req: Request, res: Response) => {
         return res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
             secure: true,
-        }).status(200).send({'accessToken':result.accessToken})
+        }).status(200).send({'accessToken': result.accessToken})
     } else {
         return res.sendStatus(401)
     }

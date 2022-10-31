@@ -24,6 +24,7 @@ export const jwtService = {
         }
     },
 
+
     async refreshToken(token:string){
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)

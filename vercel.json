@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "name": "Bloggers",
+  "name": "express-products-vercel",
   "builds": [
     {
       "src": "src/index.ts",
-      "use": "vercel-sapper"
+      "use": "@vercel/node"
     }
   ],
   "routes": [

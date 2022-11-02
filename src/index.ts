@@ -39,7 +39,6 @@ app.use('/auth', authRoute)
 app.use('/comments', commentsRoute)
 app.use('/email', emailRouter)
 
-
 app.listen(port, async () => {
     await mongoose.connect(mongoUri)
         .then((res) => console.log('success'))

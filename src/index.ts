@@ -3,13 +3,13 @@ import {Request, Response} from "express";
 import {bloggersRoute} from "./Routes/bloggers-route";
 import {postsRoute} from "./Routes/posts-route";
 import {testingRoute} from "./Routes/testing-route";
-import mongoose from "mongoose";
 import {usersRoute} from "./Routes/usersRoute";
 import {authRoute} from "./Routes/auth-route";
 import {settings} from "./settings/settings";
 import {commentsRoute} from "./Routes/comments-route";
 import {emailRouter} from "./Routes/email-router";
 import * as dotenv from 'dotenv';
+import {runDb} from "./Repositories/db";
 
 
 dotenv.config()
@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!')
+    res.send('Hello World')
 })
 const mongoUri = process.env.MONGO_URI;
 
@@ -39,9 +39,12 @@ app.use('/auth', authRoute)
 app.use('/comments', commentsRoute)
 app.use('/email', emailRouter)
 
-app.listen(port, async () => {
-    await mongoose.connect(mongoUri)
-        .then((res) => console.log('success'))
-        .catch((error) => console.log('error'))
-    console.log(`Example app listening on port ${port}`)
-})
+
+const startApp = async () => {
+    await runDb()
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
+    })
+}
+
+startApp()

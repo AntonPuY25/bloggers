@@ -1,45 +1,95 @@
 import jwt from 'jsonwebtoken'
 import {settings} from "../settings/settings";
-import {CreateJWTTokenType, RegisterUserType} from "../interfaces/registration-types/interface";
+import {
+    CreateJWTTokenType,
+    JWTTokenMethodType,
+    JWTTokenType,
+    RegisterUserType
+} from "../interfaces/registration-types/interface";
 import {usersRepository} from "../Repositories/users-repository";
+import {tokensRepository} from "../Repositories/tokens-repository";
+import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
 
 
 export const jwtService = {
-    async createJwt({expiresIn, user}: CreateJWTTokenType) {
-        const token = jwt.sign({userId: user.id},
+    async createJwt({expiresIn, user, type, deviceId, device, methodType}: CreateJWTTokenType) {
+        const token = jwt.sign({deviceId},
             settings.JWT_SECRET,
             {expiresIn})
 
-        return  token;
+        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET)
+
+        const createdToken = {
+            userId: user.id,
+            deviceId,
+            deviceName: device,
+            ip: '192.168.1.1',
+            issueAt: verifyToken.iat,
+            finishedDate: verifyToken.exp
+        };
+
+        if (type === JWTTokenType.refreshToken && verifyToken) {
+            methodType === JWTTokenMethodType.create ?
+                await tokensRepository.setToken(createdToken)
+                : await tokensRepository.updateTokenByDeviceId({token: createdToken})
+        }
+
+        return token;
 
     },
 
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
-            return result.userId
-        } catch (e) {
+            const currentToken = await tokensRepository.getUserItByDeviceID({
+                deviceId: result.deviceId,
+                issueAt: result.iat
+            })
 
+            if (!currentToken) {
+                return null
+            }
+            return currentToken.userId;
+        } catch (e) {
             return null
+
         }
     },
 
 
-    async refreshToken(token:string){
+    async refreshToken(token: string, device?: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
-            if(result){
-                const currentUser:RegisterUserType|undefined = await usersRepository.getCurrentUserById(result.userId)
-                if(currentUser){
-                    const deadRefreshTokensFromBd = [...currentUser.userData.deadRefreshTokens]
-                    if(deadRefreshTokensFromBd.includes(token)){
-                        return null
-                    }
-                        deadRefreshTokensFromBd.push(token)
-                    await usersRepository.updateJwtTokensUser(currentUser.id,deadRefreshTokensFromBd)
-                    const newRefreshToken = await this.createJwt({expiresIn:'20s',user:currentUser})
-                    const newAccessToken = await this.createJwt({expiresIn:'10s',user:currentUser})
+            if (result) {
+                const currentToken = await tokensRepository.getUserItByDeviceID({
+                    deviceId: result.deviceId,
+                    issueAt: result.iat
+                })
+
+                if (!currentToken) return null;
+
+                const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentToken.userId)
+                if (currentUser) {
+
+                    const newRefreshToken = await this.createJwt({
+                        expiresIn: ACCESS_TOKEN_TIME,
+                        user: currentUser,
+                        type: JWTTokenType.refreshToken,
+                        deviceId:result.deviceId,
+                        device,
+                        methodType: JWTTokenMethodType.update
+                    })
+
+                    const newAccessToken = await this.createJwt({
+                        expiresIn: REFRESH_TOKEN_TIME,
+                        user: currentUser,
+                        type: JWTTokenType.accessToken,
+                        deviceId:result.deviceId,
+                        device,
+                        methodType: JWTTokenMethodType.update
+                    })
+
                     return {
                         refreshToken: newRefreshToken,
                         accessToken: newAccessToken
@@ -53,20 +103,11 @@ export const jwtService = {
         }
     },
 
-    async logout(refresh_token:string){
+    async logout(refresh_token: string) {
         const currentUserId = await this.getUserIdByToken(refresh_token)
-        if(!currentUserId) return null;
-        const currentUser:RegisterUserType|undefined = await usersRepository.getCurrentUserById(currentUserId)
-        if(!currentUser) return null
-
-        const deadRefreshTokensFromBd = [...currentUser.userData.deadRefreshTokens]
-
-        if(deadRefreshTokensFromBd.includes(refresh_token)){
-            return null
-        }
-        deadRefreshTokensFromBd.push(refresh_token)
-        await usersRepository.updateJwtTokensUser(currentUser.id,deadRefreshTokensFromBd)
-
+        if (!currentUserId) return null;
+        const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentUserId)
+        if (!currentUser) return null
         return true
 
     }

@@ -10,13 +10,15 @@ import {
     passwordValidator
 } from "../middleWares/middleWares";
 import {
-    GetRefreshJWTTokenType,
+    GetRefreshJWTTokenType, JWTTokenMethodType,
     JWTTokenType,
     RegistrationBodyTypes,
     RegistrationConfirmationBodyTypes,
     RegistrationResendingEmailBodyTypes
 } from "../interfaces/registration-types/interface";
 import {duplicatedEmail, duplicatedLogin} from "../helpers/helpers";
+import {v4 as uuidv4} from "uuid";
+import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
 
 export const authRoute = Router({});
 
@@ -63,19 +65,29 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;
+    const device = req.headers['user-agent'];
+
+    const deviceId = uuidv4();
     const authResult = await authService.authUser({login, password});
     if (authResult) {
         const accessToken = await jwtService.createJwt({
             user: authResult,
-            expiresIn: '10s'
+            expiresIn: ACCESS_TOKEN_TIME,
+            type: JWTTokenType.accessToken,
+            deviceId,
+            device,
+            methodType: JWTTokenMethodType.create
         })
         const refreshToken = await jwtService.createJwt({
             user: authResult,
-            expiresIn: '20s'
+            expiresIn: REFRESH_TOKEN_TIME,
+            type: JWTTokenType.refreshToken,
+            deviceId,
+            device,
+            methodType: JWTTokenMethodType.create
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
         })
         return res.status(200).send({accessToken})
     } else {
@@ -114,15 +126,14 @@ authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
 
 authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
-
+    const device = req.headers['user-agent'];
     if (!refreshToken) return res.sendStatus(401)
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken)
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device)
 
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
-            secure: true,
         }).status(200).send({'accessToken': result.accessToken})
     } else {
         return res.sendStatus(401)

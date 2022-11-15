@@ -43,11 +43,38 @@ export enum JWTTokenType {
     refreshToken='refreshToken',
 }
 
+export enum JWTTokenMethodType {
+    create,
+    update,
+}
+
 export interface CreateJWTTokenType {
     user: RegisterUserType,
     expiresIn: string,
+    type: JWTTokenType,
+    deviceId: string;
+    methodType: JWTTokenMethodType;
+    device?: string;
 }
 export interface GetRefreshJWTTokenType {
     refreshToken: string,
     accessToken: string
+}
+
+export interface CreateTokensProps {
+    issueAt: string;
+    deviceId: string;
+    finishedDate: string;
+    userId: string;
+    ip?: string;
+    deviceName?: string;
+}
+
+export interface GetUserItByDeviceIDProps {
+    deviceId: string;
+    issueAt: string
+}
+
+export interface UpdateTokenByIdProps {
+  token:CreateTokensProps
 }

@@ -24,10 +24,6 @@ const usersSchema = new Schema({
             type: String,
             required: true,
         },
-        deadRefreshTokens: {
-            type: Array,
-            required: true,
-        }
     },
     emailConfirmation: {
         confirmationCode: {

@@ -5,7 +5,7 @@ import {
     RegistrationResendingEmailBodyTypes, UpdateUserType
 } from "../interfaces/registration-types/interface";
 import {v4 as uuidv4} from "uuid";
-import {add} from "date-fns";
+
 
 
 export const usersRepository = {
@@ -42,18 +42,6 @@ export const usersRepository = {
             await UsersModel.updateOne({id},{
                 $set:{
                     'emailConfirmation.confirmationCode':code
-                }
-            })
-            return true
-        } catch (e) {
-            return null
-        }
-    },
-    async updateJwtTokensUser(id: string, tokens: string[]) {
-        try {
-            await UsersModel.updateOne({id},{
-                $set:{
-                    'userData.deadRefreshTokens':tokens
                 }
             })
             return true

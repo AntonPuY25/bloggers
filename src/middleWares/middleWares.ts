@@ -68,6 +68,7 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
     const token = req.headers.authorization.split(' ')[1];
     const userId = await jwtService.getUserIdByToken(token)
 
+
     if (userId) {
         const currentUser =  await queryUsersRepository.getCurrentUser(userId);
         if(currentUser){

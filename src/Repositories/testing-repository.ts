@@ -2,6 +2,7 @@ import {BloggersModel} from "../DB/bloggers-scheme";
 import {PostsModel} from "../DB/post-scheme";
 import {UsersModel} from "../DB/users-scheme";
 import {CommentsModel} from "../DB/comments-scheme";
+import {TokensModel} from "../DB/tokens-scheme";
 
 
 export const testingRepository = {
@@ -10,6 +11,7 @@ export const testingRepository = {
         await PostsModel.deleteMany({})
         await UsersModel.deleteMany({})
         await CommentsModel.deleteMany({})
+        await TokensModel.deleteMany({})
         return {
             success: true
         }

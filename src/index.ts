@@ -10,6 +10,7 @@ import {commentsRoute} from "./Routes/comments-route";
 import {emailRouter} from "./Routes/email-router";
 import * as dotenv from 'dotenv';
 import {runDb} from "./Repositories/db";
+import {securityRoute} from "./Routes/security-route";
 
 
 dotenv.config()
@@ -25,6 +26,7 @@ app.use(express.json())
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World')
 })
+app.set('trust proxy', true) // getting ip address
 const mongoUri = process.env.MONGO_URI;
 
 if (!mongoUri) {
@@ -38,6 +40,7 @@ app.use('/testing', testingRoute)
 app.use('/auth', authRoute)
 app.use('/comments', commentsRoute)
 app.use('/email', emailRouter)
+app.use('/security', securityRoute)
 
 
 const startApp = async () => {

@@ -112,5 +112,19 @@ export const jwtService = {
         if (!currentUser) return null
         return true
 
+    },
+    async getCurrentIssueAt(token:string){
+        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+        if(!verifyToken) return  null;
+        if(verifyToken){
+            return verifyToken.iat;
+        }
+    },
+    async getCurrentDeviceId(token:string){
+        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+        if(!verifyToken) return  null;
+        if(verifyToken){
+            return verifyToken.deviceId;
+        }
     }
 }

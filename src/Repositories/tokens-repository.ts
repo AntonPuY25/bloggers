@@ -41,7 +41,6 @@ export const tokensRepository = {
     getAllTokens: async () => {
         try {
             const result = await TokensModel.find({});
-            console.log(result, 'result')
             if (result) {
                 return result.map((token) => ({
                     ip: token.ip,
@@ -53,5 +52,19 @@ export const tokensRepository = {
         } catch (e) {
             return null
         }
-    }
+    },
+    deleteAllExceptCurrent: async (issueAt: string) => {
+        try {
+            return await TokensModel.remove({issueAt: {$ne: issueAt}})
+        } catch (e) {
+            return null
+        }
+    },
+    deleteCurrentToken: async (deviceId: string) => {
+        try {
+            return await TokensModel.deleteOne({deviceId})
+        } catch (e) {
+            return null
+        }
+    },
 }

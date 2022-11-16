@@ -66,6 +66,7 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;
     const device = req.headers['user-agent'];
+    const ip = req.ip;
 
     const deviceId = uuidv4();
     const authResult = await authService.authUser({login, password});
@@ -76,7 +77,8 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
             type: JWTTokenType.accessToken,
             deviceId,
             device,
-            methodType: JWTTokenMethodType.create
+            methodType: JWTTokenMethodType.create,
+            ip,
         })
         const refreshToken = await jwtService.createJwt({
             user: authResult,
@@ -84,7 +86,8 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
             type: JWTTokenType.refreshToken,
             deviceId,
             device,
-            methodType: JWTTokenMethodType.create
+            methodType: JWTTokenMethodType.create,
+            ip
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -128,8 +131,9 @@ authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
     const device = req.headers['user-agent'];
     if (!refreshToken) return res.sendStatus(401)
+    const ip = req.ip;
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device)
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device,ip)
 
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {

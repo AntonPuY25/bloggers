@@ -55,6 +55,7 @@ export interface CreateJWTTokenType {
     deviceId: string;
     methodType: JWTTokenMethodType;
     device?: string;
+    ip?: string;
 }
 export interface GetRefreshJWTTokenType {
     refreshToken: string,

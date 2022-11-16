@@ -1,2 +1,2 @@
-export const ACCESS_TOKEN_TIME = '20s';
-export const REFRESH_TOKEN_TIME = '30s';
+export const ACCESS_TOKEN_TIME = '20222222222222222s';
+export const REFRESH_TOKEN_TIME = '3033333333333333s';

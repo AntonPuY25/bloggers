@@ -17,6 +17,8 @@ export const jwtService = {
             settings.JWT_SECRET,
             {expiresIn})
 
+        console.log('HEREEEEEEE')
+
         const verifyToken: any = jwt.verify(token, settings.JWT_SECRET)
 
         const createdToken = {
@@ -29,6 +31,7 @@ export const jwtService = {
         };
 
         if (type === JWTTokenType.refreshToken && verifyToken) {
+            console.log('HEREEEEEE!!!!!2222222222222')
             methodType === JWTTokenMethodType.create ?
                 await tokensRepository.setToken(createdToken)
                 : await tokensRepository.updateTokenByDeviceId({token: createdToken})

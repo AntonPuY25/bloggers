@@ -10,7 +10,7 @@ export const tokensRepository = {
         const currentToken: CreateTokensProps = {
             ip, issueAt, finishedDate, userId, deviceName, deviceId
         };
-
+        console.log('HEREEEEEEEEEEEE333333333333333')
         const tokenResult = new TokensModel(currentToken)
 
         try {

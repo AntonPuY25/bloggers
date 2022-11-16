@@ -19,6 +19,7 @@ import {
 import {duplicatedEmail, duplicatedLogin} from "../helpers/helpers";
 import {v4 as uuidv4} from "uuid";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
+import {tokensRepository} from "../Repositories/tokens-repository";
 
 export const authRoute = Router({});
 
@@ -101,6 +102,9 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
 authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
     if (!refreshToken) return res.sendStatus(401)
+
+    const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
+    await tokensRepository.deleteCurrentToken(currentDeviceId);
 
     const userId = await jwtService.getUserIdByToken(refreshToken)
 

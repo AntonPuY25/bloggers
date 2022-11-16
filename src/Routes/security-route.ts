@@ -27,8 +27,8 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     const {refreshToken} = req.cookies;
     const {deviceId} = req.params;
     const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
-    if (currentDeviceId !== currentDeviceId || !currentDeviceId) {
-        return res.sendStatus(401);
+    if (!currentDeviceId) {
+        return res.sendStatus(404);
     }
 
     const result = await tokensRepository.deleteCurrentToken(deviceId);

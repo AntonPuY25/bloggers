@@ -66,6 +66,8 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {login, password} = req.body;
+
+    console.log(req.body,'req.bodyreq.bodyreq.body')
     const device = req.headers['user-agent'];
     const ip = req.ip;
 

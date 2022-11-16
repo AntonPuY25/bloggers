@@ -69,8 +69,11 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
     const device = req.headers['user-agent'];
     const ip = req.ip;
 
+    console.log('LOGIN')
+
     const deviceId = uuidv4();
     const authResult = await authService.authUser({login, password});
+    console.log(authResult,'authResultauthResultauthResult')
     if (authResult) {
         const accessToken = await jwtService.createJwt({
             user: authResult,

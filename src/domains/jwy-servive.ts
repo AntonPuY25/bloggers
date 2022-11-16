@@ -19,7 +19,9 @@ export const jwtService = {
 
         console.log('HEREEEEEEE')
 
-        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET)
+        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+
+        console.log(verifyToken,'verifyToken')
 
         const createdToken = {
             userId: user.id,

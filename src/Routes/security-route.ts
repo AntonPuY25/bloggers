@@ -4,7 +4,7 @@ import {tokensRepository} from "../Repositories/tokens-repository";
 
 export const securityRoute = Router({});
 
-securityRoute.get('/',authMiddleWare,async (req,res)=>{
+securityRoute.get('/devices',authMiddleWare,async (req,res)=>{
     const result = await  tokensRepository.getAllTokens();
     if(result){
         return res.status(200).send(result)

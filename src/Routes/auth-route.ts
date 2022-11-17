@@ -72,7 +72,6 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
     const ip = req.ip;
 
     console.log('LOGIN')
-
     const deviceId = uuidv4();
     const authResult = await authService.authUser({login, password});
     console.log(authResult,'authResultauthResultauthResult')
@@ -97,6 +96,7 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
+            secure: true,
         })
         return res.status(200).send({accessToken})
     } else {

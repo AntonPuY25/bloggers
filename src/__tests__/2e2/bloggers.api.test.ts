@@ -16,7 +16,7 @@ describe('/blogs', () => {
             .post('/blogs')
             .send({
                 "name": "Bob",
-                "youtubeUrl": "https://youtoube.com"
+                "websiteUrl": "https://websiteUrl.com"
             })
 
 
@@ -24,7 +24,7 @@ describe('/blogs', () => {
 
         expect(result.status).toBe(201)
         expect(result.body.name).toEqual("Bob")
-        expect(result.body.youtubeUrl).toEqual("https://youtoube.com")
+        expect(result.body.websiteUrl).toEqual("https://websiteUrl.com")
 
     })
 
@@ -43,7 +43,7 @@ describe('/blogs', () => {
             .expect(200)
 
         expect(result.body.name).toEqual(currentBlog.name)
-        expect(result.body.youtubeUrl).toEqual(currentBlog.youtubeUrl)
+        expect(result.body.websiteUrl).toEqual(currentBlog.websiteUrl)
     })
 
     it('Should update current blog', async () => {
@@ -51,7 +51,7 @@ describe('/blogs', () => {
             .put(`/blogs/${currentBlog.id}`)
             .send({
                 "name": "Anton 3.0",
-                "youtubeUrl": "https://youtoube2.0.com"
+                "websiteUrl": "https://youtoube2.0.com"
             })
             .expect(204)
 
@@ -60,7 +60,7 @@ describe('/blogs', () => {
             .expect(200)
 
         expect(result.body.name).toEqual('Anton 3.0')
-        expect(result.body.youtubeUrl).toEqual('https://youtoube2.0.com')
+        expect(result.body.websiteUrl).toEqual('https://websiteUrl.0.com')
     })
 
 

@@ -33,10 +33,10 @@ bloggersRoute.post('/',authorizationMiddleWare,
     nameValidator,
     urlValidator,
     errorMiddleWAre, async (req: Request, res: Response) => {
-        const {name, youtubeUrl} = req.body;
+        const {name, websiteUrl} = req.body;
 
         const currentBlogger = await bloggersService.createBlogger(
-            {name, youtubeUrl})
+            {name, websiteUrl})
 
         if (currentBlogger) {
             const newBlogger: ResponseDataBloggerType =
@@ -99,10 +99,10 @@ bloggersRoute.get('/:id', async (req: Request, res: Response) => {
 
 bloggersRoute.put('/:id',authorizationMiddleWare, nameValidator, urlValidator, errorMiddleWAre, async (req: Request, res: Response) => {
     const blogId = req.params.id;
-    const {name, youtubeUrl} = req.body;
+    const {name, websiteUrl} = req.body;
 
     const currentBlogger = await bloggersService.updateBlogger(
-        {blogId, name, youtubeUrl})
+        {blogId, name, websiteUrl})
 
     if (currentBlogger && blogId) {
         res.send(204)

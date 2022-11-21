@@ -31,7 +31,7 @@ export const getBloggersData = ({pageSize, sortBy, sortDirection, pageNumber, se
 export const getNewResponseBlogger = (currentBlogger: ResponseDataBloggerType) => ({
     id: currentBlogger.id,
     name: currentBlogger.name,
-    youtubeUrl: currentBlogger.youtubeUrl,
+    websiteUrl: currentBlogger.websiteUrl,
     createdAt: currentBlogger.createdAt,
 })
 

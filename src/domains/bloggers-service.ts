@@ -2,19 +2,19 @@ import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
 
 export const bloggersService = {
-    createBlogger: async ({youtubeUrl, name}: CreateBloggerProps) => {
+    createBlogger: async ({websiteUrl, name}: CreateBloggerProps) => {
         const newBlogger = {
             id: Number(new Date()).toString(),
             name,
-            youtubeUrl,
+            websiteUrl,
         }
 
         return await bloggersRepository.createBlogger(newBlogger)
     },
 
-    updateBlogger: async ({blogId, name, youtubeUrl}: UpdateBloggerProps) => {
+    updateBlogger: async ({blogId, name, websiteUrl}: UpdateBloggerProps) => {
         return await bloggersRepository.updateBlogger(
-            {blogId, name, youtubeUrl})
+            {blogId, name, websiteUrl})
     },
 
     deleteBlogger: async (blogId: string) => {

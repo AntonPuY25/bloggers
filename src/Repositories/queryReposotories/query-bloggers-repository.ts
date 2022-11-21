@@ -41,7 +41,7 @@ export const queryBloggersRepository = {
                         const newBlogger: ResponseDataBloggerType = {
                             id: item.id,
                             name: item.name,
-                            youtubeUrl: item.youtubeUrl,
+                            websiteUrl: item.websiteUrl,
                             createdAt: item.createdAt,
 
                         }

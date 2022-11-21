@@ -18,7 +18,7 @@ export const bloggersRepository = {
             .catch(() => null)
     },
 
-    updateBlogger: async ({blogId, name, youtubeUrl}: UpdateBloggerProps) => {
+    updateBlogger: async ({blogId, name, websiteUrl}: UpdateBloggerProps) => {
 
         const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
 
@@ -26,7 +26,7 @@ export const bloggersRepository = {
             return BloggersModel.updateOne({id: blogId}, {
                 $set: {
                     name,
-                    youtubeUrl
+                    websiteUrl
                 }
             })
                 .then((result: any) => result)

@@ -1,12 +1,12 @@
 export interface CreateBloggerProps {
     name: string
-    youtubeUrl: string
+    websiteUrl: string
 }
 
 export interface UpdateBloggerProps {
     blogId: string
     name: string
-    youtubeUrl: string
+    websiteUrl: string
 }
 
 export interface CreatePostProps {
@@ -23,20 +23,20 @@ export interface UpdatePostProps extends CreatePostProps {
 export interface BloggerType {
     id: string
     name: string
-    youtubeUrl: string
+    websiteUrl: string
 }
 
 export interface ResponseDataBloggerType {
     id: string
     name: string
-    youtubeUrl: string
+    websiteUrl: string
     createdAt: string
 }
 
 export interface DbBloggerType {
     id: string
     name: string
-    youtubeUrl: string
+    websiteUrl: string
     createdAt: string
     _id: string
     updatedAt: string
@@ -95,7 +95,7 @@ export interface GetPostsParamsType {
 export interface GetBloggerItemsResponseType {
     id: string,
     name: string,
-    youtubeUrl: string,
+    websiteUrl: string,
     createdAt: string
 
 }
@@ -154,7 +154,7 @@ export interface GetUsersResponseType {
 }
 
 export interface AuthRequestBodyType {
-    login: string
+    loginOrEmail: string
     password: string
 }
 

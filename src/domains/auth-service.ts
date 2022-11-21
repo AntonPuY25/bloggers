@@ -112,11 +112,10 @@ export const authService = {
                 message: { errorsMessages: [{ message: 'This User is not found', field: 'email' }] },
             }
         }
-
     },
 
-    async authUser({login, password}: AuthRequestBodyType) {
-        const currentUser:RegisterUserType = await usersRepository.getCurrentUser(login);
+    async authUser({loginOrEmail, password}: AuthRequestBodyType) {
+        const currentUser:RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
 
         if (!currentUser) return null
 

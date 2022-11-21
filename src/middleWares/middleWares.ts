@@ -6,7 +6,7 @@ import {usersRepository} from "../Repositories/users-repository";
 
 const {body, validationResult} = require('express-validator');
 
-export const urlValidator = body('youtubeUrl').trim().isURL().isLength({min: 3, max: 100});
+export const urlValidator = body('websiteUrl').trim().isURL().isLength({min: 3, max: 100});
 export const nameValidator = body('name').trim().isLength({min: 3, max: 15});
 export const loginValidator = body('login').trim().isLength({min: 3, max: 10});
 export const passwordValidator = body('password').trim().isLength({min: 6, max: 20});

@@ -65,7 +65,7 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
 })
 
 authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
-    const {login, password} = req.body;
+    const {loginOrEmail, password} = req.body;
 
     console.log(req.body,'req.bodyreq.bodyreq.body')
     const device = req.headers['user-agent'];
@@ -73,7 +73,7 @@ authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, r
 
     console.log('LOGIN')
     const deviceId = uuidv4();
-    const authResult = await authService.authUser({login, password});
+    const authResult = await authService.authUser({loginOrEmail, password});
 
     if (authResult) {
         const accessToken = await jwtService.createJwt({

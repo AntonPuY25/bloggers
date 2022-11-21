@@ -11,7 +11,7 @@ const bloggersSchema = new Schema({
         type: String,
         required: true,
     },
-    youtubeUrl: {
+    websiteUrl: {
         type: String,
         required: true,
     },

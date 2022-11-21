@@ -116,11 +116,8 @@ export const authService = {
     },
 
     async authUser({login, password}: AuthRequestBodyType) {
-
-        console.log(login,'login')
-
         const currentUser:RegisterUserType = await usersRepository.getCurrentUser(login);
-        console.log(currentUser,'currentUsercurrentUsercurrentUser')
+
         if (!currentUser) return null
 
         const passwordSalt = currentUser.userData.salt;

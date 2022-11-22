@@ -121,10 +121,15 @@ export const jwtService = {
         }
     },
     async getCurrentDeviceId(token:string){
-        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
-        if(!verifyToken) return  null;
-        if(verifyToken){
-            return verifyToken.deviceId;
-        }
+       try{
+           const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+           if(!verifyToken) return  null;
+           if(verifyToken){
+               return verifyToken.deviceId;
+           }
+       }catch (e) {
+           return null
+       }
+
     }
 }

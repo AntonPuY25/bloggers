@@ -106,7 +106,7 @@ export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, 
         const currentLimited = createdLimited
             .filter((limit: any) => !(dayjs().subtract(10, 's') > dayjs(limit.date)));
 
-        if(currentLimited.length > 4){
+        if(currentLimited.length > 5){
             return res.sendStatus(429);
         }else{
             next()

@@ -16,7 +16,7 @@ import {sortDirectionType, UpdateCommentBodyParamsType} from "../interfaces/inte
 import {postsRepositories} from "../Repositories/posts-repository";
 import {commentsRepository} from "../Repositories/comments-repository";
 import {GetPostsData} from "../helpers/types";
-import {log} from "util";
+
 
 export const postsRoute = Router({});
 

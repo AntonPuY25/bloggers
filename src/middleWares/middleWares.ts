@@ -2,7 +2,8 @@ import {NextFunction, Request, Response} from "express";
 import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {jwtService} from "../domains/jwy-servive";
 import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
-import {usersRepository} from "../Repositories/users-repository";
+import dayjs from 'dayjs'
+import {requestLimitsService} from "../domains/request-limits-service";
 
 const {body, validationResult} = require('express-validator');
 
@@ -28,7 +29,6 @@ export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 3
     })
 
 
-
 export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction) => {
     const errors: any[] = validationResult(req).errors;
     const isEmpty = validationResult(req).isEmpty();
@@ -46,7 +46,7 @@ export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction)
         });
 
         return res.status(400).send({
-            errorsMessages : errorMessage
+            errorsMessages: errorMessage
         });
     }
     next()
@@ -70,14 +70,44 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
 
 
     if (userId) {
-        const currentUser =  await queryUsersRepository.getCurrentUser(userId);
-        if(currentUser){
+        const currentUser = await queryUsersRepository.getCurrentUser(userId);
+        if (currentUser) {
             req.user = currentUser
             return next()
-        }else{
+        } else {
             return res.sendStatus(403)
         }
     }
 
     return res.sendStatus(401)
+}
+
+export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const date = dayjs().toDate();
+
+    if (typeof ip != 'string') throw new Error('Sorry, but your Ip-address is not correct');
+
+    const currentLimit = {
+        ip,
+        date
+    }
+
+    const createdLimit = await requestLimitsService.setRequestLimit(currentLimit)
+
+    if (!createdLimit) throw new Error('Sorry, but something went wrong');
+
+    const createdLimited = await requestLimitsService.getLimitsByIp(currentLimit)
+
+    if (!createdLimited) next()
+
+    if (createdLimited) {
+        const currentLimited = createdLimited
+            .filter((limit: any) => !(dayjs().subtract(10, 's') > dayjs(limit.date)));
+        if(currentLimited.length > 4){
+            return res.sendStatus(429);
+        }else{
+            next()
+        }
+    }
 }

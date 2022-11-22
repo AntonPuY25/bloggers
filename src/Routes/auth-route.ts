@@ -3,7 +3,7 @@ import {AuthRequestBodyType} from "../interfaces/interfaces";
 import {authService} from "../domains/auth-service";
 import {jwtService} from "../domains/jwy-servive";
 import {
-    authMiddleWare, codeValidator,
+    authMiddleWare, checkRequestLimitsMiddleWare, codeValidator,
     emailValidator,
     errorMiddleWAre,
     loginValidator,
@@ -20,11 +20,12 @@ import {duplicatedEmail, duplicatedLogin} from "../helpers/helpers";
 import {v4 as uuidv4} from "uuid";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
 import {tokensRepository} from "../Repositories/tokens-repository";
+import {requestLimitsService} from "../domains/request-limits-service";
 
 export const authRoute = Router({});
 
 
-authRoute.post('/registration', loginValidator, passwordValidator, emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) => {
+authRoute.post('/registration', checkRequestLimitsMiddleWare, loginValidator, passwordValidator, emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) => {
 
     const {login, password, email} = req.body;
 
@@ -41,7 +42,7 @@ authRoute.post('/registration', loginValidator, passwordValidator, emailValidato
     res.sendStatus(204)
 })
 
-authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationConfirmationBodyTypes, {}>, res: Response) => {
+authRoute.post('/registration-confirmation', checkRequestLimitsMiddleWare, codeValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationConfirmationBodyTypes, {}>, res: Response) => {
     const {code} = req.body;
     const result = await authService.confirmEmail({code})
 
@@ -53,7 +54,7 @@ authRoute.post('/registration-confirmation', codeValidator, errorMiddleWAre, asy
 })
 
 
-authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
+authRoute.post('/registration-email-resending', checkRequestLimitsMiddleWare, emailValidator, errorMiddleWAre, async (req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) => {
     const {email} = req.body;
     const result = await authService.resendEmail({email})
 
@@ -64,14 +65,17 @@ authRoute.post('/registration-email-resending', emailValidator, errorMiddleWAre,
     }
 })
 
-authRoute.post('/login', async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
+authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {loginOrEmail, password} = req.body;
 
-    console.log(req.body,'req.bodyreq.bodyreq.body')
+    console.log(req.body, 'req.bodyreq.bodyreq.body')
     const device = req.headers['user-agent'];
-    const ip = req.ip;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-    console.log('LOGIN')
+    console.log(ip, 'ip')
+
+    if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
+
     const deviceId = uuidv4();
     const authResult = await authService.authUser({loginOrEmail, password});
 
@@ -108,6 +112,12 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
     if (!refreshToken) return res.sendStatus(401)
 
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
+
+
+    await requestLimitsService.deleteLimitsByIp(ip)
+
     const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
     await tokensRepository.deleteCurrentToken(currentDeviceId);
 
@@ -142,7 +152,7 @@ authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     if (!refreshToken) return res.sendStatus(401)
     const ip = req.ip;
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device,ip)
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device, ip)
 
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {

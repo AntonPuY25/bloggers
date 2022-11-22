@@ -8,7 +8,7 @@ export const requestLimitsService = {
     },
 
     getLimitsByIp: async (limit:SetLimitProps)=>{
-        return  await  requestLimitsRepository.getCurrentLimitByIp(limit.ip);
+        return  await  requestLimitsRepository.getCurrentLimitByIp(limit);
     },
 
     deleteLimitsByIp: async (ip:string)=>{

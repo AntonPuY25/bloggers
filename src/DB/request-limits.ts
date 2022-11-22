@@ -11,6 +11,10 @@ const RequestLimitsSchema = new Schema({
         type: String,
         required: false,
     },
+    type: {
+        type: String,
+        required: false,
+    },
 }, {timestamps: true})
 
 export const RequestLimitsModel = mongoose.model('RequestLimits', RequestLimitsSchema)

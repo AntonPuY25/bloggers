@@ -90,20 +90,22 @@ export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, 
 
     const currentLimit = {
         ip,
-        date
+        date,
+        type: req.path
     }
 
     const createdLimit = await requestLimitsService.setRequestLimit(currentLimit)
 
     if (!createdLimit) throw new Error('Sorry, but something went wrong');
 
-    const createdLimited = await requestLimitsService.getLimitsByIp(currentLimit)
+    const createdLimited = await requestLimitsService.getLimitsByIp(currentLimit);
+
 
     if (!createdLimited) next()
-
     if (createdLimited) {
         const currentLimited = createdLimited
             .filter((limit: any) => !(dayjs().subtract(10, 's') > dayjs(limit.date)));
+
         if(currentLimited.length > 4){
             return res.sendStatus(429);
         }else{

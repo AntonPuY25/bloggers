@@ -14,9 +14,9 @@ export const requestLimitsRepository = {
 
     },
 
-    getCurrentLimitByIp: async (ip: string) => {
+    getCurrentLimitByIp: async (limit: SetLimitProps) => {
         try {
-            return await RequestLimitsModel.find({ip})
+            return await RequestLimitsModel.find({ip: limit.ip, type: limit.type})
         } catch (e) {
             return null
         }

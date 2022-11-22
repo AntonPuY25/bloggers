@@ -67,4 +67,11 @@ export const tokensRepository = {
             return null
         }
     },
+    getCurrentSessionByDeviceId: async (deviceId: string)=>{
+        try {
+            return await TokensModel.findOne({deviceId})
+        } catch (e) {
+            return null
+        }
+    }
 }

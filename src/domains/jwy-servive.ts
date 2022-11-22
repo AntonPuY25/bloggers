@@ -123,6 +123,7 @@ export const jwtService = {
     async getCurrentDeviceId(token:string){
        try{
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+           console.log(verifyToken,'verifyToken')
            if(!verifyToken) return  null;
            if(verifyToken){
                return verifyToken.deviceId;

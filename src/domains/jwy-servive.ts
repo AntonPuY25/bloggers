@@ -117,7 +117,7 @@ export const jwtService = {
         const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
         if(!verifyToken) return  null;
         if(verifyToken){
-            return verifyToken.iat;
+            return new Date(verifyToken.iat).toISOString();
         }
     },
     async getCurrentDeviceId(token:string){

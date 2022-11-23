@@ -15,6 +15,7 @@ securityRoute.get('/devices', async (req, res) => {
 
 securityRoute.delete('/devices', async (req, res) => {
     const {refreshToken} = req.cookies;
+    if(!refreshToken)  return res.sendStatus(404);
     const issueAt = await jwtService.getCurrentIssueAt(refreshToken);
     if (!issueAt) return res.sendStatus(401);
 

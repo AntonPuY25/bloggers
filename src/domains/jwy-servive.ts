@@ -66,7 +66,7 @@ export const jwtService = {
             if (result) {
                 const currentToken = await tokensRepository.getUserItByDeviceID({
                     deviceId: result.deviceId,
-                    issueAt: new Date(result.iat).toISOString()
+                    issueAt: result.iat
                 })
 
                 console.log(currentToken,'currentToken')

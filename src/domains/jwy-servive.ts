@@ -119,11 +119,16 @@ export const jwtService = {
 
     },
     async getCurrentIssueAt(token:string){
-        const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
-        if(!verifyToken) return  null;
-        if(verifyToken){
-            return new Date(verifyToken.iat).toISOString();
-        }
+       try{
+           const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+           if(!verifyToken) return  null;
+           if(verifyToken){
+               return new Date(verifyToken.iat).toISOString();
+           }
+       }catch (e) {
+           return null
+       }
+
     },
     async getCurrentDeviceId(token:string){
        try{

@@ -43,7 +43,7 @@ export const jwtService = {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
             const currentToken = await tokensRepository.getUserItByDeviceID({
                 deviceId: result.deviceId,
-                issueAt: result.iat
+                issueAt: new Date(result.iat).toISOString()
             })
 
             if (!currentToken) {

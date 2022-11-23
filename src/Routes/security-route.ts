@@ -29,9 +29,6 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     const {deviceId} = req.params;
     if(!refreshToken)  return res.sendStatus(404);
     const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
-    console.log('RENDER',deviceId)
-    console.log('refreshToken',refreshToken)
-    console.log('currentDeviceId',currentDeviceId)
     if (!currentDeviceId) return res.sendStatus(404);
 
 

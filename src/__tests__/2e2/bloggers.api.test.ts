@@ -51,7 +51,7 @@ describe('/blogs', () => {
             .put(`/blogs/${currentBlog.id}`)
             .send({
                 "name": "Anton 3.0",
-                "websiteUrl": "https://youtoube2.0.com"
+                "websiteUrl": "https://websiteUrl.0.com"
             })
             .expect(204)
 

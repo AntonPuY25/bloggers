@@ -24,7 +24,7 @@ export const jwtService = {
             deviceId,
             deviceName: device,
             ip: ip || '',
-            issueAt: verifyToken.iat,
+            issueAt: new Date(verifyToken.iat).toISOString(),
             finishedDate: verifyToken.exp
         };
 

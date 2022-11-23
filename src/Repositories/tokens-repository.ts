@@ -4,6 +4,7 @@ import {
     UpdateTokenByIdProps
 } from "../interfaces/registration-types/interface";
 import {TokensModel} from "../DB/tokens-scheme";
+import {queryPostsRepository} from "./queryReposotories/query-posts-repository";
 
 export const tokensRepository = {
     setToken: async ({issueAt, ip, userId, deviceName, deviceId, finishedDate}: CreateTokensProps) => {
@@ -33,7 +34,7 @@ export const tokensRepository = {
                     issueAt: token.issueAt,
                     finishedDate: token.finishedDate
                 }
-            })
+            }) //TODO: upsert
         } catch (e) {
             return null
         }

@@ -32,6 +32,8 @@ describe('/users', () => {
 
     it('should delete a new user', async () => {
 
+        console.log(currentUser,'currentUser')
+
         await request(app)
             .delete(`/users/${currentUser.id}`)
             .expect(204)

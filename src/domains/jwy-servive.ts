@@ -61,11 +61,15 @@ export const jwtService = {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
+            console.log(result,'result')
+
             if (result) {
                 const currentToken = await tokensRepository.getUserItByDeviceID({
                     deviceId: result.deviceId,
-                    issueAt: result.iat
+                    issueAt: new Date(result.iat).toISOString()
                 })
+
+                console.log(currentToken,'currentToken')
 
                 if (!currentToken) return null;
 
@@ -101,6 +105,7 @@ export const jwtService = {
             return null;
 
         } catch (e) {
+            console.log(e,'e')
             return null
         }
     },
@@ -123,7 +128,6 @@ export const jwtService = {
     async getCurrentDeviceId(token:string){
        try{
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
-           console.log(verifyToken,'verifyToken')
            if(!verifyToken) return  null;
            if(verifyToken){
                return verifyToken.deviceId;

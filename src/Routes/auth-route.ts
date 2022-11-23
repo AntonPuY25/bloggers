@@ -68,11 +68,8 @@ authRoute.post('/registration-email-resending', checkRequestLimitsMiddleWare, em
 authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {loginOrEmail, password} = req.body;
 
-    console.log(req.body, 'req.bodyreq.bodyreq.body')
     const device = req.headers['user-agent'];
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-    console.log(ip, 'ip')
 
     if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
 
@@ -100,7 +97,6 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
         })
         return res.status(200).send({accessToken})
     } else {
@@ -149,11 +145,11 @@ authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
 authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
     const device = req.headers['user-agent'];
+
     if (!refreshToken) return res.sendStatus(401)
     const ip = req.ip;
 
     const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device, ip)
-
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,

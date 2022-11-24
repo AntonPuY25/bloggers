@@ -25,7 +25,7 @@ export const jwtService = {
             deviceName: device,
             ip: ip || '',
             issueAt: new Date(verifyToken.iat).toISOString(),
-            finishedDate: verifyToken.exp
+            finishedDate: new Date(verifyToken.exp).toISOString(),
         };
 
         if (type === JWTTokenType.refreshToken && verifyToken) {

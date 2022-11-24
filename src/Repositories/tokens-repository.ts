@@ -45,7 +45,7 @@ export const tokensRepository = {
                 return result.map((token) => ({
                     ip: token.ip,
                     title: token.deviceName,
-                    lastActiveDate: token.issueAt,
+                    lastActiveDate: token.finishedDate,
                     deviceId: token.deviceId,
                 }))
             }

@@ -6,6 +6,9 @@ export const securityRoute = Router({});
 
 securityRoute.get('/devices', async (req, res) => {
     const result = await tokensRepository.getAllTokens();
+    const {refreshToken} = req.cookies;
+    console.log(refreshToken,'refreshToken')
+    if(!refreshToken)  return res.sendStatus(401);
     if (result) {
         return res.status(200).send(result)
     } else {
@@ -37,6 +40,9 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     if(!currentUser) return res.sendStatus(404)
 
     if(currentUser.deviceId !== currentDeviceId) return  res.sendStatus(403)
+    if(currentUser.deviceId === currentDeviceId){
+        res.clearCookie('refreshToken')
+    }
 
     const result = await tokensRepository.deleteCurrentToken(deviceId);
     if (!result) return res.sendStatus(401);

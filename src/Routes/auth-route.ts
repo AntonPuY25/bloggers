@@ -68,11 +68,8 @@ authRoute.post('/registration-email-resending', checkRequestLimitsMiddleWare, em
 authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {}, AuthRequestBodyType, {}>, res: Response) => {
     const {loginOrEmail, password} = req.body;
 
-    console.log(req.body, 'req.bodyreq.bodyreq.body')
     const device = req.headers['user-agent'];
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-    console.log(ip, 'ip')
 
     if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
 

@@ -97,7 +97,7 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure:true,
         })
         return res.status(200).send({accessToken})
     } else {
@@ -107,7 +107,6 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
 
 authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
-    console.log(refreshToken,'refreshToken')
     if (!refreshToken) return res.sendStatus(401)
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -116,9 +115,9 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
 
     await requestLimitsService.deleteLimitsByIp(ip)
 
-    const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
+    const currentSession = await jwtService.getCurrentDeviceId(refreshToken);
 
-    if(!currentDeviceId) return res.sendStatus(401);
+    if(!currentSession) return res.sendStatus(401);
 
     const userId = await jwtService.getUserIdByToken(refreshToken)
 
@@ -126,7 +125,7 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
     if (userId) {
         const result = await jwtService.logout(refreshToken);
         if (result) {
-            await tokensRepository.deleteCurrentToken(currentDeviceId);
+            await tokensRepository.deleteCurrentToken(currentSession.deviceId);
             return res.sendStatus(204)
         }
     }

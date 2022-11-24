@@ -13,7 +13,7 @@ import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-
 
 export const jwtService = {
     async createJwt({expiresIn, user, type, deviceId, device, methodType,ip}: CreateJWTTokenType) {
-        const token = jwt.sign({deviceId},
+        const token = jwt.sign({userId:user.id,deviceId},
             settings.JWT_SECRET,
             {expiresIn})
 
@@ -41,13 +41,11 @@ export const jwtService = {
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
-            console.log(result,'result')
-            console.log(new Date(result.iat).toISOString(),'new Date(result.iat).toISOString()')
             const currentToken = await tokensRepository.getUserItByDeviceID({
                 deviceId: result.deviceId,
                 issueAt: new Date(result.iat).toISOString()
             })
-            console.log(currentToken,'currentToken')
+
 
             if (!currentToken) {
                 return null
@@ -133,7 +131,10 @@ export const jwtService = {
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
            if(!verifyToken) return  null;
            if(verifyToken){
-               return verifyToken.deviceId;
+               return {
+                   userId: verifyToken.userId,
+                   deviceId: verifyToken.deviceId,
+               };
            }
        }catch (e) {
            return null

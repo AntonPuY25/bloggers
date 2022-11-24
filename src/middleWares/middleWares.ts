@@ -53,9 +53,12 @@ export const errorMiddleWAre = (req: Request, res: Response, next: NextFunction)
 };
 
 export const authorizationMiddleWare = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.authorization || req.headers.authorization !== 'Basic YWRtaW46cXdlcnR5') {
+        return res.sendStatus(401);
+    } else {
 
         return next()
-
+    }
 }
 
 export const authMiddleWare = async (req: Request, res: Response, next: NextFunction) => {

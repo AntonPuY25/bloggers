@@ -7,7 +7,6 @@ export const securityRoute = Router({});
 securityRoute.get('/devices', async (req, res) => {
     const result = await tokensRepository.getAllTokens();
     const {refreshToken} = req.cookies;
-    console.log(refreshToken,'refreshToken')
     if(!refreshToken)  return res.sendStatus(401);
     if (result) {
         return res.status(200).send(result)
@@ -32,15 +31,17 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     const {refreshToken} = req.cookies;
     const {deviceId} = req.params;
     if(!refreshToken)  return res.sendStatus(401);
-    const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
-    if (!currentDeviceId) return res.sendStatus(401);
+    const userData = await jwtService.getCurrentDeviceId(refreshToken);
+    if (!userData) return res.sendStatus(401);
 
-    const currentUser = await tokensRepository.getCurrentSessionByDeviceId(deviceId)
+    const currentSession = await tokensRepository.getCurrentSessionByDeviceId(deviceId)
 
-    if(!currentUser) return res.sendStatus(404)
+    if(!currentSession) return res.sendStatus(404)
 
-    if(currentUser.deviceId === currentDeviceId){
+    if(userData.userId === currentSession.userId){
         res.clearCookie('refreshToken')
+    }else{
+       return  res.sendStatus(403)
     }
 
     const result = await tokensRepository.deleteCurrentToken(deviceId);
@@ -48,4 +49,3 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
 
     res.sendStatus(204)
 })
-//ecb6e400-c695-4a46-87c6-d4298a0437eb

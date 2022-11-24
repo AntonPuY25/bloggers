@@ -39,7 +39,6 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
 
     if(!currentUser) return res.sendStatus(404)
 
-    if(currentUser.deviceId !== currentDeviceId) return  res.sendStatus(403)
     if(currentUser.deviceId === currentDeviceId){
         res.clearCookie('refreshToken')
     }

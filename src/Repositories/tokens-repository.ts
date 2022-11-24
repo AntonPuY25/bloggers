@@ -21,7 +21,7 @@ export const tokensRepository = {
     },
     getUserItByDeviceID: async ({deviceId, issueAt}: GetUserItByDeviceIDProps) => {
         try {
-            return await TokensModel.findOne({deviceId, issueAt})
+            return await TokensModel.findOne({deviceId, lastActiveDate:issueAt})
         } catch (e) {
             return null
         }

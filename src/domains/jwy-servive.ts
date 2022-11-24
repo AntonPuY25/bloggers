@@ -41,10 +41,13 @@ export const jwtService = {
     async getUserIdByToken(token: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
+            console.log(result,'result')
+            console.log(new Date(result.iat).toISOString(),'new Date(result.iat).toISOString()')
             const currentToken = await tokensRepository.getUserItByDeviceID({
                 deviceId: result.deviceId,
                 issueAt: new Date(result.iat).toISOString()
             })
+            console.log(currentToken,'currentToken')
 
             if (!currentToken) {
                 return null

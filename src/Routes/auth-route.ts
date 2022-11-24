@@ -107,6 +107,7 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
 
 authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
+    console.log(refreshToken,'refreshToken')
     if (!refreshToken) return res.sendStatus(401)
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -119,14 +120,13 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
 
     if(!currentDeviceId) return res.sendStatus(401);
 
-    await tokensRepository.deleteCurrentToken(currentDeviceId);
-
     const userId = await jwtService.getUserIdByToken(refreshToken)
 
 
     if (userId) {
         const result = await jwtService.logout(refreshToken);
         if (result) {
+            await tokensRepository.deleteCurrentToken(currentDeviceId);
             return res.sendStatus(204)
         }
     }

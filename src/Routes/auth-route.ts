@@ -100,7 +100,6 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
         })
         return res.status(200).send({accessToken})
     } else {

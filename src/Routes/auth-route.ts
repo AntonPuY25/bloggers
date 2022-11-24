@@ -100,7 +100,6 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
         })
         return res.status(200).send({accessToken})
     } else {
@@ -119,6 +118,9 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
     await requestLimitsService.deleteLimitsByIp(ip)
 
     const currentDeviceId = await jwtService.getCurrentDeviceId(refreshToken);
+
+    if(!currentDeviceId) return res.sendStatus(401);
+
     await tokensRepository.deleteCurrentToken(currentDeviceId);
 
     const userId = await jwtService.getUserIdByToken(refreshToken)

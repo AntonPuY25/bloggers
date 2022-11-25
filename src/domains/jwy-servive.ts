@@ -119,7 +119,10 @@ export const jwtService = {
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
            if(!verifyToken) return  null;
            if(verifyToken){
-               return new Date(verifyToken.iat).toISOString();
+               return {
+                   issueAt : new Date(verifyToken.iat).toISOString(),
+                   userId: verifyToken.userId,
+               }
            }
        }catch (e) {
            return null

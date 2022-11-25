@@ -18,10 +18,10 @@ securityRoute.get('/devices', async (req, res) => {
 securityRoute.delete('/devices', async (req, res) => {
     const {refreshToken} = req.cookies;
     if(!refreshToken)  return res.sendStatus(401);
-    const issueAt = await jwtService.getCurrentIssueAt(refreshToken);
-    if (!issueAt) return res.sendStatus(401);
+    const tokenData = await jwtService.getCurrentIssueAt(refreshToken);
+    if (!tokenData) return res.sendStatus(401);
 
-    const result = await tokensRepository.deleteAllExceptCurrent(issueAt);
+    const result = await tokensRepository.deleteAllExceptCurrent(tokenData.userId,tokenData.issueAt);
     if (!result) return res.sendStatus(401);
 
     res.sendStatus(204)

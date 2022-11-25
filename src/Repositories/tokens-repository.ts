@@ -4,7 +4,6 @@ import {
     UpdateTokenByIdProps
 } from "../interfaces/registration-types/interface";
 import {TokensModel} from "../DB/tokens-scheme";
-import {queryPostsRepository} from "./queryReposotories/query-posts-repository";
 
 export const tokensRepository = {
     setToken: async ({issueAt, ip, userId, deviceName, deviceId, finishedDate}: CreateTokensProps) => {
@@ -45,7 +44,7 @@ export const tokensRepository = {
                 return result.map((token) => ({
                     ip: token.ip,
                     title: token.deviceName,
-                    lastActiveDate: token.finishedDate,
+                    lastActiveDate: token.issueAt,
                     deviceId: token.deviceId,
                 }))
             }

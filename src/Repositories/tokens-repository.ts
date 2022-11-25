@@ -54,7 +54,7 @@ export const tokensRepository = {
     },
     deleteAllExceptCurrent: async (userId: string,issueAt: string) => {
         try {
-            return await TokensModel.remove({userId,issueAt: {$ne: issueAt}})
+            return await TokensModel.remove({issueAt: {$ne: issueAt}})
         } catch (e) {
             return null
         }

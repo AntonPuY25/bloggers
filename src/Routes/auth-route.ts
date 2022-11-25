@@ -93,7 +93,7 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
             deviceId,
             device,
             methodType: JWTTokenMethodType.create,
-            ip
+            ip,
         })
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,

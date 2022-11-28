@@ -59,7 +59,9 @@ authRoute.post('/registration-email-resending', checkRequestLimitsMiddleWare, em
     const result = await authService.resendEmail({email})
 
     if (result?.isError) {
-        return result?.message ? res.status(400).send(result.message) : res.sendStatus(404)
+        return result?.message ?
+            res.status(400).send(result.message)
+            : res.sendStatus(404)
     } else {
         return res.sendStatus(204)
     }
@@ -86,6 +88,7 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
             methodType: JWTTokenMethodType.create,
             ip,
         })
+
         const refreshToken = await jwtService.createJwt({
             user: authResult,
             expiresIn: REFRESH_TOKEN_TIME,
@@ -95,10 +98,12 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
             methodType: JWTTokenMethodType.create,
             ip,
         })
+
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true,
         })
+
         return res.status(200).send({accessToken})
     } else {
         return res.sendStatus(401)
@@ -117,7 +122,7 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
 
     const currentSession = await jwtService.getCurrentDeviceId(refreshToken);
 
-    if(!currentSession) return res.sendStatus(401);
+    if (!currentSession) return res.sendStatus(401);
 
     const userId = await jwtService.getUserIdByToken(refreshToken)
 

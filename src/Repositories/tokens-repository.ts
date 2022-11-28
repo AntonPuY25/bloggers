@@ -18,13 +18,15 @@ export const tokensRepository = {
             return null
         }
     },
+
     getUserItByDeviceID: async ({deviceId, issueAt}: GetUserItByDeviceIDProps) => {
         try {
-            return await TokensModel.findOne({deviceId, lastActiveDate:issueAt})
+            return await TokensModel.findOne({deviceId, lastActiveDate: issueAt})
         } catch (e) {
             return null
         }
     },
+
     updateTokenByDeviceId: async ({token}: UpdateTokenByIdProps) => {
         try {
             return await TokensModel.updateOne({deviceId: token.deviceId}, {
@@ -37,6 +39,7 @@ export const tokensRepository = {
             return null
         }
     },
+
     getAllTokens: async () => {
         try {
             const result = await TokensModel.find({});
@@ -52,13 +55,15 @@ export const tokensRepository = {
             return null
         }
     },
-    deleteAllExceptCurrent: async (userId: string,issueAt: string) => {
+
+    deleteAllExceptCurrent: async (userId: string, issueAt: string) => {
         try {
             return await TokensModel.remove({issueAt: {$ne: issueAt}})
         } catch (e) {
             return null
         }
     },
+
     deleteCurrentToken: async (deviceId: string) => {
         try {
             return await TokensModel.deleteOne({deviceId})
@@ -66,7 +71,8 @@ export const tokensRepository = {
             return null
         }
     },
-    getCurrentSessionByDeviceId: async (deviceId: string)=>{
+
+    getCurrentSessionByDeviceId: async (deviceId: string) => {
         try {
             return await TokensModel.findOne({deviceId})
         } catch (e) {

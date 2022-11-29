@@ -117,7 +117,7 @@ export const authService = {
     async authUser({loginOrEmail, password}: AuthRequestBodyType) {
         const currentUser:RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
 
-        if (!currentUser) return null
+        if (!currentUser) return null;
 
         const passwordSalt = currentUser.userData.salt;
         const passwordHash = await getGeneratedHashPassword(password, passwordSalt)

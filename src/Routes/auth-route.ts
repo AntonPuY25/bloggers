@@ -128,10 +128,7 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
         const result = await jwtService.logout(userId);
         if (result) {
             await tokensRepository.deleteCurrentToken(currentSession.deviceId);
-            res.cookie('refreshToken', null, {
-                httpOnly: true,
-                secure: true,
-            })
+            res.clearCookie('refreshToken');
             return res.sendStatus(204)
         }
     }

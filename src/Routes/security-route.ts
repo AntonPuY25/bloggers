@@ -33,13 +33,12 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     const userData = await jwtService.getCurrentDeviceId(refreshToken);
     if (!userData) return res.sendStatus(401);
 
-    const currentSession = await tokensRepository.getCurrentSessionByDeviceId(deviceId);
+    const currentSession = await tokensRepository.getCurrentSessionByDeviceId(userData.deviceId);
 
     if(!currentSession) return res.sendStatus(404);
 
     if(userData.userId === currentSession.userId){
         await tokensRepository.deleteCurrentToken(deviceId);
-        res.clearCookie('refreshToken')
     }else{
        return  res.sendStatus(403)
     }

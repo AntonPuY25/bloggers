@@ -151,13 +151,11 @@ authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
 authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
 
-    const device = req.headers['user-agent'];
-
     if (!refreshToken) return res.sendStatus(401);
 
     const ip = req.ip;
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device, ip);
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, ip);
 
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {

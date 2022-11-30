@@ -61,7 +61,7 @@ export const jwtService = {
     },
 
 
-    async refreshToken(token: string, device?: string, ip?:string) {
+    async refreshToken(token: string,  ip?:string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
@@ -80,7 +80,7 @@ export const jwtService = {
                         user: currentUser,
                         type: JWTTokenType.refreshToken,
                         deviceId:result.deviceId,
-                        device,
+                        device: currentToken.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
                     })
@@ -90,7 +90,7 @@ export const jwtService = {
                         user: currentUser,
                         type: JWTTokenType.accessToken,
                         deviceId:result.deviceId,
-                        device,
+                        device : currentToken.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
                     })

@@ -38,13 +38,11 @@ securityRoute.delete('/devices/:deviceId', async (req: Request, res: Response) =
     if(!currentSession) return res.sendStatus(404);
 
     if(userData.userId === currentSession.userId){
+        await tokensRepository.deleteCurrentToken(deviceId);
         res.clearCookie('refreshToken')
     }else{
        return  res.sendStatus(403)
     }
-
-    const result = await tokensRepository.deleteCurrentToken(deviceId);
-    if (!result) return res.sendStatus(401);
 
     res.sendStatus(204)
 })

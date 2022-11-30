@@ -22,8 +22,6 @@ describe('/auth', ()=>{
             .send(dataForLogin)
             .expect(200)
 
-
-        console.log(result,'result')
     })
 
 })

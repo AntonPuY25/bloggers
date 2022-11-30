@@ -71,11 +71,9 @@ authRoute.post('/login', checkRequestLimitsMiddleWare, async (req: Request<{}, {
     const {loginOrEmail, password} = req.body;
 
     const device = req.headers['user-agent'];
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-    if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
-
+    const ip = req.ip;
     const deviceId = uuidv4();
+
     const authResult = await authService.authUser({loginOrEmail, password});
 
     if (authResult) {
@@ -114,8 +112,7 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
     if (!refreshToken) return res.sendStatus(401)
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    if (typeof ip != 'string') return res.status(405).send('Sorry, but your Ip-address is not correct');
+    const ip = req.ip;
 
 
     await requestLimitsService.deleteLimitsByIp(ip)
@@ -128,9 +125,13 @@ authRoute.post('/logout', async (req: Request, res: Response) => {
 
 
     if (userId) {
-        const result = await jwtService.logout(refreshToken);
+        const result = await jwtService.logout(userId);
         if (result) {
             await tokensRepository.deleteCurrentToken(currentSession.deviceId);
+            res.cookie('refreshToken', null, {
+                httpOnly: true,
+                secure: true,
+            })
             return res.sendStatus(204)
         }
     }
@@ -152,11 +153,14 @@ authRoute.get('/me', authMiddleWare, async (req: Request, res: Response) => {
 
 authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     const {refreshToken} = req.cookies;
+
     const device = req.headers['user-agent'];
-    if (!refreshToken) return res.sendStatus(401)
+
+    if (!refreshToken) return res.sendStatus(401);
+
     const ip = req.ip;
 
-    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device, ip)
+    const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, device, ip);
 
     if (result) {
         return res.cookie('refreshToken', result.refreshToken, {

@@ -36,22 +36,24 @@ export const jwtService = {
         }
 
         return token;
-
     },
 
     async getUserIdByToken(token: string) {
+
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
+
             const currentToken = await tokensRepository.getUserItByDeviceID({
                 deviceId: result.deviceId,
                 issueAt: new Date(result.iat).toISOString()
             })
 
-
             if (!currentToken) {
                 return null
             }
+
             return currentToken.userId;
+
         } catch (e) {
             return null
 
@@ -106,14 +108,14 @@ export const jwtService = {
         }
     },
 
-    async logout(refresh_token: string) {
-        const currentUserId = await this.getUserIdByToken(refresh_token)
-        if (!currentUserId) return null;
-        const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentUserId)
+    async logout(userId: string) {
+
+        const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(userId)
         if (!currentUser) return null
         return true
 
     },
+
     async getCurrentIssueAt(token:string){
        try{
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
@@ -129,6 +131,7 @@ export const jwtService = {
        }
 
     },
+
     async getCurrentDeviceId(token:string){
        try{
            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);

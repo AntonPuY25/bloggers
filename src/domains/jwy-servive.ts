@@ -66,31 +66,31 @@ export const jwtService = {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
             if (result) {
-                const currentToken = await tokensRepository.getUserItByDeviceID({
+                const currentDevice = await tokensRepository.getUserItByDeviceID({
                     deviceId: result.deviceId,
                     issueAt: new Date(result.iat).toISOString()
                 })
 
-                if (!currentToken) return null;
+                if (!currentDevice) return null;
 
-                const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentToken.userId)
+                const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentDevice.userId)
                 if (currentUser) {
                     const newRefreshToken = await this.createJwt({
-                        expiresIn: ACCESS_TOKEN_TIME,
+                        expiresIn: REFRESH_TOKEN_TIME,
                         user: currentUser,
                         type: JWTTokenType.refreshToken,
                         deviceId:result.deviceId,
-                        device: currentToken.deviceName,
+                        device: currentDevice.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
                     })
 
                     const newAccessToken = await this.createJwt({
-                        expiresIn: REFRESH_TOKEN_TIME,
+                        expiresIn: ACCESS_TOKEN_TIME,
                         user: currentUser,
                         type: JWTTokenType.accessToken,
                         deviceId:result.deviceId,
-                        device : currentToken.deviceName,
+                        device : currentDevice.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
                     })

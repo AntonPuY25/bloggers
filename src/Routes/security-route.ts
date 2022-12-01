@@ -5,9 +5,12 @@ import {jwtService} from "../domains/jwy-servive";
 export const securityRoute = Router({});
 
 securityRoute.get('/devices', async (req, res) => {
-    const result = await tokensRepository.getAllTokens();
     const {refreshToken} = req.cookies;
     if(!refreshToken)  return res.sendStatus(401);
+
+    const currentUserId = await jwtService.getUserIdByToken(refreshToken);
+    if(!currentUserId) return res.sendStatus(401);
+    const result = await tokensRepository.getAllTokens(currentUserId);
     if (result) {
         return res.status(200).send(result)
     } else {
@@ -21,7 +24,7 @@ securityRoute.delete('/devices', async (req, res) => {
     const tokenData = await jwtService.getCurrentIssueAt(refreshToken);
     if (!tokenData) return res.sendStatus(401);
 
-    const result = await tokensRepository.deleteAllExceptCurrent(tokenData.userId,tokenData.issueAt);
+    const result = await tokensRepository.deleteAllExceptCurrent(tokenData.issueAt);
     if (!result) return res.sendStatus(401);
 
     res.sendStatus(204)

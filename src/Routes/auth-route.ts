@@ -195,7 +195,9 @@ authRoute.post('/new-password', checkRequestLimitsMiddleWare, newPasswordValidat
 
         const currentUser = await usersRepository.getCurrentUserByPassword({password: recoveryCode})
 
-        if (!currentUser) return res.sendStatus(400)
+        if (!currentUser) {
+            return res.status(400).send({"newPassword": "validvalid", "recoveryCode": "incorrect"})
+        }
 
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await getGeneratedHashPassword(newPassword, passwordSalt)

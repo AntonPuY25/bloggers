@@ -3,6 +3,7 @@ import {SendEmailAdaptorTypes} from "./types";
 
 export const emailAdapter = {
     async sendEmail({email,subject,message}:SendEmailAdaptorTypes){
+
         const transporter = await nodemailer.createTransport({
             service: "gmail",
             auth: {

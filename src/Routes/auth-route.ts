@@ -176,9 +176,9 @@ authRoute.post('/password-recovery', checkRequestLimitsMiddleWare, emailValidato
 
         const currentUser = await usersRepository.getCurrentUserByEmail({email});
 
-        if (!currentUser) res.sendStatus(204);
+        if (!currentUser) return res.sendStatus(204);
 
-        const result = await authService.recoveryPassword({email, code: currentUser.userData.password});
+        const result = await authService.recoveryPassword({email, code: currentUser?.userData?.password});
 
         if (result?.message === 'Success') {
             return res.sendStatus(204);

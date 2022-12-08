@@ -34,5 +34,22 @@ export const emailManager = {
             email, message, subject
         }
 
+    },
+
+    async getRecoveryPasswordEmailMessage(email: string, code: string) {
+
+        const link = `https://${settings.JWT_SECRET}/password-recovery?recoveryCode=${code}`
+
+        const message = " <h1>Password recovery</h1>\n" +
+            "       <p>To finish password recovery please follow the link below:\n" +
+            `          <a href=${link}>recovery password</a>\n` +
+            "      </p>\n"
+
+        const subject = "Password recovery"
+
+        return {
+            email, message, subject
+        }
+
     }
 }

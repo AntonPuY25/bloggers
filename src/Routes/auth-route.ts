@@ -1,12 +1,12 @@
 import {Request, Response, Router} from "express";
-import {AuthRequestBodyType} from "../interfaces/interfaces";
+import {AuthNewPasswordBodyType, AuthRecoveryPasswordBodyType, AuthRequestBodyType} from "../interfaces/interfaces";
 import {authService} from "../domains/auth-service";
 import {jwtService} from "../domains/jwy-servive";
 import {
     authMiddleWare, checkRequestLimitsMiddleWare, codeValidator,
     emailValidator,
     errorMiddleWAre,
-    loginValidator,
+    loginValidator, newPasswordValidator,
     passwordValidator
 } from "../middleWares/middleWares";
 import {
@@ -16,11 +16,13 @@ import {
     RegistrationConfirmationBodyTypes,
     RegistrationResendingEmailBodyTypes
 } from "../interfaces/registration-types/interface";
-import {duplicatedEmail, duplicatedLogin} from "../helpers/helpers";
+import {duplicatedEmail, duplicatedLogin, getGeneratedHashPassword} from "../helpers/helpers";
 import {v4 as uuidv4} from "uuid";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
 import {tokensRepository} from "../Repositories/tokens-repository";
 import {requestLimitsService} from "../domains/request-limits-service";
+import {usersRepository} from "../Repositories/users-repository";
+import bcrypt from "bcrypt";
 
 export const authRoute = Router({});
 
@@ -167,3 +169,46 @@ authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     }
 
 })
+
+authRoute.post('/password-recovery', checkRequestLimitsMiddleWare, emailValidator, errorMiddleWAre,
+    async (req: Request<{}, {}, AuthRecoveryPasswordBodyType, {}>, res: Response) => {
+        const {email} = req.body;
+
+        const currentUser = await usersRepository.getCurrentUserByEmail({email});
+
+        if (!currentUser) res.sendStatus(204);
+
+        const result = await authService.recoveryPassword({email, code: currentUser.userData.password});
+
+        if (result?.message === 'Success') {
+            return res.sendStatus(204);
+        }
+
+        res.sendStatus(404)
+
+
+    })
+
+authRoute.post('/new-password', checkRequestLimitsMiddleWare, newPasswordValidator, errorMiddleWAre,
+    async (req: Request<{}, {}, AuthNewPasswordBodyType, {}>, res: Response) => {
+        const {recoveryCode, newPassword} = req.body;
+
+        const currentUser = await usersRepository.getCurrentUserByPassword({password: recoveryCode})
+
+        if (!currentUser) return res.sendStatus(400)
+
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await getGeneratedHashPassword(newPassword, passwordSalt)
+
+        const result = await usersRepository.updatedCurrentUserPassword({
+            passwordHash,
+            passwordSalt,
+            id: currentUser.id
+        })
+
+        if (result) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(400)
+        }
+    })

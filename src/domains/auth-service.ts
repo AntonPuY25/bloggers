@@ -1,4 +1,4 @@
-import {AuthRequestBodyType} from "../interfaces/interfaces";
+import {AuthRecoveryPasswordType, AuthRequestBodyType} from "../interfaces/interfaces";
 import {usersRepository} from "../Repositories/users-repository";
 import {getGeneratedHashPassword, isConfirmedEmailError} from "../helpers/helpers";
 import {
@@ -11,7 +11,6 @@ import {v4 as uuidv4} from "uuid";
 import {add} from "date-fns";
 import {emailManager} from "../managers/email-manager";
 import {emailAdapter} from "../adapters/email-adapter";
-
 
 
 export const authService = {
@@ -27,7 +26,7 @@ export const authService = {
                 password: passwordHash,
                 salt: passwordSalt,
                 email,
-                deadRefreshTokens:[]
+                deadRefreshTokens: []
             },
             emailConfirmation: {
                 confirmationCode: uuidv4(),
@@ -61,8 +60,8 @@ export const authService = {
         if (currentUser) {
             if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('code')
             if (currentUser.emailConfirmation.expirationDate < new Date()) return {
-                isError:true,
-                message:isConfirmedEmailError('code')
+                isError: true,
+                message: isConfirmedEmailError('code')
             };
 
             const updatedUser = await usersRepository.confirmEmail(currentUser.id)
@@ -77,8 +76,8 @@ export const authService = {
         } else {
 
             return {
-                isError:true,
-                message:{ errorsMessages: [{ message: 'This User is not found', field: 'code' }] }
+                isError: true,
+                message: {errorsMessages: [{message: 'This User is not found', field: 'code'}]}
             }
         }
 
@@ -93,10 +92,10 @@ export const authService = {
 
             const newCode = uuidv4()
 
-            const isUpdatedUser = await usersRepository.updateCodeUser(currentUser.id , newCode)
+            const isUpdatedUser = await usersRepository.updateCodeUser(currentUser.id, newCode)
 
-            if(isUpdatedUser){
-                const email = await emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email,newCode)
+            if (isUpdatedUser) {
+                const email = await emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email, newCode)
                 const sentEmail = await emailAdapter.sendEmail(email)
 
                 if (sentEmail) {
@@ -109,14 +108,14 @@ export const authService = {
 
         } else {
             return {
-                isError:true,
-                message: { errorsMessages: [{ message: 'This User is not found', field: 'email' }] },
+                isError: true,
+                message: {errorsMessages: [{message: 'This User is not found', field: 'email'}]},
             }
         }
     },
 
     async authUser({loginOrEmail, password}: AuthRequestBodyType) {
-        const currentUser:RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
+        const currentUser: RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
 
         if (!currentUser) return null;
 
@@ -125,5 +124,21 @@ export const authService = {
         if (passwordHash === currentUser.userData.password) return currentUser;
 
         return null
+    },
+
+    async recoveryPassword({email,code}: AuthRecoveryPasswordType) {
+
+        const currentEmailMessage = await emailManager.getRecoveryPasswordEmailMessage(email, code);
+
+        const sentEmail = await emailAdapter.sendEmail(currentEmailMessage)
+
+        if (sentEmail) {
+            return {
+                isError: false,
+                message: 'Success',
+            }
+        }
+
+        return  null;
     }
 }

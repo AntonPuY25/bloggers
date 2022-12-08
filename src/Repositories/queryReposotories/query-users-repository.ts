@@ -39,6 +39,7 @@ export const queryUsersRepository = {
                         login: item.userData.login,
                         createdAt: item.createdAt,
                         isConfirmed: item.emailConfirmation.isConfirmed,
+                        salt: item.userData.salt,
                     }
                     acc.push(newUser)
                     return acc

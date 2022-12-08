@@ -1,8 +1,9 @@
 import {UsersModel} from "../DB/users-scheme";
 import {
+    FindBySaltUserTypes,
     RegisterUserType,
     RegistrationConfirmationBodyTypes,
-    RegistrationResendingEmailBodyTypes, UpdateUserType
+    RegistrationResendingEmailBodyTypes, UpdateCurrentUserSaltType,
 } from "../interfaces/registration-types/interface";
 import {v4 as uuidv4} from "uuid";
 
@@ -37,6 +38,7 @@ export const usersRepository = {
             }
 
         },
+
     async updateCodeUser(id: string, code: string) {
         try {
             await UsersModel.updateOne({id},{
@@ -49,16 +51,19 @@ export const usersRepository = {
             return null
         }
     },
+
     async getCurrentUser(login: string) {
         return UsersModel.find({'userData.login':login})
             .then((result: any) => result[0])
             .catch(() => null)
     },
+
     async getCurrentUserById(id: string) {
         return UsersModel.find({'id':id})
             .then((result: any) => result[0])
             .catch(() => null)
     },
+
     async getCurrentUserByCode({code}: RegistrationConfirmationBodyTypes) {
         return UsersModel.find({'emailConfirmation.confirmationCode': code})
             .then((result: any) => result[0])
@@ -67,6 +72,12 @@ export const usersRepository = {
 
     async getCurrentUserByEmail({email}: RegistrationResendingEmailBodyTypes) {
         return UsersModel.find({'userData.email': email})
+            .then((result: any) => result[0])
+            .catch(() => null)
+    },
+
+    async getCurrentUserByPassword({password}: FindBySaltUserTypes) {
+        return UsersModel.find({'userData.password': password})
             .then((result: any) => result[0])
             .catch(() => null)
     },
@@ -80,5 +91,19 @@ export const usersRepository = {
         })
             .then((result: any) => result)
             .catch(() => null)
+    },
+
+    async updatedCurrentUserPassword({id,passwordHash,passwordSalt}: UpdateCurrentUserSaltType) {
+        try {
+            await UsersModel.updateOne({id},{
+                $set:{
+                    'userData.password':passwordHash,
+                    'userData.salt':passwordSalt,
+                }
+            })
+            return true
+        } catch (e) {
+            return null
+        }
     },
 }

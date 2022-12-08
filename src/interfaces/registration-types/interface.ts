@@ -38,6 +38,18 @@ export interface RegistrationConfirmationBodyTypes {
 export interface RegistrationResendingEmailBodyTypes {
     email: string
 }
+
+export interface FindBySaltUserTypes {
+    password: string
+}
+
+export interface UpdateCurrentUserSaltType {
+    id: string
+    passwordHash: string;
+    passwordSalt: string;
+}
+
+
 export enum JWTTokenType {
     accessToken='accessToken',
     refreshToken='refreshToken',

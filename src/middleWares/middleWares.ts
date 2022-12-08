@@ -11,6 +11,7 @@ export const urlValidator = body('websiteUrl').trim().isURL().isLength({min: 3, 
 export const nameValidator = body('name').trim().isLength({min: 3, max: 15});
 export const loginValidator = body('login').trim().isLength({min: 3, max: 10});
 export const passwordValidator = body('password').trim().isLength({min: 6, max: 20});
+export const newPasswordValidator = body('newPassword').trim().isLength({min: 6, max: 20});
 export const emailValidator = body('email').trim().isEmail().isLength({min: 3});
 export const titleValidator = body('title').trim().isLength({min: 3, max: 30})
 export const descriptionValidator = body('shortDescription').trim().isLength({min: 3, max: 100})

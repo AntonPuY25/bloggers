@@ -12,11 +12,10 @@ import * as dotenv from 'dotenv';
 import {runDb} from "./Repositories/db";
 import {securityRoute} from "./Routes/security-route";
 
-
 dotenv.config()
 const express = require('express')
 export const app = express()
-const port = settings.MONGO_URI
+const port = settings.PORT
 const cookieParser = require("cookie-parser");
 
 app.use(cors())
@@ -26,12 +25,8 @@ app.use(express.json())
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World')
 })
-app.set('trust proxy', true) // getting ip address
-const mongoUri = process.env.MONGO_URI;
 
-if (!mongoUri) {
-    throw new Error('Url isn\'t find');
-}
+app.set('trust proxy', true) // getting ip address
 
 app.use('/blogs', bloggersRoute)
 app.use('/posts', postsRoute)

@@ -137,6 +137,7 @@ export interface UsersType {
     email: string,
     createdAt?: string,
     isConfirmed?: string,
+    salt?: string,
 }
 
 export interface UserWithPasswordType extends UsersType {
@@ -207,4 +208,18 @@ export interface DbCommentsType {
     postId: string,
     createdAt: string,
     updatedAt: string,
+}
+
+export interface AuthRecoveryPasswordBodyType {
+    email: string
+}
+
+export interface AuthRecoveryPasswordType {
+    email: string;
+    code: string;
+}
+
+export interface AuthNewPasswordBodyType {
+    newPassword: "string",
+    recoveryCode: "string"
 }

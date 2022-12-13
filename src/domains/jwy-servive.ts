@@ -10,8 +10,7 @@ import {usersRepository} from "../Repositories/users-repository";
 import {tokensRepository} from "../Repositories/tokens-repository";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
 
-
-export const jwtService = {
+class JwtService  {
     async createJwt({expiresIn, user, type, deviceId, device, methodType,ip}: CreateJWTTokenType) {
         const token = jwt.sign({deviceId,userId:user.id},
             settings.JWT_SECRET,
@@ -36,7 +35,7 @@ export const jwtService = {
         }
 
         return token;
-    },
+    }
 
     async getUserIdByToken(token: string) {
 
@@ -58,8 +57,7 @@ export const jwtService = {
             return null
 
         }
-    },
-
+    }
 
     async refreshToken(token: string,  ip?:string) {
         try {
@@ -106,7 +104,7 @@ export const jwtService = {
         } catch (e) {
             return null
         }
-    },
+    }
 
     async logout(userId: string) {
 
@@ -114,7 +112,7 @@ export const jwtService = {
         if (!currentUser) return null
         return true
 
-    },
+    }
 
     async getCurrentIssueAt(token:string){
        try{
@@ -130,7 +128,7 @@ export const jwtService = {
            return null
        }
 
-    },
+    }
 
     async getCurrentDeviceId(token:string){
        try{
@@ -148,3 +146,5 @@ export const jwtService = {
 
     }
 }
+
+export const jwtService = new JwtService();

@@ -2,7 +2,7 @@ import {GetUsersParamsType, GetUsersResponseType, UsersType} from "../../interfa
 import {UsersModel} from "../../DB/users-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-export const queryUsersRepository = {
+class QueryUsersRepository {
     async getUsers({
                        pageNumber,
                        pageSize,
@@ -54,7 +54,7 @@ export const queryUsersRepository = {
                 } as GetUsersResponseType;
             })
             .catch(() => null)
-    },
+    }
 
     async deleteUser(userId: string) {
         const currentUser = await UsersModel.find({id: userId})
@@ -66,12 +66,13 @@ export const queryUsersRepository = {
         } else {
             return null
         }
-    },
+    }
 
-
-    getCurrentUser: async (userId: string) => {
+    async getCurrentUser(userId: string) {
         return await UsersModel.findOne({id: userId})
             .then((result: any) => result)
             .catch(() => null)
-    },
+    }
 }
+
+export const queryUsersRepository = new QueryUsersRepository();

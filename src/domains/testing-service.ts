@@ -1,5 +1,9 @@
 import {testingRepository} from "../Repositories/testing-repository";
 
-export const testingService = {
-    allClear:async ()=> await testingRepository.allClear()
+class TestingService {
+    async allClear() {
+        await testingRepository.allClear()
+    }
 }
+
+export const testingService = new TestingService();

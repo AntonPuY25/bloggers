@@ -1,8 +1,8 @@
 import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
 
-export const bloggersService = {
-    createBlogger: async ({websiteUrl, name}: CreateBloggerProps) => {
+class BloggersService {
+    async createBlogger({websiteUrl, name}: CreateBloggerProps) {
         const newBlogger = {
             id: Number(new Date()).toString(),
             name,
@@ -10,15 +10,17 @@ export const bloggersService = {
         }
 
         return await bloggersRepository.createBlogger(newBlogger)
-    },
+    }
 
-    updateBlogger: async ({blogId, name, websiteUrl}: UpdateBloggerProps) => {
+    async updateBlogger({blogId, name, websiteUrl}: UpdateBloggerProps) {
         return await bloggersRepository.updateBlogger(
             {blogId, name, websiteUrl})
-    },
+    }
 
-    deleteBlogger: async (blogId: string) => {
+    async deleteBlogger(blogId: string) {
         return await bloggersRepository.deleteBlogger(blogId)
-    },
+    }
 
 }
+
+export const bloggersService = new BloggersService();

@@ -1,17 +1,19 @@
 import {SetLimitProps} from "../interfaces/request-limits-types/interface";
 import {requestLimitsRepository} from "../Repositories/request-limits-repository";
 
-export const requestLimitsService = {
-
-    setRequestLimit: async (limit:SetLimitProps)=>{
+class RequestLimitsService {
+    async setRequestLimit(limit: SetLimitProps) {
         return await requestLimitsRepository.setLimit(limit)
-    },
+    }
 
-    getLimitsByIp: async (limit:SetLimitProps)=>{
-        return  await  requestLimitsRepository.getCurrentLimitByIp(limit);
-    },
+    async getLimitsByIp(limit: SetLimitProps) {
+        return await requestLimitsRepository.getCurrentLimitByIp(limit);
+    }
 
-    deleteLimitsByIp: async (ip:string)=>{
+    async deleteLimitsByIp(ip: string) {
         return await requestLimitsRepository.deleteLimitsByIp(ip)
+
     }
 }
+
+export const requestLimitsService = new RequestLimitsService();

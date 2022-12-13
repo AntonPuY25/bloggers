@@ -5,9 +5,8 @@ import {CommentsModel} from "../DB/comments-scheme";
 import {TokensModel} from "../DB/tokens-scheme";
 import {RequestLimitsModel} from "../DB/request-limits";
 
-
-export const testingRepository = {
-    allClear: async () => {
+class TestingRepository {
+    async allClear() {
         await BloggersModel.deleteMany({})
         await PostsModel.deleteMany({})
         await UsersModel.deleteMany({})
@@ -20,3 +19,5 @@ export const testingRepository = {
 
     }
 }
+
+export const testingRepository = new TestingRepository();

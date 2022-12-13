@@ -13,8 +13,7 @@ import {emailManager} from "../managers/email-manager";
 import {emailAdapter} from "../adapters/email-adapter";
 
 
-export const authService = {
-
+class AuthService {
     async registerUser({email, login, password}: RegistrationBodyTypes) {
 
         const passwordSalt = await bcrypt.genSalt(10)
@@ -51,7 +50,7 @@ export const authService = {
         } else {
             return null;
         }
-    },
+    }
 
     async confirmEmail({code}: RegistrationConfirmationBodyTypes) {
 
@@ -81,7 +80,7 @@ export const authService = {
             }
         }
 
-    },
+    }
 
     async resendEmail({email}: RegistrationResendingEmailBodyTypes) {
 
@@ -112,7 +111,7 @@ export const authService = {
                 message: {errorsMessages: [{message: 'This User is not found', field: 'email'}]},
             }
         }
-    },
+    }
 
     async authUser({loginOrEmail, password}: AuthRequestBodyType) {
         const currentUser: RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
@@ -124,9 +123,9 @@ export const authService = {
         if (passwordHash === currentUser.userData.password) return currentUser;
 
         return null
-    },
+    }
 
-    async recoveryPassword({email,code}: AuthRecoveryPasswordType) {
+    async recoveryPassword({email, code}: AuthRecoveryPasswordType) {
 
         const currentEmailMessage = await emailManager.getRecoveryPasswordEmailMessage(email, code);
 
@@ -139,6 +138,8 @@ export const authService = {
             }
         }
 
-        return  null;
+        return null;
     }
 }
+
+export const authService = new AuthService();

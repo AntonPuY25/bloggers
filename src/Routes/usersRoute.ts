@@ -15,9 +15,9 @@ import {authService} from "../domains/auth-service";
 
 export const usersRoute = Router({});
 
-usersRoute.get('/',
-    async (req: Request<{}, {}, {},
-        GetUsersParamsRequestType>, res: Response) => {
+class UserController {
+    async getUsers(req: Request<{}, {}, {},
+        GetUsersParamsRequestType>, res: Response) {
 
         const {
             pageNumber, pageSize, sortBy,
@@ -40,10 +40,9 @@ usersRoute.get('/',
         } else {
             res.sendStatus(404)
         }
-    })
+    }
 
-usersRoute.post('/',authorizationMiddleWare, loginValidator, passwordValidator, emailValidator, errorMiddleWAre,
-    async (req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) => {
+    async createUser(req: Request<{}, {}, UserWithPasswordType, {}>, res: Response) {
         const {email, login, password} = req.body
 
         const isDuplicatedEmail = await duplicatedEmail(email)
@@ -65,10 +64,9 @@ usersRoute.post('/',authorizationMiddleWare, loginValidator, passwordValidator, 
         } else {
             res.sendStatus(404)
         }
-    })
+    }
 
-usersRoute.delete('/:userId',
-    async (req: Request, res: Response) => {
+    async deleteUser(req: Request, res: Response) {
 
         const {userId} = req.params;
         const result = await queryUsersRepository.deleteUser(userId);
@@ -78,4 +76,17 @@ usersRoute.delete('/:userId',
         } else {
             res.sendStatus(404)
         }
-    })
+    }
+}
+
+const instanceUserController = new UserController();
+
+usersRoute.get('/',
+    instanceUserController.getUsers)
+
+usersRoute.post('/', authorizationMiddleWare, loginValidator,
+    passwordValidator, emailValidator, errorMiddleWAre,
+    instanceUserController.createUser)
+
+usersRoute.delete('/:userId',
+    instanceUserController.deleteUser)

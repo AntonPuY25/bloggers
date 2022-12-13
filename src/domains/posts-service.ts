@@ -1,5 +1,5 @@
 import {postsRepositories} from "../Repositories/posts-repository";
-import {CreatePostProps, DbPostType, ResponseDataPostType, UpdatePostProps} from "../interfaces/interfaces";
+import {CreatePostProps, DbPostType, UpdatePostProps} from "../interfaces/interfaces";
 
 class PostsService {
     async createPost({content, blogId, shortDescription, title}: CreatePostProps){

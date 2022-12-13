@@ -2,10 +2,8 @@ import {PostType} from "../interfaces/interfaces";
 import {bloggersRepository} from "./bloggers-repository";
 import {PostsModel} from "../DB/post-scheme";
 
-
-export const postsRepositories = {
-
-    createPost: async (post: PostType) => {
+class PostsRepositories {
+    async createPost(post: PostType) {
         const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId);
 
         if (currentBlogger) {
@@ -17,15 +15,15 @@ export const postsRepositories = {
                 .then((result: any) => result)
                 .catch(() => null)
         }
-    },
+    }
 
-    getCurrentPost: async (postId: string) => {
+    async getCurrentPost(postId: string) {
         return PostsModel.findOne({id: postId})
             .then((result: any) => result)
             .catch(() => null)
-    },
+    }
 
-    updatePost: async (post: PostType, postId: string) => {
+    async updatePost(post: PostType, postId: string) {
         const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId)
 
         if (!currentBlogger) return null
@@ -46,9 +44,9 @@ export const postsRepositories = {
         } else {
             return null
         }
-    },
+    }
 
-    deletedPost: async (postId: string) => {
+    async deletedPost(postId: string) {
         const currentPost = await postsRepositories.getCurrentPost(postId)
 
         if (currentPost) {
@@ -56,5 +54,7 @@ export const postsRepositories = {
                 .then((result: any) => result)
                 .catch(() => null)
         }
-    },
+    }
 }
+
+export const postsRepositories = new PostsRepositories();

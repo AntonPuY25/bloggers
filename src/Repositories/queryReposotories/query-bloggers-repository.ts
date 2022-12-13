@@ -7,14 +7,14 @@ import {
 } from "../../interfaces/interfaces";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-export const queryBloggersRepository = {
-    getBloggers: async ({
-                            searchNameTerm,
-                            pageNumber ,
-                            pageSize,
-                            sortBy,
-                            sortDirection
-                        }: GetBloggersParamsType) => {
+class QueryBloggersRepository {
+    async getBloggers({
+                          searchNameTerm,
+                          pageNumber,
+                          pageSize,
+                          sortBy,
+                          sortDirection
+                      }: GetBloggersParamsType) {
 
         const findOptions = searchNameTerm ? {
                 $or:
@@ -23,11 +23,11 @@ export const queryBloggersRepository = {
             }
             : {};
 
-        const skipCount = getSkipCountData(pageNumber,pageSize);
+        const skipCount = getSkipCountData(pageNumber, pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = await BloggersModel.find(findOptions).count();
-        const pagesCount = getPagesCountData(totalCount,pageSize);
+        const pagesCount = getPagesCountData(totalCount, pageSize);
         const sortCreateData = getSortCreatedData(sortBy)
         const sortDirectionData = getSortDirectionData(sortDirection)
 
@@ -59,11 +59,13 @@ export const queryBloggersRepository = {
                 }
             })
             .catch(() => null);
-    },
+    }
 
-    getCurrentBlogger: async (blogId: string) => {
+    async getCurrentBlogger(blogId: string) {
         return BloggersModel.findOne({id: blogId})
             .then((result: any) => result)
             .catch(() => null)
-    },
+    }
 }
+
+export const queryBloggersRepository = new QueryBloggersRepository();

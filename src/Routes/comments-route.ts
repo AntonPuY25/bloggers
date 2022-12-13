@@ -5,21 +5,22 @@ import {commentsRepository} from "../Repositories/comments-repository";
 
 export const commentsRoute = Router({});
 
-commentsRoute.get('/:commentId', async (req: Request<{ commentId: string },
-    {}, {}, {}>, res: Response) => {
-    const {commentId} = req.params;
+class CommentController {
+    async getCurrentComment(req: Request<{ commentId: string },
+        {}, {}, {}>, res: Response) {
+        const {commentId} = req.params;
 
-    const currentComment = await commentsRepository.getCurrentComment(commentId);
-    if (currentComment) {
-        res.status(200).send(currentComment)
-    } else {
-        res.sendStatus(404)
+        const currentComment = await commentsRepository.getCurrentComment(commentId);
+        if (currentComment) {
+            res.status(200).send(currentComment)
+        } else {
+            res.sendStatus(404)
+        }
+
     }
 
-})
-
-commentsRoute.put('/:commentId', authMiddleWare,
-    contentCommentValidator, errorMiddleWAre, async (req: Request<{ commentId: string }, {}, UpdateCommentBodyParamsType, {}>, res: Response) => {
+    async updateComment(req: Request<{ commentId: string },
+        {}, UpdateCommentBodyParamsType, {}>, res: Response) {
         const {content} = req.body;
         const {commentId} = req.params;
         const {id} = req.user!;
@@ -38,22 +39,32 @@ commentsRoute.put('/:commentId', authMiddleWare,
             res.sendStatus(404)
         }
 
-    })
-
-commentsRoute.delete('/:commentId', authMiddleWare, async (req: Request<{ commentId: string }, {}, {}, {}>, res: Response) => {
-    const {commentId} = req.params;
-    const {id} = req.user!;
-
-    const currentComment = await commentsRepository.getCurrentComment(commentId);
-    if (!currentComment) return res.sendStatus(404)
-
-    if (currentComment.userId !== id) return res.sendStatus(403)
-
-    const result = await commentsRepository.deleteCurrentComment(commentId);
-    if (result) {
-        res.sendStatus(204)
-    } else {
-        res.sendStatus(404)
     }
 
-})
+    async deleteComment(req: Request<{ commentId: string }, {}, {}, {}>, res: Response) {
+        const {commentId} = req.params;
+        const {id} = req.user!;
+
+        const currentComment = await commentsRepository.getCurrentComment(commentId);
+        if (!currentComment) return res.sendStatus(404)
+
+        if (currentComment.userId !== id) return res.sendStatus(403)
+
+        const result = await commentsRepository.deleteCurrentComment(commentId);
+        if (result) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(404)
+        }
+
+    }
+}
+
+const instanceCommentController = new CommentController();
+
+commentsRoute.get('/:commentId', instanceCommentController.getCurrentComment)
+
+commentsRoute.put('/:commentId', authMiddleWare,
+    contentCommentValidator, errorMiddleWAre, instanceCommentController.updateComment)
+
+commentsRoute.delete('/:commentId', authMiddleWare, instanceCommentController.deleteComment)

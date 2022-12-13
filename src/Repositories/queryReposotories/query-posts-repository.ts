@@ -2,21 +2,20 @@ import {PostsModel} from "../../DB/post-scheme";
 import {DbPostType, GetPostsParamsType, GetPostsResponseType, ResponseDataPostType} from "../../interfaces/interfaces";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-export const queryPostsRepository = {
-    getPosts: async ({blogId, sortBy, sortDirection, pageNumber, pageSize}: GetPostsParamsType) => {
+class QueryPostsRepository {
+    async getPosts({blogId, sortBy, sortDirection, pageNumber, pageSize}: GetPostsParamsType) {
         const postsFilterData = blogId ? {blogId: blogId} : {}
-        const skipCount = getSkipCountData(pageNumber,pageSize);
+        const skipCount = getSkipCountData(pageNumber, pageSize);
         const skipData = pageNumber ? skipCount : 0;
         const limitData = pageSize;
         const totalCount = await PostsModel.find(postsFilterData).count();
-        const pagesCount = getPagesCountData(totalCount,pageSize);
+        const pagesCount = getPagesCountData(totalCount, pageSize);
         const sortCreateData = getSortCreatedData(sortBy)
         const sortDirectionData = getSortDirectionData(sortDirection)
 
 
-
         return PostsModel.find(postsFilterData).skip(skipData).limit(limitData).sort({
-            [sortCreateData] : sortDirectionData
+            [sortCreateData]: sortDirectionData
         })
             .then((result: any) => {
                 if (result.length) {
@@ -34,15 +33,15 @@ export const queryPostsRepository = {
                         return acc
                     }, [])
 
-                        return {
-                            pagesCount,
-                            page: Number(pageNumber),
-                            pageSize: Number(pageSize),
-                            totalCount: Number(totalCount),
-                            items,
+                    return {
+                        pagesCount,
+                        page: Number(pageNumber),
+                        pageSize: Number(pageSize),
+                        totalCount: Number(totalCount),
+                        items,
 
 
-                        } as GetPostsResponseType;
+                    } as GetPostsResponseType;
 
 
                 } else {
@@ -50,9 +49,9 @@ export const queryPostsRepository = {
                 }
             })
             .catch(() => null)
-    },
+    }
 
-    getCurrentPost: async (postId: string) => {
+    async getCurrentPost(postId: string) {
         return PostsModel.findOne({id: postId})
             .then((result: any) => {
                 if (result) {
@@ -71,5 +70,7 @@ export const queryPostsRepository = {
                 }
             })
             .catch(() => null)
-    },
+    }
 }
+
+export const queryPostsRepository = new QueryPostsRepository();

@@ -5,11 +5,9 @@ import {
     GetCommentForCurrentPostType
 } from "../interfaces/interfaces";
 import {CommentsModel} from "../DB/comments-scheme";
-import {UsersModel} from "../DB/users-scheme";
-import {PostsModel} from "../DB/post-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../helpers/helpers";
 
-export const commentsRepository = {
+class CommentsRepository {
     async createComment({content, userId, postId, userLogin}: CreateCommentPropsType) {
 
         const currentComment: CommentType = {
@@ -35,7 +33,7 @@ export const commentsRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
     async getCommentsForCurrentPost({
                                         postId,
@@ -84,7 +82,7 @@ export const commentsRepository = {
         } catch (e) {
             return null;
         }
-    },
+    }
 
     async getCurrentComment(commentId: string) {
         try {
@@ -106,7 +104,7 @@ export const commentsRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
     async updateCurrentComment(commentId: string, content: string) {
         try {
@@ -119,7 +117,7 @@ export const commentsRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
     async deleteCurrentComment(commentId: string) {
         try {
@@ -129,3 +127,5 @@ export const commentsRepository = {
         }
     }
 }
+
+export const commentsRepository = new CommentsRepository();

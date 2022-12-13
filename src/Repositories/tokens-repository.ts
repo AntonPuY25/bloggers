@@ -5,8 +5,8 @@ import {
 } from "../interfaces/registration-types/interface";
 import {TokensModel} from "../DB/tokens-scheme";
 
-export const tokensRepository = {
-    setToken: async ({issueAt, ip, userId, deviceName, deviceId, finishedDate}: CreateTokensProps) => {
+class TokensRepository {
+    async setToken({issueAt, ip, userId, deviceName, deviceId, finishedDate}: CreateTokensProps) {
         const currentToken: CreateTokensProps = {
             ip, issueAt, finishedDate, userId, deviceName, deviceId
         };
@@ -17,17 +17,17 @@ export const tokensRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
-    getUserItByDeviceID: async ({deviceId, issueAt}: GetUserItByDeviceIDProps) => {
+    async getUserItByDeviceID({deviceId, issueAt}: GetUserItByDeviceIDProps) {
         try {
             return await TokensModel.findOne({deviceId, lastActiveDate: issueAt})
         } catch (e) {
             return null
         }
-    },
+    }
 
-    updateTokenByDeviceId: async ({token}: UpdateTokenByIdProps) => {
+    async updateTokenByDeviceId({token}: UpdateTokenByIdProps) {
         try {
             return await TokensModel.updateOne({deviceId: token.deviceId}, {
                 $set: {
@@ -38,9 +38,9 @@ export const tokensRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
-    getAllTokens: async (userId:string) => {
+    async getAllTokens(userId: string) {
         try {
             const result = await TokensModel.find({userId});
             if (result) {
@@ -54,25 +54,25 @@ export const tokensRepository = {
         } catch (e) {
             return null
         }
-    },
+    }
 
-    deleteAllExceptCurrent: async (issueAt: string) => {
+    async deleteAllExceptCurrent(issueAt: string) {
         try {
             return await TokensModel.remove({issueAt: {$ne: issueAt}})
         } catch (e) {
             return null
         }
-    },
+    }
 
-    deleteCurrentToken: async (deviceId: string) => {
+    async deleteCurrentToken(deviceId: string) {
         try {
             return await TokensModel.deleteOne({deviceId})
         } catch (e) {
             return null
         }
-    },
+    }
 
-    getCurrentSessionByDeviceId: async (deviceId: string) => {
+    async getCurrentSessionByDeviceId(deviceId: string) {
         try {
             return await TokensModel.findOne({deviceId})
         } catch (e) {
@@ -80,3 +80,5 @@ export const tokensRepository = {
         }
     }
 }
+
+export const tokensRepository = new TokensRepository();

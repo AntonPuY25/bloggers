@@ -1,9 +1,8 @@
 import {postsRepositories} from "../Repositories/posts-repository";
 import {CreatePostProps, DbPostType, ResponseDataPostType, UpdatePostProps} from "../interfaces/interfaces";
 
-export const postsService = {
-
-    createPost: async ({content, blogId, shortDescription, title}: CreatePostProps) => {
+class PostsService {
+    async createPost({content, blogId, shortDescription, title}: CreatePostProps){
         const newPost = {
             id: Number(new Date()).toString(),
             title,
@@ -25,9 +24,9 @@ export const postsService = {
                 blogId: postFromBd.blogId.toString(),
             }
         }
-    },
+    }
 
-    updatePost: async ({content, blogId, shortDescription, title, postId}: UpdatePostProps) => {
+    async updatePost({content, blogId, shortDescription, title, postId}: UpdatePostProps){
 
         const newPost = {
             id: postId,
@@ -38,9 +37,11 @@ export const postsService = {
         }
 
         return await postsRepositories.updatePost(newPost, postId)
-    },
+    }
 
-    deletedPost: async (postId: string) => {
+    async deletedPost(postId: string){
         return await postsRepositories.deletedPost(postId)
-    },
+    }
 }
+
+export const postsService = new PostsService()

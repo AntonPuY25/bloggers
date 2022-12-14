@@ -2,7 +2,7 @@ import {testingRepository} from "../Repositories/testing-repository";
 
 class TestingService {
     async allClear() {
-        await testingRepository.allClear()
+      return await testingRepository.allClear()
     }
 }
 

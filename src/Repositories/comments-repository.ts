@@ -10,26 +10,25 @@ import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectio
 class CommentsRepository {
     async createComment({content, userId, postId, userLogin}: CreateCommentPropsType) {
 
-        const currentComment: CommentType = {
-            id: Number(new Date()).toString(),
+        const currentComment: CommentType = new Comments(
+            Number(new Date()).toString(),
             content,
             userId,
             userLogin,
-            postId,
-        }
+            postId)
+
+
         const currentBlogger = new CommentsModel(currentComment)
 
         try {
             const result: any = await currentBlogger.save()
 
-            return {
-                id: result.id,
-                userId: result.userId,
-                content: result.content,
-                userLogin: result.userLogin,
-                createdAt: result.createdAt,
-            } as CommentDataType
-
+            return new CommentsFromBd(result.id,
+                result.content,
+                result.userId,
+                result.userLogin,
+                result.createdAt,
+            )
         } catch (e) {
             return null
         }
@@ -57,13 +56,13 @@ class CommentsRepository {
 
             if (result.length) {
                 const items = result.reduce((acc: CommentDataType[], item: DbCommentsType) => {
-                    const newComment: CommentDataType = {
-                        id: item.id,
-                        userId: item.userId,
-                        content: item.content,
-                        userLogin: item.userLogin,
-                        createdAt: item.createdAt
-                    }
+                    const newComment: CommentDataType = new CommentsFromBd(
+                        item.id,
+                        item.content,
+                        item.userId,
+                        item.userLogin,
+                        item.createdAt
+                    )
                     acc.push(newComment)
                     return acc
                 }, [])
@@ -90,13 +89,12 @@ class CommentsRepository {
 
             if (result.length) {
                 const {id, userId, content, userLogin, createdAt} = result[0];
-                return {
-                    id,
-                    userId,
+                return new CommentsFromBd(id,
                     content,
+                    userId,
                     userLogin,
-                    createdAt
-                }
+                    createdAt,
+                )
 
             } else {
                 return null

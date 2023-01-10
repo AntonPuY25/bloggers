@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
+import {QueryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 import {GetUsersParamsRequestType, UserWithPasswordType} from "../interfaces/interfaces";
 import {
     authorizationMiddleWare,
@@ -10,12 +10,20 @@ import {
 } from "../middleWares/middleWares";
 import {duplicatedEmail, duplicatedLogin, getUsersData} from "../helpers/helpers";
 import {GetUsersDataType} from "../helpers/types";
-import {authService} from "../domains/auth-service";
+import {AuthService} from "../domains/auth-service";
 
 
 export const usersRoute = Router({});
 
 class UserController {
+    queryUsersRepository: QueryUsersRepository;
+    authService: AuthService;
+
+    constructor() {
+        this.queryUsersRepository = new QueryUsersRepository();
+        this.authService = new AuthService();
+    }
+
     async getUsers(req: Request<{}, {}, {},
         GetUsersParamsRequestType>, res: Response) {
 
@@ -24,7 +32,7 @@ class UserController {
             sortDirection, searchEmailTerm, searchLoginTerm
         } = req.query;
 
-        const currentUser = await queryUsersRepository.getUsers(
+        const currentUser = await this.queryUsersRepository.getUsers(
             getUsersData({
                 pageSize,
                 pageNumber,
@@ -51,7 +59,7 @@ class UserController {
         if (isDuplicatedEmail) return res.status(400).send(isDuplicatedEmail)
         if (isDuplicatedLogin) return res.status(400).send(isDuplicatedLogin)
 
-        const currentUser = await authService.registerUser(
+        const currentUser = await this.authService.registerUser(
             {email, login, password})
 
         if (currentUser) {
@@ -69,7 +77,7 @@ class UserController {
     async deleteUser(req: Request, res: Response) {
 
         const {userId} = req.params;
-        const result = await queryUsersRepository.deleteUser(userId);
+        const result = await this.queryUsersRepository.deleteUser(userId);
 
         if (result) {
             res.sendStatus(204)

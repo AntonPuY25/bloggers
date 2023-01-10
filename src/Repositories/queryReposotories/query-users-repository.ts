@@ -2,7 +2,7 @@ import {GetUsersParamsType, GetUsersResponseType, UsersType} from "../../interfa
 import {UsersModel} from "../../DB/users-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-class QueryUsersRepository {
+export class QueryUsersRepository {
     async getUsers({
                        pageNumber,
                        pageSize,
@@ -74,5 +74,3 @@ class QueryUsersRepository {
             .catch(() => null)
     }
 }
-
-export const queryUsersRepository = new QueryUsersRepository();

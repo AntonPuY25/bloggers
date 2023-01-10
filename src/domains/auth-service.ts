@@ -1,5 +1,5 @@
 import {AuthRecoveryPasswordType, AuthRequestBodyType} from "../interfaces/interfaces";
-import {usersRepository} from "../Repositories/users-repository";
+import {UsersRepository} from "../Repositories/users-repository";
 import {getGeneratedHashPassword, isConfirmedEmailError} from "../helpers/helpers";
 import {
     RegisterUserType,
@@ -13,7 +13,13 @@ import {emailManager} from "../managers/email-manager";
 import {emailAdapter} from "../adapters/email-adapter";
 
 
-class AuthService {
+export class AuthService {
+    usersRepository: UsersRepository;
+
+    constructor() {
+        this.usersRepository = new UsersRepository();
+    }
+
     async registerUser({email, login, password}: RegistrationBodyTypes) {
 
         const passwordSalt = await bcrypt.genSalt(10)
@@ -36,7 +42,7 @@ class AuthService {
             }
         }
 
-        const currentUser = await usersRepository.createUser(userDb)
+        const currentUser = await this.usersRepository.createUser(userDb)
         if (currentUser) {
             const email = await emailManager.getRecoveryMessageEmailByUser(currentUser)
             const sentEmail = await emailAdapter.sendEmail(email)
@@ -54,7 +60,7 @@ class AuthService {
 
     async confirmEmail({code}: RegistrationConfirmationBodyTypes) {
 
-        const currentUser: RegisterUserType = await usersRepository.getCurrentUserByCode({code})
+        const currentUser: RegisterUserType = await this.usersRepository.getCurrentUserByCode({code})
 
         if (currentUser) {
             if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('code')
@@ -63,7 +69,7 @@ class AuthService {
                 message: isConfirmedEmailError('code')
             };
 
-            const updatedUser = await usersRepository.confirmEmail(currentUser.id)
+            const updatedUser = await this.usersRepository.confirmEmail(currentUser.id)
 
             if (updatedUser) {
                 return {
@@ -84,14 +90,14 @@ class AuthService {
 
     async resendEmail({email}: RegistrationResendingEmailBodyTypes) {
 
-        const currentUser: RegisterUserType = await usersRepository.getCurrentUserByEmail({email})
+        const currentUser: RegisterUserType = await this.usersRepository.getCurrentUserByEmail({email})
 
         if (currentUser) {
             if (currentUser.emailConfirmation.isConfirmed) return isConfirmedEmailError('email')
 
             const newCode = uuidv4()
 
-            const isUpdatedUser = await usersRepository.updateCodeUser(currentUser.id, newCode)
+            const isUpdatedUser = await this.usersRepository.updateCodeUser(currentUser.id, newCode)
 
             if (isUpdatedUser) {
                 const email = await emailManager.getRecoveryMessageEmailByConfirmationCode(currentUser.userData.email, newCode)
@@ -114,7 +120,7 @@ class AuthService {
     }
 
     async authUser({loginOrEmail, password}: AuthRequestBodyType) {
-        const currentUser: RegisterUserType = await usersRepository.getCurrentUser(loginOrEmail);
+        const currentUser: RegisterUserType = await this.usersRepository.getCurrentUser(loginOrEmail);
 
         if (!currentUser) return null;
 
@@ -141,5 +147,3 @@ class AuthService {
         return null;
     }
 }
-
-export const authService = new AuthService();

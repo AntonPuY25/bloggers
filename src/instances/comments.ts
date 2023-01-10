@@ -1,4 +1,4 @@
-class Comments {
+export class Comments {
     constructor(public id: string,
                 public content: string,
                 public userId: string,
@@ -8,7 +8,7 @@ class Comments {
     }
 }
 
-class CommentsFromBd extends Comments {
+export class CommentsFromBd extends Comments {
     constructor(id: string,
                 content: string,
                 userId: string,

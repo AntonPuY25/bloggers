@@ -5,7 +5,7 @@ import {
 } from "../interfaces/registration-types/interface";
 import {TokensModel} from "../DB/tokens-scheme";
 
-class TokensRepository {
+export class TokensRepository {
     async setToken({issueAt, ip, userId, deviceName, deviceId, finishedDate}: CreateTokensProps) {
         const currentToken: CreateTokensProps = {
             ip, issueAt, finishedDate, userId, deviceName, deviceId
@@ -80,5 +80,3 @@ class TokensRepository {
         }
     }
 }
-
-export const tokensRepository = new TokensRepository();

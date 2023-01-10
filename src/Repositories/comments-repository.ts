@@ -6,8 +6,9 @@ import {
 } from "../interfaces/interfaces";
 import {CommentsModel} from "../DB/comments-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../helpers/helpers";
+import {Comments, CommentsFromBd} from "../instances/comments";
 
-class CommentsRepository {
+export class CommentsRepository {
     async createComment({content, userId, postId, userLogin}: CreateCommentPropsType) {
 
         const currentComment: CommentType = new Comments(
@@ -125,5 +126,3 @@ class CommentsRepository {
         }
     }
 }
-
-export const commentsRepository = new CommentsRepository();

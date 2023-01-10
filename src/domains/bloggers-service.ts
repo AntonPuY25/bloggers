@@ -1,7 +1,13 @@
-import {bloggersRepository} from "../Repositories/bloggers-repository";
 import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
+import {BloggersRepository} from "../Repositories/bloggers-repository";
 
-class BloggersService {
+export class BloggersService {
+    bloggersRepository: BloggersRepository;
+
+    constructor() {
+        this.bloggersRepository = new BloggersRepository();
+    }
+
     async createBlogger({websiteUrl, name}: CreateBloggerProps) {
         const newBlogger = {
             id: Number(new Date()).toString(),
@@ -9,18 +15,16 @@ class BloggersService {
             websiteUrl,
         }
 
-        return await bloggersRepository.createBlogger(newBlogger)
+        return await  this.bloggersRepository.createBlogger(newBlogger)
     }
 
     async updateBlogger({blogId, name, websiteUrl}: UpdateBloggerProps) {
-        return await bloggersRepository.updateBlogger(
+        return await  this.bloggersRepository.updateBlogger(
             {blogId, name, websiteUrl})
     }
 
     async deleteBlogger(blogId: string) {
-        return await bloggersRepository.deleteBlogger(blogId)
+        return await  this.bloggersRepository.deleteBlogger(blogId)
     }
 
 }
-
-export const bloggersService = new BloggersService();

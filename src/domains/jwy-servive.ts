@@ -6,13 +6,21 @@ import {
     JWTTokenType,
     RegisterUserType
 } from "../interfaces/registration-types/interface";
-import {usersRepository} from "../Repositories/users-repository";
-import {tokensRepository} from "../Repositories/tokens-repository";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
+import {UsersRepository} from "../Repositories/users-repository";
+import {TokensRepository} from "../Repositories/tokens-repository";
 
-class JwtService  {
-    async createJwt({expiresIn, user, type, deviceId, device, methodType,ip}: CreateJWTTokenType) {
-        const token = jwt.sign({deviceId,userId:user.id},
+export class JwtService {
+    usersRepository: UsersRepository;
+    tokensRepository: TokensRepository;
+
+    constructor() {
+        this.usersRepository = new UsersRepository();
+        this.tokensRepository = new TokensRepository();
+    }
+
+    async createJwt({expiresIn, user, type, deviceId, device, methodType, ip}: CreateJWTTokenType) {
+        const token = jwt.sign({deviceId, userId: user.id},
             settings.JWT_SECRET,
             {expiresIn})
 
@@ -30,8 +38,8 @@ class JwtService  {
 
         if (type === JWTTokenType.refreshToken && verifyToken) {
             methodType === JWTTokenMethodType.create ?
-                await tokensRepository.setToken(createdToken)
-                : await tokensRepository.updateTokenByDeviceId({token: createdToken})
+                await this.tokensRepository.setToken(createdToken)
+                : await this.tokensRepository.updateTokenByDeviceId({token: createdToken})
         }
 
         return token;
@@ -42,7 +50,7 @@ class JwtService  {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
-            const currentToken = await tokensRepository.getUserItByDeviceID({
+            const currentToken = await this.tokensRepository.getUserItByDeviceID({
                 deviceId: result.deviceId,
                 issueAt: new Date(result.iat).toISOString()
             })
@@ -59,25 +67,25 @@ class JwtService  {
         }
     }
 
-    async refreshToken(token: string,  ip?:string) {
+    async refreshToken(token: string, ip?: string) {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
 
             if (result) {
-                const currentDevice = await tokensRepository.getUserItByDeviceID({
+                const currentDevice = await this.tokensRepository.getUserItByDeviceID({
                     deviceId: result.deviceId,
                     issueAt: new Date(result.iat).toISOString()
                 })
 
                 if (!currentDevice) return null;
 
-                const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(currentDevice.userId)
+                const currentUser: RegisterUserType | undefined = await this.usersRepository.getCurrentUserById(currentDevice.userId)
                 if (currentUser) {
                     const newRefreshToken = await this.createJwt({
                         expiresIn: REFRESH_TOKEN_TIME,
                         user: currentUser,
                         type: JWTTokenType.refreshToken,
-                        deviceId:result.deviceId,
+                        deviceId: result.deviceId,
                         device: currentDevice.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
@@ -87,8 +95,8 @@ class JwtService  {
                         expiresIn: ACCESS_TOKEN_TIME,
                         user: currentUser,
                         type: JWTTokenType.accessToken,
-                        deviceId:result.deviceId,
-                        device : currentDevice.deviceName,
+                        deviceId: result.deviceId,
+                        device: currentDevice.deviceName,
                         methodType: JWTTokenMethodType.update,
                         ip,
                     })
@@ -108,43 +116,41 @@ class JwtService  {
 
     async logout(userId: string) {
 
-        const currentUser: RegisterUserType | undefined = await usersRepository.getCurrentUserById(userId)
+        const currentUser: RegisterUserType | undefined = await this.usersRepository.getCurrentUserById(userId)
         if (!currentUser) return null
         return true
 
     }
 
-    async getCurrentIssueAt(token:string){
-       try{
-           const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
-           if(!verifyToken) return  null;
-           if(verifyToken){
-               return {
-                   issueAt : new Date(verifyToken.iat).toISOString(),
-                   userId: verifyToken.userId,
-               }
-           }
-       }catch (e) {
-           return null
-       }
+    async getCurrentIssueAt(token: string) {
+        try {
+            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+            if (!verifyToken) return null;
+            if (verifyToken) {
+                return {
+                    issueAt: new Date(verifyToken.iat).toISOString(),
+                    userId: verifyToken.userId,
+                }
+            }
+        } catch (e) {
+            return null
+        }
 
     }
 
-    async getCurrentDeviceId(token:string){
-       try{
-           const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
-           if(!verifyToken) return  null;
-           if(verifyToken){
-               return {
-                   userId: verifyToken.userId,
-                   deviceId: verifyToken.deviceId,
-               };
-           }
-       }catch (e) {
-           return null
-       }
+    async getCurrentDeviceId(token: string) {
+        try {
+            const verifyToken: any = jwt.verify(token, settings.JWT_SECRET);
+            if (!verifyToken) return null;
+            if (verifyToken) {
+                return {
+                    userId: verifyToken.userId,
+                    deviceId: verifyToken.deviceId,
+                };
+            }
+        } catch (e) {
+            return null
+        }
 
     }
 }
-
-export const jwtService = new JwtService();

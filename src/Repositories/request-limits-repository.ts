@@ -1,7 +1,7 @@
 import {RequestLimitsModel} from "../DB/request-limits";
 import {SetLimitProps} from "../interfaces/request-limits-types/interface";
 
-class RequestLimitsRepository {
+export class RequestLimitsRepository {
     async setLimit(limit: SetLimitProps) {
         const newLimitModel = new RequestLimitsModel(limit)
 
@@ -29,5 +29,3 @@ class RequestLimitsRepository {
         }
     }
 }
-
-export const requestLimitsRepository = new RequestLimitsRepository();

@@ -1,10 +1,16 @@
 import {PostType} from "../interfaces/interfaces";
-import {bloggersRepository} from "./bloggers-repository";
 import {PostsModel} from "../DB/post-scheme";
+import {BloggersRepository} from "./bloggers-repository";
 
 class PostsRepositories {
+    bloggersRepository: BloggersRepository;
+
+    constructor() {
+        this.bloggersRepository = new BloggersRepository();
+    }
+
     async createPost(post: PostType) {
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId);
+        const currentBlogger = await this.bloggersRepository.getCurrentBlogger(post.blogId);
 
         if (currentBlogger) {
             post.blogName = currentBlogger.name
@@ -24,7 +30,7 @@ class PostsRepositories {
     }
 
     async updatePost(post: PostType, postId: string) {
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(post.blogId)
+        const currentBlogger = await this.bloggersRepository.getCurrentBlogger(post.blogId)
 
         if (!currentBlogger) return null
 

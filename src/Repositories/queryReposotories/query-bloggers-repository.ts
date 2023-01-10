@@ -7,7 +7,7 @@ import {
 } from "../../interfaces/interfaces";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-class QueryBloggersRepository {
+export class QueryBloggersRepository {
     async getBloggers({
                           searchNameTerm,
                           pageNumber,
@@ -68,4 +68,3 @@ class QueryBloggersRepository {
     }
 }
 
-export const queryBloggersRepository = new QueryBloggersRepository();

@@ -1,9 +1,13 @@
-import {testingRepository} from "../Repositories/testing-repository";
+import {TestingRepository} from "../Repositories/testing-repository";
 
-class TestingService {
+export class TestingService {
+    testingRepository: TestingRepository;
+
+    constructor() {
+        this.testingRepository = new TestingRepository();
+    }
+
     async allClear() {
-      return await testingRepository.allClear()
+        return await this.testingRepository.allClear()
     }
 }
-
-export const testingService = new TestingService();

@@ -10,22 +10,31 @@ import {
     titleValidator
 } from "../middleWares/middleWares";
 import {getCurrentFieldError, getPostsData} from "../helpers/helpers";
-import {postsService} from "../domains/posts-service";
-import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
 import {sortDirectionType, UpdateCommentBodyParamsType} from "../interfaces/interfaces";
 import {postsRepositories} from "../Repositories/posts-repository";
-import {commentsRepository} from "../Repositories/comments-repository";
 import {GetPostsData} from "../helpers/types";
+import {CommentsRepository} from "../Repositories/comments-repository";
+import {QueryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
+import {PostsService} from "../domains/posts-service";
 
 
 export const postsRoute = Router({});
 
 class PostController {
+    commentsRepository: CommentsRepository;
+    queryPostsRepository: QueryPostsRepository;
+    postsService: PostsService;
+
+    constructor() {
+        this.commentsRepository = new CommentsRepository();
+        this.queryPostsRepository = new QueryPostsRepository();
+        this.postsService = new PostsService()
+    }
 
     async getPosts(req: Request, res: Response) {
 
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query;
-        res.send(await queryPostsRepository.getPosts(getPostsData({
+        res.send(await this.queryPostsRepository.getPosts(getPostsData({
             pageSize,
             pageNumber,
             sortBy,
@@ -34,7 +43,7 @@ class PostController {
     }
 
     async createPost(req: Request, res: Response) {
-        const currentPost = await postsService.createPost(req.body)
+        const currentPost = await this.postsService.createPost(req.body)
 
         if (currentPost) {
             res.status(201).send(currentPost)
@@ -47,7 +56,7 @@ class PostController {
     async getCurrentPost(req: Request, res: Response) {
         const postId = req.params.id;
 
-        const currentPost = await queryPostsRepository.getCurrentPost(postId)
+        const currentPost = await this.queryPostsRepository.getCurrentPost(postId)
         if (currentPost) {
             res.send(currentPost)
         } else {
@@ -58,7 +67,7 @@ class PostController {
     async updatePost(req: Request, res: Response) {
         const postId = req.params.id;
 
-        const currentPost = await postsService.updatePost(
+        const currentPost = await this.postsService.updatePost(
             {...req.body, postId})
 
         if (currentPost) {
@@ -71,7 +80,7 @@ class PostController {
     async deletedPost(req: Request, res: Response) {
         const postId = req.params.id;
 
-        const currentPost = await postsService.deletedPost(postId)
+        const currentPost = await this.postsService.deletedPost(postId)
         if (currentPost) {
             res.send(204)
         } else {
@@ -90,7 +99,7 @@ class PostController {
 
         if (!currentPost) return res.sendStatus(404)
 
-        const currentComment = await commentsRepository.createComment({
+        const currentComment = await this.commentsRepository.createComment({
             postId,
             content,
             userId: id,
@@ -107,7 +116,8 @@ class PostController {
         pageNumber: string,
         pageSize: string,
         sortBy: string,
-        sortDirection: sortDirectionType}>, res: Response) {
+        sortDirection: sortDirectionType
+    }>, res: Response) {
         const {postId} = req.params;
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query;
 
@@ -123,7 +133,7 @@ class PostController {
         } as GetPostsData);
 
 
-        const comments = await commentsRepository.getCommentsForCurrentPost(
+        const comments = await this.commentsRepository.getCommentsForCurrentPost(
             {postId, ...postData})
 
         if (comments) {

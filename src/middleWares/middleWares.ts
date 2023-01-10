@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from "express";
-import {bloggersRepository} from "../Repositories/bloggers-repository";
-import {jwtService} from "../domains/jwy-servive";
-import {queryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 import dayjs from 'dayjs'
-import {requestLimitsService} from "../domains/request-limits-service";
+import {QueryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
+import {BloggersRepository} from "../Repositories/bloggers-repository";
+import {JwtService} from "../domains/jwy-servive";
+import {RequestLimitsService} from "../domains/request-limits-service";
 
 const {body, validationResult} = require('express-validator');
 
@@ -21,6 +21,7 @@ export const codeValidator = body('code').trim().isLength({min: 1});
 
 export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30})
     .custom(async (value: string) => {
+        const bloggersRepository = new BloggersRepository();
         const currentBlogger = await bloggersRepository.getCurrentBlogger(value)
         if (!currentBlogger) {
             throw new Error('Not found this blogger');
@@ -67,13 +68,14 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
         return res.sendStatus(401);
     }
 
-
+    const jwtService = new JwtService();
 
     const token = req.headers.authorization.split(' ')[1];
     const userId = await jwtService.getUserIdByToken(token)
 
 
     if (userId) {
+        const queryUsersRepository = new QueryUsersRepository();
         const currentUser = await queryUsersRepository.getCurrentUser(userId);
         if (currentUser) {
             req.user = currentUser
@@ -98,6 +100,8 @@ export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, 
         type: req.path
     }
 
+    const requestLimitsService = new RequestLimitsService();
+
     const createdLimit = await requestLimitsService.setRequestLimit(currentLimit)
 
     if (!createdLimit) throw new Error('Sorry, but something went wrong');
@@ -110,9 +114,9 @@ export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, 
         const currentLimited = createdLimited
             .filter((limit: any) => !(dayjs().subtract(10, 's') > dayjs(limit.date)));
 
-        if(currentLimited.length > 5){
+        if (currentLimited.length > 5) {
             return res.sendStatus(429);
-        }else{
+        } else {
             next()
         }
     }

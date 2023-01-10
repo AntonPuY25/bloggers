@@ -2,7 +2,7 @@ import {postsRepositories} from "../Repositories/posts-repository";
 import {CreatePostProps, DbPostType, UpdatePostProps} from "../interfaces/interfaces";
 import {Post, PostFromBd} from "../instances/posts";
 
-class PostsService {
+export class PostsService {
     async createPost({content, blogId, shortDescription, title}: CreatePostProps) {
         const newPost = new Post(Number(new Date()).toString(),
             title,
@@ -43,5 +43,3 @@ class PostsService {
         return await postsRepositories.deletedPost(postId)
     }
 }
-
-export const postsService = new PostsService()

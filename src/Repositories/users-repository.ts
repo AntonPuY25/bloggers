@@ -7,7 +7,7 @@ import {
 } from "../interfaces/registration-types/interface";
 import {v4 as uuidv4} from "uuid";
 
-class UsersRepository {
+export class UsersRepository {
     async createUser(userDb: RegisterUserType) {
         const user = new UsersModel(userDb)
 
@@ -105,5 +105,3 @@ class UsersRepository {
         }
     }
 }
-
-export const usersRepository = new UsersRepository();

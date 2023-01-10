@@ -2,7 +2,7 @@ import {SendEmailAdaptorTypes} from "../adapters/types";
 import {emailAdapter} from "../adapters/email-adapter";
 import {emailManager} from "../managers/email-manager";
 
-class EmailService {
+export class EmailService {
     async sendEmail({email, subject, message}: SendEmailAdaptorTypes) {
 
         const recoveryData = await emailManager.getRecoveryMessageEmailByUser({
@@ -14,5 +14,3 @@ class EmailService {
         return await emailAdapter.sendEmail(recoveryData)
     }
 }
-
-export const emailService = new EmailService();

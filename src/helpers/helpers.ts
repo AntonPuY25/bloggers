@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import {GetBloggersData, GetPostsData, GetUsersDataType} from "./types";
 import {ResponseDataBloggerType, sortDirectionType} from "../interfaces/interfaces";
-import {usersRepository} from "../Repositories/users-repository";
+import {UsersRepository} from "../Repositories/users-repository";
 
 export const getCurrentFieldError = (field: string, message: string) => {
     return {
@@ -84,6 +84,7 @@ export const isConfirmedEmailError = (field:string) => ({
 )
 
 export const duplicatedEmail = async (email:string)=>{
+    const usersRepository = new UsersRepository();
     const currentUser = await usersRepository.getCurrentUserByEmail({email})
     if (currentUser) {
     return  {
@@ -100,6 +101,7 @@ export const duplicatedEmail = async (email:string)=>{
 }
 
 export const duplicatedLogin = async (login:string)=>{
+    const usersRepository = new UsersRepository();
     const currentUser = await usersRepository.getCurrentUser(login)
     if (currentUser) {
         return  {

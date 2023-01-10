@@ -1,11 +1,17 @@
 import {Request, Response, Router} from "express";
-import {testingService} from "../domains/testing-service";
+import {TestingService} from "../domains/testing-service";
 
 export const testingRoute = Router({});
 
 class ClearData {
+    testingService: TestingService;
+
+    constructor() {
+        this.testingService = new TestingService();
+    }
+
     async allClear(req: Request, res: Response) {
-        const {success} = await testingService.allClear()
+        const {success} = await this.testingService.allClear()
 
         if (success) {
             res.sendStatus(204)

@@ -2,7 +2,7 @@ import {BloggerType, UpdateBloggerProps} from "../interfaces/interfaces";
 import {BloggersModel} from "../DB/bloggers-scheme";
 
 
-class BloggersRepository {
+export class BloggersRepository {
     async createBlogger(newBlogger: BloggerType) {
         const currentBlogger = new BloggersModel(newBlogger)
 
@@ -20,7 +20,7 @@ class BloggersRepository {
 
     async updateBlogger({blogId, name, websiteUrl}: UpdateBloggerProps) {
 
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
+        const currentBlogger = await this.getCurrentBlogger(blogId)
 
         if (currentBlogger) {
             return BloggersModel.updateOne({id: blogId}, {
@@ -39,7 +39,7 @@ class BloggersRepository {
 
     async deleteBlogger(blogId: string) {
 
-        const currentBlogger = await bloggersRepository.getCurrentBlogger(blogId)
+        const currentBlogger = await this.getCurrentBlogger(blogId)
         if (currentBlogger) {
             return BloggersModel.deleteOne({id: blogId})
                 .then((result: any) => result)
@@ -49,5 +49,3 @@ class BloggersRepository {
         }
     }
 }
-
-export const bloggersRepository = new BloggersRepository();

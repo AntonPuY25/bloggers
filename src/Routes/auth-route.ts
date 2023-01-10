@@ -1,7 +1,5 @@
 import {Request, Response, Router} from "express";
 import {AuthNewPasswordBodyType, AuthRecoveryPasswordBodyType, AuthRequestBodyType} from "../interfaces/interfaces";
-import {authService} from "../domains/auth-service";
-import {jwtService} from "../domains/jwy-servive";
 import {
     authMiddleWare, checkRequestLimitsMiddleWare, codeValidator,
     emailValidator,
@@ -19,14 +17,30 @@ import {
 import {duplicatedEmail, duplicatedLogin, getGeneratedHashPassword} from "../helpers/helpers";
 import {v4 as uuidv4} from "uuid";
 import {ACCESS_TOKEN_TIME, REFRESH_TOKEN_TIME} from "../interfaces/registration-types/constants";
-import {tokensRepository} from "../Repositories/tokens-repository";
-import {requestLimitsService} from "../domains/request-limits-service";
-import {usersRepository} from "../Repositories/users-repository";
 import bcrypt from "bcrypt";
+import {AuthService} from "../domains/auth-service";
+import {UsersRepository} from "../Repositories/users-repository";
+import {TokensRepository} from "../Repositories/tokens-repository";
+import {JwtService} from "../domains/jwy-servive";
+import {RequestLimitsService} from "../domains/request-limits-service";
 
 export const authRoute = Router({});
 
 class AuthController {
+    authService: AuthService;
+    usersRepository: UsersRepository;
+    tokensRepository: TokensRepository;
+    jwtService: JwtService;
+    requestLimitsService: RequestLimitsService;
+
+    constructor() {
+        this.authService = new AuthService();
+        this.usersRepository = new UsersRepository();
+        this.tokensRepository = new TokensRepository();
+        this.jwtService = new JwtService();
+        this.requestLimitsService = new RequestLimitsService();
+    }
+
     async registration(req: Request<{}, {}, RegistrationBodyTypes, {}>, res: Response) {
 
         const {login, password, email} = req.body;
@@ -37,7 +51,7 @@ class AuthController {
         if (isDuplicatedEmail) return res.status(400).send(isDuplicatedEmail)
         if (isDuplicatedLogin) return res.status(400).send(isDuplicatedLogin)
 
-        const currentUser = await authService.registerUser({email, login, password})
+        const currentUser = await this.authService.registerUser({email, login, password})
 
         if (!currentUser) return res.sendStatus(404);
 
@@ -46,7 +60,7 @@ class AuthController {
 
     async confirmRegistration(req: Request<{}, {}, RegistrationConfirmationBodyTypes, {}>, res: Response) {
         const {code} = req.body;
-        const result = await authService.confirmEmail({code})
+        const result = await this.authService.confirmEmail({code})
 
         if (result?.isError) {
             return result?.message ? res.status(400).send(result.message) : res.sendStatus(400)
@@ -57,7 +71,7 @@ class AuthController {
 
     async emailResendingForRegistration(req: Request<{}, {}, RegistrationResendingEmailBodyTypes, {}>, res: Response) {
         const {email} = req.body;
-        const result = await authService.resendEmail({email})
+        const result = await this.authService.resendEmail({email})
 
         if (result?.isError) {
             return result?.message ?
@@ -75,10 +89,10 @@ class AuthController {
         const ip = req.ip;
         const deviceId = uuidv4();
 
-        const authResult = await authService.authUser({loginOrEmail, password});
+        const authResult = await this.authService.authUser({loginOrEmail, password});
 
         if (authResult) {
-            const accessToken = await jwtService.createJwt({
+            const accessToken = await this.jwtService.createJwt({
                 user: authResult,
                 expiresIn: ACCESS_TOKEN_TIME,
                 type: JWTTokenType.accessToken,
@@ -88,7 +102,7 @@ class AuthController {
                 ip,
             })
 
-            const refreshToken = await jwtService.createJwt({
+            const refreshToken = await this.jwtService.createJwt({
                 user: authResult,
                 expiresIn: REFRESH_TOKEN_TIME,
                 type: JWTTokenType.refreshToken,
@@ -116,19 +130,19 @@ class AuthController {
         const ip = req.ip;
 
 
-        await requestLimitsService.deleteLimitsByIp(ip)
+        await this.requestLimitsService.deleteLimitsByIp(ip)
 
-        const currentSession = await jwtService.getCurrentDeviceId(refreshToken);
+        const currentSession = await this.jwtService.getCurrentDeviceId(refreshToken);
 
         if (!currentSession) return res.sendStatus(401);
 
-        const userId = await jwtService.getUserIdByToken(refreshToken)
+        const userId = await this.jwtService.getUserIdByToken(refreshToken)
 
 
         if (userId) {
-            const result = await jwtService.logout(userId);
+            const result = await this.jwtService.logout(userId);
             if (result) {
-                await tokensRepository.deleteCurrentToken(currentSession.deviceId);
+                await this.tokensRepository.deleteCurrentToken(currentSession.deviceId);
                 res.clearCookie('refreshToken');
                 return res.sendStatus(204)
             }
@@ -156,7 +170,7 @@ class AuthController {
 
         const ip = req.ip;
 
-        const result: GetRefreshJWTTokenType | null = await jwtService.refreshToken(refreshToken, ip);
+        const result: GetRefreshJWTTokenType | null = await this.jwtService.refreshToken(refreshToken, ip);
 
         if (result) {
             return res.cookie('refreshToken', result.refreshToken, {
@@ -172,11 +186,11 @@ class AuthController {
     async passwordRecovery(req: Request<{}, {}, AuthRecoveryPasswordBodyType, {}>, res: Response) {
         const {email} = req.body;
 
-        const currentUser = await usersRepository.getCurrentUserByEmail({email});
+        const currentUser = await this.usersRepository.getCurrentUserByEmail({email});
 
         if (!currentUser) return res.sendStatus(204);
 
-        const result = await authService.recoveryPassword({email, code: currentUser?.userData?.password});
+        const result = await this.authService.recoveryPassword({email, code: currentUser?.userData?.password});
 
         if (result?.message === 'Success') {
             return res.sendStatus(204);
@@ -190,7 +204,7 @@ class AuthController {
     async createNewPassword(req: Request<{}, {}, AuthNewPasswordBodyType, {}>, res: Response) {
         const {recoveryCode, newPassword} = req.body;
 
-        const currentUser = await usersRepository.getCurrentUserByPassword({password: recoveryCode})
+        const currentUser = await this.usersRepository.getCurrentUserByPassword({password: recoveryCode})
 
         if (!currentUser) {
             return res.status(400).send({errorsMessages: [{message: 'recoveryCode incorrect', field: 'recoveryCode'}]})
@@ -199,7 +213,7 @@ class AuthController {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await getGeneratedHashPassword(newPassword, passwordSalt)
 
-        const result = await usersRepository.updatedCurrentUserPassword({
+        const result = await this.usersRepository.updatedCurrentUserPassword({
             passwordHash,
             passwordSalt,
             id: currentUser.id

@@ -1,18 +1,25 @@
 import {Router, Request, Response} from "express";
-import {tokensRepository} from "../Repositories/tokens-repository";
-import {jwtService} from "../domains/jwy-servive";
+import {TokensRepository} from "../Repositories/tokens-repository";
+import {JwtService} from "../domains/jwy-servive";
 
 export const securityRoute = Router({});
 
 class SecurityController {
+    tokensRepository: TokensRepository;
+    jwtService: JwtService;
+
+    constructor() {
+        this.tokensRepository = new TokensRepository();
+        this.jwtService = new JwtService()
+    }
 
     async getDevices(req: Request, res: Response) {
         const {refreshToken} = req.cookies;
         if (!refreshToken) return res.sendStatus(401);
 
-        const currentUserId = await jwtService.getUserIdByToken(refreshToken);
+        const currentUserId = await this.jwtService.getUserIdByToken(refreshToken);
         if (!currentUserId) return res.sendStatus(401);
-        const result = await tokensRepository.getAllTokens(currentUserId);
+        const result = await this.tokensRepository.getAllTokens(currentUserId);
         if (result) {
             return res.status(200).send(result)
         } else {
@@ -23,10 +30,10 @@ class SecurityController {
     async deleteDevices(req: Request, res: Response) {
         const {refreshToken} = req.cookies;
         if (!refreshToken) return res.sendStatus(401);
-        const tokenData = await jwtService.getCurrentIssueAt(refreshToken);
+        const tokenData = await this.jwtService.getCurrentIssueAt(refreshToken);
         if (!tokenData) return res.sendStatus(401);
 
-        const result = await tokensRepository.deleteAllExceptCurrent(tokenData.issueAt);
+        const result = await this.tokensRepository.deleteAllExceptCurrent(tokenData.issueAt);
         if (!result) return res.sendStatus(401);
 
         res.sendStatus(204)
@@ -36,16 +43,16 @@ class SecurityController {
         const {refreshToken} = req.cookies;
         const {deviceId} = req.params;
         if (!refreshToken) return res.sendStatus(401);
-        const userData = await jwtService.getCurrentDeviceId(refreshToken);
+        const userData = await this.jwtService.getCurrentDeviceId(refreshToken);
 
         if (!userData) return res.sendStatus(401);
 
-        const currentSession = await tokensRepository.getCurrentSessionByDeviceId(deviceId);
+        const currentSession = await this.tokensRepository.getCurrentSessionByDeviceId(deviceId);
 
         if (!currentSession) return res.sendStatus(404);
 
         if (userData.userId === currentSession.userId) {
-            await tokensRepository.deleteCurrentToken(deviceId);
+            await this.tokensRepository.deleteCurrentToken(deviceId);
         } else {
             return res.sendStatus(403)
         }

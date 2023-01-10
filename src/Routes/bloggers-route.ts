@@ -8,20 +8,32 @@ import {
     titleValidator,
     urlValidator
 } from "../middleWares/middleWares";
-import {bloggersService} from "../domains/bloggers-service";
 import {ResponseDataBloggerType} from "../interfaces/interfaces";
-import {queryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
-import {postsService} from "../domains/posts-service";
-import {queryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
 import {getBloggersData, getNewResponseBlogger} from "../helpers/helpers";
 import {GetBloggersData} from "../helpers/types";
+import {QueryPostsRepository} from "../Repositories/queryReposotories/query-posts-repository";
+import {QueryBloggersRepository} from "../Repositories/queryReposotories/query-bloggers-repository";
+import {BloggersService} from "../domains/bloggers-service";
+import {PostsService} from "../domains/posts-service";
 
 export const bloggersRoute = Router({})
 
 class BloggerController {
+    queryPostsRepository: QueryPostsRepository;
+    queryBloggersRepository: QueryBloggersRepository;
+    bloggersService: BloggersService;
+    postsService: PostsService;
+
+    constructor() {
+        this.queryPostsRepository = new QueryPostsRepository();
+        this.queryBloggersRepository = new QueryBloggersRepository();
+        this.bloggersService = new BloggersService();
+        this.postsService = new PostsService();
+    }
+
     async getBloggers(req: Request, res: Response) {
         const {searchNameTerm, pageNumber, pageSize, sortBy, sortDirection} = req.query;
-        res.send(await queryBloggersRepository.getBloggers(getBloggersData({
+        res.send(await this.queryBloggersRepository.getBloggers(getBloggersData({
             pageSize,
             sortBy,
             sortDirection,
@@ -33,7 +45,7 @@ class BloggerController {
     async createBlogger(req: Request, res: Response) {
         const {name, websiteUrl} = req.body;
 
-        const currentBlogger = await bloggersService.createBlogger(
+        const currentBlogger = await this.bloggersService.createBlogger(
             {name, websiteUrl})
 
         if (currentBlogger) {
@@ -49,7 +61,7 @@ class BloggerController {
     async createPostForCurrentBlogger(req: Request, res: Response) {
 
         const {blogId} = req.params;
-        const currentBlogger = await postsService.createPost(
+        const currentBlogger = await this.postsService.createPost(
             {...req.body, blogId})
 
         if (currentBlogger) {
@@ -64,7 +76,7 @@ class BloggerController {
         const {blogId} = req.params;
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query;
 
-        const currentBlogger = await queryPostsRepository.getPosts({
+        const currentBlogger = await  this.queryPostsRepository.getPosts({
             pageSize: pageSize ? Number(pageSize) : 10,
             pageNumber: pageNumber ? Number(pageNumber) : 1,
             sortBy: sortBy as string,
@@ -82,7 +94,7 @@ class BloggerController {
 
     async getCurrentBlogger(req: Request, res: Response) {
         const blogId = req.params.id;
-        const currentBlogger = await queryBloggersRepository.getCurrentBlogger(blogId)
+        const currentBlogger = await this.queryBloggersRepository.getCurrentBlogger(blogId)
 
         if (currentBlogger && blogId) {
             const newBlogger: ResponseDataBloggerType = getNewResponseBlogger(currentBlogger)
@@ -96,7 +108,7 @@ class BloggerController {
         const blogId = req.params.id;
         const {name, websiteUrl} = req.body;
 
-        const currentBlogger = await bloggersService.updateBlogger(
+        const currentBlogger = await this.bloggersService.updateBlogger(
             {blogId, name, websiteUrl})
 
         if (currentBlogger && blogId) {
@@ -108,7 +120,7 @@ class BloggerController {
 
     async deleteBlogger(req: Request, res: Response) {
         const blogId = req.params.id;
-        const currentBlogger = await bloggersService.deleteBlogger(blogId)
+        const currentBlogger = await this.bloggersService.deleteBlogger(blogId)
 
         if (currentBlogger && blogId) {
             res.sendStatus(204)

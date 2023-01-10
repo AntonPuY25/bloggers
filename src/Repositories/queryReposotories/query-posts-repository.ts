@@ -2,7 +2,7 @@ import {PostsModel} from "../../DB/post-scheme";
 import {DbPostType, GetPostsParamsType, GetPostsResponseType, ResponseDataPostType} from "../../interfaces/interfaces";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../../helpers/helpers";
 
-class QueryPostsRepository {
+export class QueryPostsRepository {
     async getPosts({blogId, sortBy, sortDirection, pageNumber, pageSize}: GetPostsParamsType) {
         const postsFilterData = blogId ? {blogId: blogId} : {}
         const skipCount = getSkipCountData(pageNumber, pageSize);
@@ -72,5 +72,3 @@ class QueryPostsRepository {
             .catch(() => null)
     }
 }
-
-export const queryPostsRepository = new QueryPostsRepository();

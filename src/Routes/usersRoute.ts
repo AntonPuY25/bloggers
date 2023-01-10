@@ -90,11 +90,11 @@ class UserController {
 const instanceUserController = new UserController();
 
 usersRoute.get('/',
-    instanceUserController.getUsers)
+    instanceUserController.getUsers.bind(instanceUserController))
 
 usersRoute.post('/', authorizationMiddleWare, loginValidator,
     passwordValidator, emailValidator, errorMiddleWAre,
-    instanceUserController.createUser)
+    instanceUserController.createUser.bind(instanceUserController))
 
 usersRoute.delete('/:userId',
-    instanceUserController.deleteUser)
+    instanceUserController.deleteUser.bind(instanceUserController))

@@ -67,9 +67,9 @@ class CommentController {
 
 const instanceCommentController = new CommentController();
 
-commentsRoute.get('/:commentId', instanceCommentController.getCurrentComment)
+commentsRoute.get('/:commentId', instanceCommentController.getCurrentComment.bind(instanceCommentController))
 
 commentsRoute.put('/:commentId', authMiddleWare,
-    contentCommentValidator, errorMiddleWAre, instanceCommentController.updateComment)
+    contentCommentValidator, errorMiddleWAre, instanceCommentController.updateComment.bind(instanceCommentController))
 
-commentsRoute.delete('/:commentId', authMiddleWare, instanceCommentController.deleteComment)
+commentsRoute.delete('/:commentId', authMiddleWare, instanceCommentController.deleteComment.bind(instanceCommentController))

@@ -231,25 +231,25 @@ const instanceAuthController = new AuthController();
 
 authRoute.post('/registration', checkRequestLimitsMiddleWare, loginValidator,
     passwordValidator, emailValidator, errorMiddleWAre,
-    instanceAuthController.registration)
+    instanceAuthController.registration.bind(instanceAuthController))
 
 authRoute.post('/registration-confirmation', checkRequestLimitsMiddleWare, codeValidator,
-    errorMiddleWAre, instanceAuthController.confirmRegistration)
+    errorMiddleWAre, instanceAuthController.confirmRegistration.bind(instanceAuthController))
 
 
 authRoute.post('/registration-email-resending', checkRequestLimitsMiddleWare,
-    emailValidator, errorMiddleWAre, instanceAuthController.emailResendingForRegistration)
+    emailValidator, errorMiddleWAre, instanceAuthController.emailResendingForRegistration.bind(instanceAuthController))
 
-authRoute.post('/login', checkRequestLimitsMiddleWare, instanceAuthController.login)
+authRoute.post('/login', checkRequestLimitsMiddleWare, instanceAuthController.login.bind(instanceAuthController))
 
-authRoute.post('/logout', instanceAuthController.logout)
+authRoute.post('/logout', instanceAuthController.logout.bind(instanceAuthController))
 
-authRoute.get('/me', authMiddleWare, instanceAuthController.getMyData)
+authRoute.get('/me', authMiddleWare, instanceAuthController.getMyData.bind(instanceAuthController))
 
-authRoute.post('/refresh-token', instanceAuthController.refreshToken)
+authRoute.post('/refresh-token', instanceAuthController.refreshToken.bind(instanceAuthController))
 
 authRoute.post('/password-recovery', checkRequestLimitsMiddleWare, emailValidator,
-    errorMiddleWAre, instanceAuthController.passwordRecovery)
+    errorMiddleWAre, instanceAuthController.passwordRecovery.bind(instanceAuthController))
 
 authRoute.post('/new-password', checkRequestLimitsMiddleWare, newPasswordValidator, errorMiddleWAre,
-    instanceAuthController.createNewPassword)
+    instanceAuthController.createNewPassword.bind(instanceAuthController))

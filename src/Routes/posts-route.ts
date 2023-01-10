@@ -147,25 +147,25 @@ class PostController {
 
 const instancePostController = new PostController();
 
-postsRoute.get('/', instancePostController.getPosts)
+postsRoute.get('/', instancePostController.getPosts.bind(instancePostController))
 
 postsRoute.post('/', authorizationMiddleWare, titleValidator,
     descriptionValidator, contentValidator, bloggerIdValidator,
-    errorMiddleWAre, instancePostController.createPost)
+    errorMiddleWAre, instancePostController.createPost.bind(instancePostController))
 
-postsRoute.get('/:id', instancePostController.getCurrentPost)
+postsRoute.get('/:id', instancePostController.getCurrentPost.bind(instancePostController))
 
 postsRoute.put('/:id', authorizationMiddleWare,
     titleValidator, descriptionValidator, contentValidator,
 
-    bloggerIdValidator, errorMiddleWAre, instancePostController.updatePost)
+    bloggerIdValidator, errorMiddleWAre, instancePostController.updatePost.bind(instancePostController))
 
 postsRoute.delete('/:id', authorizationMiddleWare,
-    instancePostController.deletedPost)
+    instancePostController.deletedPost.bind(instancePostController))
 
 postsRoute.post('/:postId/comments', authMiddleWare,
     contentCommentValidator, errorMiddleWAre,
-    instancePostController.createCommentForCurrentPost)
+    instancePostController.createCommentForCurrentPost.bind(instancePostController))
 
 postsRoute.get('/:postId/comments',
-    instancePostController.getCommentForCurrentPost)
+    instancePostController.getCommentForCurrentPost.bind(instancePostController))

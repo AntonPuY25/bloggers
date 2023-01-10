@@ -25,4 +25,4 @@ class EmailController {
 
 const instanceEmailController = new EmailController();
 
-emailRouter.post('/', instanceEmailController.sendEmail)
+emailRouter.post('/', instanceEmailController.sendEmail.bind(instanceEmailController))

@@ -132,25 +132,25 @@ class BloggerController {
 
 const instanceBloggerController = new BloggerController();
 
-bloggersRoute.get('/', instanceBloggerController.getBloggers)
+bloggersRoute.get('/', instanceBloggerController.getBloggers.bind(instanceBloggerController))
 
 bloggersRoute.post('/', authorizationMiddleWare,
     nameValidator,
     urlValidator,
-    errorMiddleWAre, instanceBloggerController.createBlogger)
+    errorMiddleWAre, instanceBloggerController.createBlogger.bind(instanceBloggerController))
 
 bloggersRoute.post('/:blogId/posts', authorizationMiddleWare,
     titleValidator, descriptionValidator,
-    contentValidator, errorMiddleWAre, instanceBloggerController.createPostForCurrentBlogger)
+    contentValidator, errorMiddleWAre, instanceBloggerController.createPostForCurrentBlogger.bind(instanceBloggerController))
 
-bloggersRoute.get('/:blogId/posts', instanceBloggerController.getPostForCurrentBlogger)
+bloggersRoute.get('/:blogId/posts', instanceBloggerController.getPostForCurrentBlogger.bind(instanceBloggerController))
 
 
-bloggersRoute.get('/:id', instanceBloggerController.getCurrentBlogger)
+bloggersRoute.get('/:id', instanceBloggerController.getCurrentBlogger.bind(instanceBloggerController))
 
 bloggersRoute.put('/:id', authorizationMiddleWare, nameValidator,
-    urlValidator, errorMiddleWAre, instanceBloggerController.updateBlogger)
+    urlValidator, errorMiddleWAre, instanceBloggerController.updateBlogger.bind(instanceBloggerController))
 
 bloggersRoute.delete('/:id', authorizationMiddleWare,
-    instanceBloggerController.deleteBlogger)
+    instanceBloggerController.deleteBlogger.bind(instanceBloggerController))
 

@@ -22,4 +22,4 @@ class ClearData {
 
 const instanceClearData = new ClearData();
 
-testingRoute.delete('/all-data', instanceClearData.allClear)
+testingRoute.delete('/all-data', instanceClearData.allClear.bind(instanceClearData))

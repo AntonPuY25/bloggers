@@ -2,7 +2,7 @@ import {PostType} from "../interfaces/interfaces";
 import {PostsModel} from "../DB/post-scheme";
 import {BloggersRepository} from "./bloggers-repository";
 
-class PostsRepositories {
+export class PostsRepositories {
     bloggersRepository: BloggersRepository;
 
     constructor() {
@@ -34,7 +34,7 @@ class PostsRepositories {
 
         if (!currentBlogger) return null
 
-        const currentPost = await postsRepositories.getCurrentPost(postId)
+        const currentPost = await this.getCurrentPost(postId)
         if (currentPost) {
             post.blogName = currentBlogger.name
             return PostsModel.updateOne({id: postId}, {
@@ -53,7 +53,7 @@ class PostsRepositories {
     }
 
     async deletedPost(postId: string) {
-        const currentPost = await postsRepositories.getCurrentPost(postId)
+        const currentPost =  await this.getCurrentPost(postId)
 
         if (currentPost) {
             return PostsModel.deleteOne({id: postId})
@@ -62,5 +62,3 @@ class PostsRepositories {
         }
     }
 }
-
-export const postsRepositories = new PostsRepositories();

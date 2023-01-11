@@ -14,11 +14,7 @@ import {emailAdapter} from "../adapters/email-adapter";
 
 
 export class AuthService {
-    usersRepository: UsersRepository;
-
-    constructor() {
-        this.usersRepository = new UsersRepository();
-    }
+    constructor(protected usersRepository: UsersRepository) {}
 
     async registerUser({email, login, password}: RegistrationBodyTypes) {
 

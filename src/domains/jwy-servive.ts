@@ -11,12 +11,9 @@ import {UsersRepository} from "../Repositories/users-repository";
 import {TokensRepository} from "../Repositories/tokens-repository";
 
 export class JwtService {
-    usersRepository: UsersRepository;
-    tokensRepository: TokensRepository;
 
-    constructor() {
-        this.usersRepository = new UsersRepository();
-        this.tokensRepository = new TokensRepository();
+    constructor(protected usersRepository: UsersRepository,
+                protected tokensRepository: TokensRepository) {
     }
 
     async createJwt({expiresIn, user, type, deviceId, device, methodType, ip}: CreateJWTTokenType) {

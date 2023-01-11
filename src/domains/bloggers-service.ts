@@ -2,11 +2,8 @@ import {CreateBloggerProps, UpdateBloggerProps} from "../interfaces/interfaces";
 import {BloggersRepository} from "../Repositories/bloggers-repository";
 
 export class BloggersService {
-    bloggersRepository: BloggersRepository;
 
-    constructor() {
-        this.bloggersRepository = new BloggersRepository();
-    }
+    constructor(protected bloggersRepository: BloggersRepository) {}
 
     async createBlogger({websiteUrl, name}: CreateBloggerProps) {
         const newBlogger = {

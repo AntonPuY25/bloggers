@@ -7,6 +7,12 @@ import {
 import {CommentsModel} from "../DB/comments-scheme";
 import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectionData} from "../helpers/helpers";
 import {Comments, CommentsFromBd} from "../instances/comments";
+import {DEFAULT_LIKE_COMMENT} from "../constants/constants";
+import {
+    LikeStatusResponseType,
+    LikeStatusResponseTypeToBd, NameFiledCount,
+    UpdateLikeStatusForCurrentComment
+} from "../interfaces/comments-types/types";
 
 export class CommentsRepository {
     async createComment({content, userId, postId, userLogin}: CreateCommentPropsType) {
@@ -16,19 +22,22 @@ export class CommentsRepository {
             content,
             userId,
             userLogin,
+            DEFAULT_LIKE_COMMENT,
             postId)
 
 
         const currentBlogger = new CommentsModel(currentComment)
 
         try {
-            const result: any = await currentBlogger.save()
+            const result: any = await currentBlogger.save();
 
-            return new CommentsFromBd(result.id,
+            return new CommentsFromBd(
+                result.id,
                 result.content,
                 result.userId,
                 result.userLogin,
                 result.createdAt,
+                result.likesInfo,
             )
         } catch (e) {
             return null
@@ -62,7 +71,8 @@ export class CommentsRepository {
                         item.content,
                         item.userId,
                         item.userLogin,
-                        item.createdAt
+                        item.createdAt,
+                        item.likesInfo,
                     )
                     acc.push(newComment)
                     return acc
@@ -87,15 +97,17 @@ export class CommentsRepository {
     async getCurrentComment(commentId: string) {
         try {
             const result: any = await CommentsModel.find({id: commentId})
-
             if (result.length) {
-                const {id, userId, content, userLogin, createdAt} = result[0];
-                return new CommentsFromBd(id,
+                const {id, userId, content, userLogin, createdAt, likesInfo} = result[0];
+
+                return new CommentsFromBd(
+                    id,
                     content,
                     userId,
                     userLogin,
                     createdAt,
-                )
+                    likesInfo,
+                );
 
             } else {
                 return null
@@ -121,6 +133,27 @@ export class CommentsRepository {
     async deleteCurrentComment(commentId: string) {
         try {
             return CommentsModel.deleteOne({id: commentId})
+        } catch (e) {
+            return null
+        }
+    }
+
+    async updateLikeStatusForCurrentComment({
+                                                likeStatus,
+                                                commentId,
+                                                count,
+                                                nameFieldCount
+                                            }: LikeStatusResponseTypeToBd) {
+
+        const currentField = `likesInfo.${nameFieldCount}`;
+
+        try {
+            return CommentsModel.updateOne({id: commentId}, {
+                $set: {
+                    'likesInfo.myStatus': likeStatus,
+                    [currentField]: count,
+                }
+            })
         } catch (e) {
             return null
         }

@@ -21,8 +21,13 @@ const commentsSchema = new Schema({
     },
     postId: {
         type: String,
+        required: false,
+    },
+    likesInfo: {
+        type: Object,
         required: true,
-    }
+    },
+
 }, {timestamps: true})
 
 export const CommentsModel = mongoose.model('Comments',commentsSchema)

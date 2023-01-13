@@ -86,8 +86,9 @@ export class PostController {
             postId,
             content,
             userId: id,
-            userLogin: req?.user?.userData?.login!
+            userLogin: req?.user?.userData?.login!,
         })
+
         if (currentComment) {
             res.status(201).send(currentComment)
         } else {

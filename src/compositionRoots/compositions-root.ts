@@ -23,6 +23,7 @@ import {EmailService} from "../domains/email-service";
 import {PostController} from "../controllers/post-controller";
 import {SecurityController} from "../controllers/security-controller";
 import {ClearDataController} from "../controllers/test-controller";
+import {CommentsService} from "../domains/comments-service";
 
 //Repositories
 const usersRepository = new UsersRepository();
@@ -39,11 +40,12 @@ const tokensRepository = new TokensRepository();
 //Services
 const authService = new AuthService(usersRepository);
 const bloggersService = new BloggersService(bloggersRepository);
-const jwtService = new JwtService(usersRepository, tokensRepository);
+export const jwtService = new JwtService(usersRepository, tokensRepository);
 const postsService = new PostsService(postsRepositories);
-const requestLimitsService = new RequestLimitsService(requestLimitsRepository);
+export const requestLimitsService = new RequestLimitsService(requestLimitsRepository);
 const testingService = new TestingService(testingRepository);
 const emailService = new EmailService();
+const commentsService = new CommentsService(commentsRepository);
 
 //Controllers
 export const userController = new UserController(authService,queryUsersRepository);
@@ -56,7 +58,7 @@ export const bloggerController = new BloggerController(queryPostsRepository,
     queryBloggersRepository,
     bloggersService,
     postsService);
-export const commentController = new CommentController(commentsRepository);
+export const commentController = new CommentController(commentsRepository,commentsService);
 export const emailController = new EmailController(emailService);
 export const postController = new PostController(commentsRepository,
     queryPostsRepository,

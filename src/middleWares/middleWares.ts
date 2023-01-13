@@ -2,8 +2,8 @@ import {NextFunction, Request, Response} from "express";
 import dayjs from 'dayjs'
 import {QueryUsersRepository} from "../Repositories/queryReposotories/query-users-repository";
 import {BloggersRepository} from "../Repositories/bloggers-repository";
-import {JwtService} from "../domains/jwy-servive";
-import {RequestLimitsService} from "../domains/request-limits-service";
+import {jwtService, requestLimitsService} from "../compositionRoots/compositions-root";
+import {LikeStatus} from "../interfaces/comments-types/types";
 
 const {body, validationResult} = require('express-validator');
 
@@ -18,6 +18,10 @@ export const descriptionValidator = body('shortDescription').trim().isLength({mi
 export const contentValidator = body('content').trim().isLength({min: 3, max: 1000})
 export const contentCommentValidator = body('content').trim().isLength({min: 20, max: 300})
 export const codeValidator = body('code').trim().isLength({min: 1});
+export const LikeValidator = body('likeStatus').trim().isLength({
+    min: 4,
+    max: 7
+}).isIn([LikeStatus.Like, LikeStatus.None, LikeStatus.Dislike]);
 
 export const bloggerIdValidator = body('blogId').trim().isLength({min: 1, max: 30})
     .custom(async (value: string) => {
@@ -68,8 +72,6 @@ export const authMiddleWare = async (req: Request, res: Response, next: NextFunc
         return res.sendStatus(401);
     }
 
-    const jwtService = new JwtService();
-
     const token = req.headers.authorization.split(' ')[1];
     const userId = await jwtService.getUserIdByToken(token)
 
@@ -99,8 +101,6 @@ export const checkRequestLimitsMiddleWare = async (req: Request, res: Response, 
         date,
         type: req.path
     }
-
-    const requestLimitsService = new RequestLimitsService();
 
     const createdLimit = await requestLimitsService.setRequestLimit(currentLimit)
 

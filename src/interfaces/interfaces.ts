@@ -1,3 +1,5 @@
+import {LikeInfoType} from "./comments-types/types";
+
 export interface CreateBloggerProps {
     name: string
     websiteUrl: string
@@ -169,6 +171,7 @@ export interface CommentDataType {
     userId: string,
     userLogin: string,
     createdAt: string,
+    likesInfo: LikeInfoType,
 }
 
 export interface CommentType {
@@ -176,7 +179,9 @@ export interface CommentType {
     content: string,
     userId: string,
     userLogin: string,
-    postId: string
+    likesInfo: LikeInfoType,
+    postId?: string
+
 }
 
 export interface CreateCommentPropsType {
@@ -208,6 +213,7 @@ export interface DbCommentsType {
     postId: string,
     createdAt: string,
     updatedAt: string,
+    likesInfo: LikeInfoType,
 }
 
 export interface AuthRecoveryPasswordBodyType {

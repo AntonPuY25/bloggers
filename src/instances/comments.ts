@@ -1,9 +1,13 @@
+import {LikeInfoType} from "../interfaces/comments-types/types";
+
 export class Comments {
     constructor(public id: string,
                 public content: string,
                 public userId: string,
                 public userLogin: string,
-                public postId: string
+                public likesInfo:LikeInfoType,
+                public postId?: string,
+
     ) {
     }
 }
@@ -14,8 +18,10 @@ export class CommentsFromBd extends Comments {
                 userId: string,
                 userLogin: string,
                 public createdAt: string,
+                likesInfo:LikeInfoType,
+
     ) {
-        super(id,content,userId,userLogin,'1');
+        super(id,content,userId,userLogin,likesInfo);
     }
 }
 

@@ -12,8 +12,15 @@ export class CommentController {
     async getCurrentComment(req: Request<{ commentId: string },
         {}, {}, {}>, res: Response) {
         const {commentId} = req.params;
+        const {refreshToken} = req.cookies;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId);
+        let isAuthorizationUser = true;
+
+        if (!refreshToken) {
+            isAuthorizationUser = false;
+        }
+
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, isAuthorizationUser);
 
         if (currentComment) {
             res.status(200).send(currentComment)
@@ -29,7 +36,7 @@ export class CommentController {
         const {commentId} = req.params;
         const {id} = req.user!;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
 
         if (!currentComment) return res.sendStatus(404)
 
@@ -49,7 +56,7 @@ export class CommentController {
         const {commentId} = req.params;
         const {id} = req.user!;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
         if (!currentComment) return res.sendStatus(404)
 
         if (currentComment.userId !== id) return res.sendStatus(403)
@@ -67,7 +74,7 @@ export class CommentController {
         const {likeStatus} = req.body;
         const {commentId} = req.params;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
 
         if (!currentComment) return res.sendStatus(404)
 

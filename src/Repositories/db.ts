@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 // Connection URL
-const url = process.env.MONGO_URI_LOCAL;
+const url = process.env.MONGO_URI;
 
 if (!url) {
     throw new Error('❗ Url doesn\'t found')

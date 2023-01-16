@@ -4,11 +4,6 @@ export enum LikeStatus {
     Dislike = 'Dislike'
 }
 
-export enum NameFiledCount {
-    likesCount = 'likesCount',
-    dislikesCount = 'dislikesCount',
-}
-
 export interface LikeStatusResponseType {
     likeStatus: LikeStatus
 }
@@ -27,8 +22,8 @@ export interface UpdateLikeStatusForCurrentComment {
 
 export interface LikeStatusResponseTypeToBd {
     likeStatus: LikeStatus
-    nameFieldCount: NameFiledCount
-    count: number,
+    countForLikeField: number,
+    countForDisLikeField: number,
     commentId: string,
 }
 

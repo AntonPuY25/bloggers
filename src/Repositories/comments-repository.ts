@@ -9,9 +9,8 @@ import {getPagesCountData, getSkipCountData, getSortCreatedData, getSortDirectio
 import {Comments, CommentsFromBd} from "../instances/comments";
 import {DEFAULT_LIKE_COMMENT} from "../constants/constants";
 import {
-    LikeStatusResponseType,
-    LikeStatusResponseTypeToBd, NameFiledCount,
-    UpdateLikeStatusForCurrentComment
+    LikeStatus,
+    LikeStatusResponseTypeToBd,
 } from "../interfaces/comments-types/types";
 
 export class CommentsRepository {
@@ -94,20 +93,36 @@ export class CommentsRepository {
         }
     }
 
-    async getCurrentComment(commentId: string) {
+    async getCurrentComment(commentId: string, isAuthorizationUser: boolean) {
         try {
             const result: any = await CommentsModel.find({id: commentId})
             if (result.length) {
                 const {id, userId, content, userLogin, createdAt, likesInfo} = result[0];
 
-                return new CommentsFromBd(
-                    id,
-                    content,
-                    userId,
-                    userLogin,
-                    createdAt,
-                    likesInfo,
-                );
+                if (isAuthorizationUser) {
+                    return new CommentsFromBd(
+                        id,
+                        content,
+                        userId,
+                        userLogin,
+                        createdAt,
+                        likesInfo,
+                    );
+                } else {
+                    return new CommentsFromBd(
+                        id,
+                        content,
+                        userId,
+                        userLogin,
+                        createdAt,
+                        {
+                            likesCount: 0,
+                            dislikesCount: 0,
+                            myStatus: LikeStatus.None,
+                        },
+                    );
+                }
+
 
             } else {
                 return null
@@ -141,19 +156,22 @@ export class CommentsRepository {
     async updateLikeStatusForCurrentComment({
                                                 likeStatus,
                                                 commentId,
-                                                count,
-                                                nameFieldCount
+                                                countForLikeField,
+                                                countForDisLikeField,
                                             }: LikeStatusResponseTypeToBd) {
-
-        const currentField = `likesInfo.${nameFieldCount}`;
 
         try {
             return CommentsModel.updateOne({id: commentId}, {
-                $set: {
-                    'likesInfo.myStatus': likeStatus,
-                    [currentField]: count,
-                }
-            })
+                    $set: {
+                        'likesInfo.myStatus': likeStatus,
+
+                    },
+                    $inc: {
+                        'likesInfo.likesCount': countForLikeField,
+                        'likesInfo.dislikesCount': countForDisLikeField,
+                    }
+                },
+            )
         } catch (e) {
             return null
         }

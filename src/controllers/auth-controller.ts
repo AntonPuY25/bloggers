@@ -160,7 +160,7 @@ export class AuthController {
         if (result) {
             return res.cookie('refreshToken', result.refreshToken, {
                 httpOnly: true,
-                secure: true,
+                //secure: true,
             }).status(200).send({'accessToken': result.accessToken})
         } else {
             return res.sendStatus(401)

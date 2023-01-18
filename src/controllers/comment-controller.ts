@@ -3,10 +3,13 @@ import {Request, Response} from "express";
 import {UpdateCommentBodyParamsType} from "../interfaces/interfaces";
 import {LikeStatusResponseType} from "../interfaces/comments-types/types";
 import {CommentsService} from "../domains/comments-service";
+import {JwtService} from "../domains/jwy-servive";
 
 export class CommentController {
     constructor(protected commentsRepository: CommentsRepository,
-                protected commentsService: CommentsService) {
+                protected commentsService: CommentsService,
+                protected jwtService: JwtService
+                ) {
     }
 
     async getCurrentComment(req: Request<{ commentId: string },
@@ -14,13 +17,10 @@ export class CommentController {
         const {commentId} = req.params;
         const {refreshToken} = req.cookies;
 
-        let isAuthorizationUser = true;
+        const currentUserID = await this.jwtService.getUserIdByToken(refreshToken)
 
-        if (!refreshToken) {
-            isAuthorizationUser = false;
-        }
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId, isAuthorizationUser);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, currentUserID);
 
         if (currentComment) {
             res.status(200).send(currentComment)
@@ -36,7 +36,7 @@ export class CommentController {
         const {commentId} = req.params;
         const {id} = req.user!;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, id);
 
         if (!currentComment) return res.sendStatus(404)
 
@@ -56,7 +56,7 @@ export class CommentController {
         const {commentId} = req.params;
         const {id} = req.user!;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, id);
         if (!currentComment) return res.sendStatus(404)
 
         if (currentComment.userId !== id) return res.sendStatus(403)
@@ -74,7 +74,7 @@ export class CommentController {
         const {likeStatus} = req.body;
         const {commentId} = req.params;
 
-        const currentComment = await this.commentsRepository.getCurrentComment(commentId, true);
+        const currentComment = await this.commentsRepository.getCurrentComment(commentId, null);
 
         if (!currentComment) return res.sendStatus(404)
 

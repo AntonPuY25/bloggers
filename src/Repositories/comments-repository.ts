@@ -93,13 +93,13 @@ export class CommentsRepository {
         }
     }
 
-    async getCurrentComment(commentId: string, isAuthorizationUser: boolean) {
+    async getCurrentComment(commentId: string, currentUserID: string | null) {
         try {
             const result: any = await CommentsModel.find({id: commentId})
             if (result.length) {
                 const {id, userId, content, userLogin, createdAt, likesInfo} = result[0];
 
-                if (isAuthorizationUser) {
+                if (currentUserID) {
                     return new CommentsFromBd(
                         id,
                         content,

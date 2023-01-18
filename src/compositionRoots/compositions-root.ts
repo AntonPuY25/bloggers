@@ -48,7 +48,7 @@ const emailService = new EmailService();
 const commentsService = new CommentsService(commentsRepository);
 
 //Controllers
-export const userController = new UserController(authService,queryUsersRepository);
+export const userController = new UserController(authService, queryUsersRepository);
 export const authController = new AuthController(authService,
     usersRepository,
     jwtService,
@@ -58,7 +58,7 @@ export const bloggerController = new BloggerController(queryPostsRepository,
     queryBloggersRepository,
     bloggersService,
     postsService);
-export const commentController = new CommentController(commentsRepository,commentsService);
+export const commentController = new CommentController(commentsRepository, commentsService, jwtService);
 export const emailController = new EmailController(emailService);
 export const postController = new PostController(commentsRepository,
     queryPostsRepository,
